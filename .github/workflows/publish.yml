@@ -1,0 +1,83 @@
+name: Publish
+
+# Tag-driven release. Push a v* tag and this publishes to npm with provenance
+# (Trusted Publishing — no tokens, no 2FA prompt) and then registers the new
+# version with the Official MCP Registry using GitHub OIDC.
+#
+# ONE-TIME SETUP, and it cannot be done from CI:
+#   1. `npm publish` v1.0.0 manually from a real terminal on npm >= 11.5.1
+#      (`npm publish --auth-type=web`). Trusted Publishing configuration lives on
+#      the PACKAGE's settings page, so the package has to exist first.
+#   2. On npmjs.com > gov-data-mcp > Settings > Trusted Publisher, select GitHub
+#      Actions and enter EXACTLY:
+#         Organization or user: malonestar
+#         Repository:           gov-data-mcp
+#         Workflow filename:    publish.yml
+#      The filename must match this file's name character for character.
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # required for BOTH npm provenance and MCP registry OIDC
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+
+      # Trusted Publishing needs npm >= 11.5.1; the runner ships older.
+      - run: npm install -g npm@latest
+
+      - run: npm ci || npm install
+
+      - name: Test
+        run: npm test
+
+      - name: Mutation-verify the suite
+        run: node tools/mutate.cjs
+
+      - name: Assert the tag matches package.json
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          PKG=$(node -p "require('./package.json').version")
+          SRV=$(node -p "require('./server.json').version")
+          PKGSRV=$(node -p "require('./server.json').packages[0].version")
+          echo "tag=$TAG package.json=$PKG server.json=$SRV server.json/package=$PKGSRV"
+          test "$TAG" = "$PKG" || { echo "tag does not match package.json version"; exit 1; }
+          test "$TAG" = "$SRV" || { echo "tag does not match server.json version"; exit 1; }
+          test "$TAG" = "$PKGSRV" || { echo "tag does not match server.json packages[0].version"; exit 1; }
+
+      - name: Assert mcpName matches the registry server name
+        run: |
+          MCP=$(node -p "require('./package.json').mcpName")
+          SRV=$(node -p "require('./server.json').name")
+          test "$MCP" = "$SRV" || { echo "package.json mcpName ($MCP) != server.json name ($SRV) — the registry verifies these match"; exit 1; }
+
+      - name: Publish to npm
+        run: npm publish --provenance --access public
+
+      - name: Install mcp-publisher
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64.tar.gz" | tar xz mcp-publisher
+          sudo mv mcp-publisher /usr/local/bin/
+
+      - name: Publish to the Official MCP Registry
+        run: |
+          mcp-publisher login github-oidc
+          mcp-publisher publish
+
+      - name: Verify the registry entry is live
+        run: |
+          sleep 10
+          curl -sf "https://registry.modelcontextprotocol.io/v0/servers?search=io.github.malonestar/gov-data-mcp" | tee /tmp/reg.json
+          grep -q "gov-data-mcp" /tmp/reg.json
