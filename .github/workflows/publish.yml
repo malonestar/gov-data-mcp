@@ -46,6 +46,19 @@ jobs:
       - name: Mutation-verify the suite
         run: node tools/mutate.cjs
 
+      # The catalog IS the tool definition agents read, and it is a snapshot of
+      # a moving target. On 2026-08-18 an EIGHT-DAY-OLD catalog was already
+      # wrong by 14 actors and 10 required fields, so no age-based staleness
+      # bound can gate this — only a diff against live can.
+      #
+      # Needs the APIFY_TOKEN repo secret. If it is missing this step FAILS
+      # rather than skipping: shipping a catalog nobody verified is precisely
+      # the defect being guarded against.
+      - name: Verify the catalog still matches the live Actors
+        env:
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+        run: node tools/check-catalog-live.cjs
+
       - name: Assert the tag matches package.json
         run: |
           TAG="${GITHUB_REF_NAME#v}"

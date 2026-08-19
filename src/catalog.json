@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-11T05:09:28.953Z",
+  "generatedAt": "2026-08-19T03:44:54.885Z",
   "owner": "malonestar",
-  "count": 95,
+  "count": 109,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
@@ -264,7 +264,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Two-letter state codes to filter by. BLM mining claims exist in AK, AZ, CA, CO, ID, MT, NM, NV, OR, UT and WY, plus a small number administered by BLM Eastern States (currently Arkansas). Matches either the case-serial prefix or the state in the PLSS legal description. Empty = all states. Example: [\"NV\"].",
+            "description": "REQUIRED. Two-letter state codes to search. BLM mining claims exist in AK, AZ, CA, CO, ID, MT, NM, NV, OR, UT and WY, plus a small number elsewhere. Name the states explicitly; there is no default, so a run cannot silently answer about Nevada when you meant the whole West. Example: [\"NV\"].",
             "items": {
               "type": "string"
             }
@@ -314,7 +314,10 @@
             "type": "boolean",
             "description": "Delta mode: emit only claims not seen in previous runs, using a named cross-run store keyed to this exact filter set. The first run after enabling it establishes the baseline and emits everything that matches. Applied by default if omitted: false."
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -663,7 +666,7 @@
         "properties": {
           "state": {
             "type": "string",
-            "description": "US state to pull licensed childcare providers from. v1 supports TX (Texas HHSC Child Care Licensing). FL and CA are scaffolded for v1.1. An unsupported state fails loudly before anything is billed. Example: \"TX\".",
+            "description": "REQUIRED. US state to pull licensed childcare providers from. v1 supports TX (Texas HHSC Child Care Licensing); FL and CA are scaffolded but not enabled. Name the state explicitly rather than relying on a default. Example: \"TX\".",
             "enum": [
               "TX"
             ]
@@ -714,7 +717,10 @@
             "type": "boolean",
             "description": "Only include currently active operations (operation_status = Y). Disable to include all statuses. Applied by default if omitted: true."
           }
-        }
+        },
+        "required": [
+          "state"
+        ]
       }
     },
     {
@@ -964,7 +970,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Hard cap on the number of records written to the dataset (billed as results). Applied by default if omitted: 5000.",
+            "description": "Hard cap on the number of records written to the dataset (billed as results). Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 20000
           },
@@ -1019,7 +1025,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of change (or snapshot) records to emit after filtering. One record = one billable result. Example: 100. Applied by default if omitted: 5000.",
+            "description": "Maximum number of change (or snapshot) records to emit after filtering. One record = one billable result. Example: 100. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 200000
           },
@@ -1093,6 +1099,80 @@
             "maximum": 5000
           }
         }
+      }
+    },
+    {
+      "slug": "dod-mirta-military-installation-siting-screener",
+      "actorId": "malonestar/dod-mirta-military-installation-siting-screener",
+      "title": "DoD Military Installation & FIRRMA Site Proximity Screener",
+      "description": "Screen any US coordinate against DoD MIRTA installation boundaries: on-installation verdict, reporting component, joint-base status, and the published FIRRMA site flag with measured distance for CFIUS Part 802 diligence.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/dod-mirta-military-installation-siting-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "One entry per coordinate to screen. Each needs lat and lon in WGS84 decimal degrees, an optional label, and an optional radiusMiles that overrides the run-level radius. Example: [{\"lat\":39.7017,\"lon\":-104.7514,\"label\":\"Aurora CO parcel\",\"radiusMiles\":25}]. Required - a run with no assets fails loudly and bills nothing. Example: [{\"lat\":39.7017,\"lon\":-104.7514,\"label\":\"Aurora CO parcel (adjacent to Buckley SFB)\",\"radiusMiles\":25},{\"lat\":36.8508,\"lon\":-76.2859,\"label\":\"Norfolk VA waterfront site\",\"radiusMiles\":15},{\"lat\":32.7157,\"lon\":-117.1611,\"label\":\"San Diego CA industrial parcel\",\"radiusMiles\":15},{\"lat\":41.5,\"lon\":-100,\"label\":\"Rural Nebraska control parcel\",\"radiusMiles\":25}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "How far from each coordinate to look for DoD installations. Applies to any asset that does not set its own radiusMiles. Defaults to 25 when omitted; maximum 250. Deliberately has no schema default, because an Apify input-schema default is injected server-side into every run and a default on a query predicate silently narrows queries the caller never wrote. Example: 25.",
+            "minimum": 1,
+            "maximum": 250
+          },
+          "firrmaScanMiles": {
+            "type": "integer",
+            "description": "Separate, usually wider radius used only to find sites DoD flags with ISFIRRMASITE, so the CFIUS-adjacent proximity bands can be reported honestly. Defaults to 100 when omitted; maximum 250. Any reported band wider than this radius is null (not checked), never false. Example: 100.",
+            "minimum": 1,
+            "maximum": 250
+          },
+          "includeInstallationDetail": {
+            "type": "boolean",
+            "description": "When true (the default) the run emits an asset_summary row per site plus an installation row for each DoD installation found within the radius. Set false for summary rows only. Applied by default if omitted: true."
+          },
+          "activeOnly": {
+            "type": "boolean",
+            "description": "When true, installation detail rows are limited to sites whose published operational status is Active or is not decodable. Sites with an unmapped status code are KEPT, because an undefined code is not evidence a site is inactive. Summary counts are unaffected. Applied by default if omitted: false."
+          },
+          "maxInstallationsPerAsset": {
+            "type": "integer",
+            "description": "Caps how many installation detail rows are emitted per screened coordinate, nearest first. Defaults to 25 when omitted. Example: 25.",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "maxAssets": {
+            "type": "integer",
+            "description": "Safety cap on how many coordinates a single run will screen. Defaults to 25 when omitted; maximum 100. Example: 25.",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "skipDriftChecks": {
+            "type": "boolean",
+            "description": "Diagnostic only. The live drift gate verifies feature counts, the published coded-value vocabularies, a positive canary (Buckley Space Force Base) and a negative control before any billable row is produced. Disabling it removes the protection against a silently changed upstream. Applied by default if omitted: false."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam that forces one or all upstream layers to fail, so the null-versus-false contract and the billing gate can be re-proved on demand instead of only during a real outage. Leave as none for normal use. Applied by default if omitted: \"none\".",
+            "enum": [
+              "none",
+              "boundary",
+              "point",
+              "firrma",
+              "all"
+            ]
+          }
+        },
+        "required": [
+          "assets"
+        ]
       }
     },
     {
@@ -1221,6 +1301,53 @@
       }
     },
     {
+      "slug": "eia-v2-site-energy-economics",
+      "actorId": "malonestar/eia-v2-site-energy-economics",
+      "title": "Electricity Rates & Grid Mix by State — EIA Site Economics",
+      "description": "Electricity cost screening by state from the EIA v2 API: industrial, commercial and residential retail rates with YoY change and a live US benchmark, plus operating capacity by fuel, balancing authority, storage split and planned retirements. For data-center and industrial siting.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/eia-v2-site-energy-economics",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Free EIA v2 API key. Register in about a minute at https://www.eia.gov/opendata/register.php (no cost, no card). Supplying your own key gives you your own rate limit; leave it blank to use the Actor default key, which is shared across all users. If no key is available at all the run FAILS loudly with the registration URL and bills nothing - it does not return a green empty dataset. You may also set an EIA_API_KEY environment variable on the Actor."
+          },
+          "states": {
+            "type": "array",
+            "description": "Two-letter US state ids to build an electricity-economics profile for (e.g. \"CO\", \"TX\"). One billable state_profile row per state. \"US\" is also accepted for the national aggregate. An id EIA does not publish is flagged state_id_recognized=false rather than returned as a state with zero capacity. Example: [\"CO\",\"TX\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "months": {
+            "type": "integer",
+            "description": "How many months of retail-rate history to fetch per state. Used to find the latest month and compute the same-month year-over-year price change, so 13 is the minimum for one full YoY comparison. Does not affect the capacity rollup, which always uses the newest published month. Applied by default if omitted: 24.",
+            "minimum": 13,
+            "maximum": 240
+          },
+          "includePlantDetail": {
+            "type": "boolean",
+            "description": "When true, also emit one billable row per GENERATOR (row_type \"plant\") with plant name and id, operator, balancing authority, fuel, technology, prime mover, nameplate and net summer/winter capacity, in-service date, planned retirement date, county and lat/lon - capped by \"Max plant rows\". When false (default) only the one state_profile summary row per state is returned. Applied by default if omitted: false."
+          },
+          "maxPlantRows": {
+            "type": "integer",
+            "description": "Safety cap on the number of per-generator rows emitted per state when \"Include per-plant capacity rows\" is true. Each row is billable. Ignored when that option is false. Applied by default if omitted: 200.",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "required": [
+          "states"
+        ]
+      }
+    },
+    {
       "slug": "energy-corridor-368-screener",
       "actorId": "malonestar/energy-corridor-368-screener",
       "title": "Section 368 Energy Corridor Screener - Federal ROW Siting Flag",
@@ -1250,6 +1377,49 @@
           "maxAssets": {
             "type": "integer",
             "description": "Maximum number of assets processed in one run (1-2000). One result row is emitted (and billed) per asset. Default 500. Example: 500.",
+            "minimum": 1,
+            "maximum": 2000
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
+      "slug": "epa-airtoxscreen-cancer-risk-screener",
+      "actorId": "malonestar/epa-airtoxscreen-cancer-risk-screener",
+      "title": "EPA AirToxScreen Cancer Risk Screener - Census Tract Air Toxics",
+      "description": "EPA AirToxScreen 2019 census-tract cancer-risk API: total risk per million, top contributing pollutants, point/on-road/non-road/non-point source attribution, non-cancer hazard index, and a live national percentile. For Phase I due diligence and environmental-justice screening.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/epa-airtoxscreen-cancer-risk-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "List of points to screen against EPA AirToxScreen 2019 census-tract air-toxics cancer risk. Each item needs numeric lat/lon and an optional label. Example: [{\"lat\":29.7355,\"lon\":-95.24,\"label\":\"Houston Ship Channel / Manchester, TX\"},{\"lat\":34.0339,\"lon\":-118.2076,\"label\":\"Boyle Heights, Los Angeles, CA\"},{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver, CO\"},{\"lat\":39.3,\"lon\":-101,\"label\":\"Rural Thomas County, KS\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includeAllPollutants": {
+            "type": "boolean",
+            "description": "When true, also emit ambient_concentrations_ug_m3 (all 177 EPA-modeled ambient air-toxics concentrations) and cancer_risk_by_pollutant_full (all 72 named cancer-risk pollutants, not just the top ranked ones) on every matched row. Off by default to keep the row curated rather than a 318-field dump. Applied by default if omitted: false."
+          },
+          "topPollutantsCount": {
+            "type": "integer",
+            "description": "How many top-contributing cancer-risk pollutants to rank and return per matched tract (by CR_* value, descending). Maximum 72 (the full named-pollutant list). Applied by default if omitted: 10.",
+            "minimum": 1,
+            "maximum": 72
+          },
+          "maxAssets": {
+            "type": "integer",
+            "description": "Safety cap on how many assets one run will screen, regardless of how many are supplied in \"assets\". Applied by default if omitted: 200.",
             "minimum": 1,
             "maximum": 2000
           }
@@ -1447,7 +1617,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "US states to pull GHGRP direct-emitter facilities for. Accepts 2-letter codes (e.g. \"WY\", \"TX\") OR full names (e.g. \"Wyoming\"). This is the primary (inventory) input — one dataset row per facility. Leave assets empty to run in inventory mode. Example: [\"Wyoming\"].",
+            "description": "REQUIRED. US states to pull GHGRP direct-emitter facilities for. Accepts 2-letter codes (e.g. [\"WY\",\"TX\"]) OR full names (e.g. [\"Wyoming\"]). Each state is queried independently against EPA Envirofacts; there is no nationwide mode, so at least one state must be named. Example: [\"Wyoming\"].",
             "items": {
               "type": "string"
             }
@@ -1502,7 +1672,10 @@
             "minimum": 1,
             "maximum": 50000
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -1610,7 +1783,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "US states to roll up, as 2-letter codes or full names (e.g. [\"Delaware\"] or [\"DE\",\"NJ\"]). Each state is queried independently and handlers are ranked within their state. Example: [\"Delaware\"].",
+            "description": "REQUIRED. US states to roll up, as 2-letter codes or full names (e.g. [\"DE\"] or [\"TX\",\"LA\"]). Each state is queried independently against the RCRAInfo Biennial Report. There is no nationwide mode — name the states you want. Example: [\"Delaware\"].",
             "items": {
               "type": "string"
             }
@@ -1640,7 +1813,10 @@
             "type": "boolean",
             "description": "Fetch the previous biennial cycle (2023 vs 2021) as well and add per-facility tonnage delta, percent change, generator-status change and a new-this-cycle flag. Doubles the upstream fetch, so turn it off for very large states (California 2023 alone is 285,108 rows). When the prior-cycle fetch fails, every prior-cycle field is null rather than 0. Example: true."
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -1690,6 +1866,143 @@
         "required": [
           "assets"
         ]
+      }
+    },
+    {
+      "slug": "epa-tri-facility-release-rollup",
+      "actorId": "malonestar/epa-tri-facility-release-rollup",
+      "title": "EPA TRI Toxic Release Rollup by Radius - Site Screener",
+      "description": "Rolls up EPA Toxics Release Inventory facilities and their reported on-site chemical releases within a radius of any US coordinate. Air, water, underground injection and land totals per facility, plus carcinogen, PBT and PFAS breakdowns, for Phase I ESA and environmental due diligence.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/epa-tri-facility-release-rollup",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "One entry per property or project site: {\"lat\": 39.8033, \"lon\": -104.9456, \"label\": \"Commerce City parcel\"}. US longitudes are NEGATIVE. Maximum 25 sites per run. Example: [{\"lat\":39.8033,\"lon\":-104.9456,\"label\":\"Commerce City, CO - refinery corridor parcel\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "Radius around each site for the coordinate match tier. Maximum 25. If omitted the actor uses 5 miles and marks radius_miles_defaulted = true on every row, so the radius is never implicit. There is deliberately no schema default: an Apify default is injected server-side into every run. Example: 3.",
+            "minimum": 1,
+            "maximum": 25
+          },
+          "reportingYear": {
+            "type": "integer",
+            "description": "TRI reporting year to roll up (1987 onwards). If omitted the actor resolves the newest reporting year EPA actually serves and publishes it as reporting_year with reporting_year_source = auto_newest_served. Deliberately has no schema default so a stale cycle can never be pinned server-side. Example: 2023.",
+            "minimum": 1987,
+            "maximum": 2100
+          },
+          "includeCountyTier": {
+            "type": "boolean",
+            "description": "EPA publishes no latitude/longitude for a large share of TRI facilities (measured 2026-08-17: 417 of 765 Colorado facility records, and 196 of the 259 Colorado facilities that filed a 2023 form). When true, such facilities are still returned if they sit in the same county as the site, at match_tier = county with a null distance. Turning this off makes the answer faster and strictly less complete. Example: true."
+          },
+          "maxFacilitiesPerAsset": {
+            "type": "integer",
+            "description": "Caps how many facilities are priced out per site. Coordinate-tier matches are taken first, nearest first, then county-tier matches ordered by facility id. The full candidate counts are published on the asset_summary row so a capped answer is never mistaken for a complete one. Example: 12.",
+            "minimum": 1,
+            "maximum": 250
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
+      "slug": "erns-nrc-release-incident-screener",
+      "actorId": "malonestar/erns-nrc-release-incident-screener",
+      "title": "NRC ERNS Chemical Spill & Release Incident Screener by Address",
+      "description": "Screen any US property against the National Response Center (ERNS) release-report corpus, 2005-present. Tiered coordinate / address / city / county matching with an explicit match class on every row, because only ~19% of NRC records carry a coordinate. Materials, CAS, evacuations, injuries, damage.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/erns-nrc-release-incident-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "screen = check properties against the NRC corpus (the default when omitted). delta = monitor the current-year file for newly reported incidents using a named cross-run baseline. Example: \"screen\".",
+            "enum": [
+              "screen",
+              "delta"
+            ]
+          },
+          "assets": {
+            "type": "array",
+            "description": "One entry per property. Give lat + lon, or a street + city + state the US Census geocoder can resolve. Optional: label, county. Required in screen mode; ignored in delta mode. Example: [{\"label\":\"Deer Park terminal\",\"lat\":29.7317,\"lon\":-95.1267}]. Example: [{\"label\":\"Houston Ship Channel - Deer Park\",\"lat\":29.7317,\"lon\":-95.1267,\"city\":\"Deer Park\",\"county\":\"Harris\",\"state\":\"TX\"},{\"label\":\"Greeley County KS - rural control\",\"lat\":38.48,\"lon\":-101.8,\"city\":\"Tribune\",\"county\":\"Greeley\",\"state\":\"KS\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "Radius for the COORDINATE tier only. Applies to roughly 19% of NRC records - the rest carry no coordinate and are reached by the address, city and county tiers instead. Falls back to 1 mile when omitted. Max 50. Example: 3.",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "yearsBack": {
+            "type": "integer",
+            "description": "How many calendar years back to read, newest first. The NRC corpus starts at CY2005, so a larger value is silently clamped to 2005 and the row says so. Each year is a 14-18 MB workbook, so more years means a longer run. Falls back to 10 when omitted. Example: 3.",
+            "minimum": 1,
+            "maximum": 30
+          },
+          "matchTiers": {
+            "type": "array",
+            "description": "Which tiers to use, in strict precedence order: coordinate, address, city, county. Disabling the non-coordinate tiers makes the screen miss roughly four out of five NRC records. All four are applied when omitted. Example: [\"coordinate\",\"address\",\"city\",\"county\"].",
+            "items": {
+              "type": "string",
+              "enum": [
+                "coordinate",
+                "address",
+                "city",
+                "county"
+              ]
+            }
+          },
+          "includeNonRelease": {
+            "type": "boolean",
+            "description": "RAILROAD NON-RELEASE reports are 11% of the corpus and by definition involve no material released. Leave on to see them (flagged is_release=false); turn off to suppress them - the count suppressed is always reported, never silently dropped. On when omitted. Example: true."
+          },
+          "maxIncidentsPerAsset": {
+            "type": "integer",
+            "description": "Cap on incident rows emitted per property, nearest and highest-tier first. The true match count is always published as incidents_matched_total. Falls back to 500 when omitted. Example: 200.",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on total emitted rows across all properties. matched_rows_total and results_truncated are on every row so a capped answer is never mistaken for a complete one. Falls back to 5000 when omitted. Example: 2000.",
+            "minimum": 1,
+            "maximum": 50000
+          },
+          "deltaStates": {
+            "type": "array",
+            "description": "Two-letter state or territory codes to scope the delta monitor, e.g. [\"TX\",\"LA\"]. Leave empty to monitor the whole current-year file. Ignored in screen mode. Example: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "deltaOnly": {
+            "type": "boolean",
+            "description": "Delta mode only. When on, emit ONLY incidents absent from the previous run's baseline. The first run for a scope has no baseline, so it fails loudly and stores one rather than billing you for the whole file labelled new. Off when omitted. Example: false."
+          },
+          "useFileCache": {
+            "type": "boolean",
+            "description": "Cache each annual workbook index in a named key-value store keyed by the file's Last-Modified header. Historical years are frozen so they download once ever; the current-year file is re-downloaded only when NRC actually replaces it. On when omitted. Example: true."
+          }
+        }
       }
     },
     {
@@ -1778,7 +2091,7 @@
           },
           "states": {
             "type": "array",
-            "description": "REQUIRED. Two-letter USPS codes for the states whose branch networks you want, for example [\"TX\"] or [\"TX\",\"OK\"]. Filtering uses the FDIC field OFF_PSTALP, which is the BRANCH's state (not the bank's charter state), so out-of-state banks operating branches here are included. Maximum 10 states per run. Example: [\"TX\"].",
+            "description": "REQUIRED. Two-letter USPS codes for the states whose branch networks you want, for example [\"TX\"] or [\"TX\",\"OK\"]. Filters on the BRANCH state (OFF_PSTALP), not the charter state, so an out-of-state bank with branches here is included. Maximum 10 states per run. Example: [\"TX\"].",
             "items": {
               "type": "string"
             }
@@ -1828,7 +2141,10 @@
             "type": "boolean",
             "description": "When true (recommended) the actor also queries FDIC change code 520 on BOTH endpoints of each move, so a branch relocating out of a county is counted as a loss for that county and a gain for the destination. Turn it off to skip the extra query; relocation fields then come back null. Applied by default if omitted: true."
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -2215,6 +2531,73 @@
       }
     },
     {
+      "slug": "fhlbank-membership-delta-monitor",
+      "actorId": "malonestar/fhlbank-membership-delta-monitor",
+      "title": "FHLBank Membership Roster & Delta Monitor",
+      "description": "FHLBank System membership roster and quarter-over-quarter delta tracker sourced from FHFA's published member file: joins, exits and attribute changes across all 11 districts, with CERT/FED_ID/NCUA_ID/NAIC_ID join keys for correspondent banking, KYB and competitive intel.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/fhlbank-membership-delta-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "\"roster\" returns a filtered listing of current FHLBank members. \"delta\" resolves the prior quarter's file too and returns only join/exit/attribute_change events between it and the current quarter. Example: \"roster\".",
+            "enum": [
+              "roster",
+              "delta"
+            ]
+          },
+          "states": {
+            "type": "array",
+            "description": "Optional list of US states/territories to filter by (2-letter postal code, e.g. \"CO\", or the full name, e.g. \"Colorado\" -- both are recognized). Leave empty for all states. Example: [\"CO\"]. Applied by default if omitted: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "charterTypes": {
+            "type": "array",
+            "description": "Optional list of charter types to filter by: \"Federal\", \"National\", \"State\", or \"None\". Leave empty for all charter types. Applied by default if omitted: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "districts": {
+            "type": "array",
+            "description": "Optional list of FHLBank districts to filter by (Atlanta, Boston, Chicago, Cincinnati, Dallas, Des Moines, Indianapolis, New York, Pittsburgh, San Francisco, Topeka). Leave empty for all districts. Applied by default if omitted: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "memberSince": {
+            "type": "string",
+            "description": "Optional YYYY-MM-DD cutoff. Only include members whose FHFA-published membership date is on or after this date. Leave blank for no cutoff."
+          },
+          "quarter": {
+            "type": "string",
+            "description": "Optional exact quarter to use as the \"current\" file, in the form q<1-4><YYYY>, e.g. \"q22026\" for the April-June 2026 file. Leave blank to automatically use the most recently posted quarter (with rollback up to 4 quarters if it is not yet posted)."
+          },
+          "eventTypes": {
+            "type": "array",
+            "description": "Delta mode only. Which event types to include: \"join\" (new members), \"exit\" (members no longer in the current file), \"attribute_change\" (a field changed for an existing member). Leave empty to include all three. Applied by default if omitted: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Maximum number of rows (roster mode) or delta events (delta mode) to return in this run. Example: 1000.",
+            "minimum": 1,
+            "maximum": 50000
+          }
+        }
+      }
+    },
+    {
       "slug": "fhwa-nbi-bridge-risk-monitor",
       "actorId": "malonestar/fhwa-nbi-bridge-risk-monitor",
       "title": "US Bridge Condition & Scour Risk Monitor — FHWA NBI",
@@ -2264,6 +2647,81 @@
             "maximum": 50000
           }
         }
+      }
+    },
+    {
+      "slug": "fuds-defense-site-screener",
+      "actorId": "malonestar/fuds-defense-site-screener",
+      "title": "FUDS Formerly Used Defense Sites Screener - UXO & Contamination",
+      "description": "Screen any US coordinate against the USACE Formerly Used Defense Sites inventory: on-property boundary intersect, nearest FUDS property, munitions response sites (MMRP/UXO) and contamination projects (IRP), split by hazard.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/fuds-defense-site-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "One entry per site. Each needs lat and lon in WGS84 decimal degrees; label and radiusMiles are optional. Example: [{\"lat\": 39.603223, \"lon\": -104.631551, \"label\": \"Aurora CO parcel\", \"radiusMiles\": 1}]. A site with a missing or out-of-range coordinate is reported as an error row rather than silently screened. Example: [{\"lat\":39.603223,\"lon\":-104.631551,\"label\":\"Aurora CO parcel - inside the former Buckley Field range\",\"radiusMiles\":1},{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver CO downtown site\",\"radiusMiles\":3},{\"lat\":34.0709,\"lon\":-118.2903,\"label\":\"Los Angeles CA infill site\",\"radiusMiles\":3},{\"lat\":43.2,\"lon\":-96.1,\"label\":\"NW Iowa farmland - clear control\",\"radiusMiles\":25}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "Radius applied to any site that does not carry its own radiusMiles. Statute miles, clamped to 1-50. When omitted entirely the actor uses 1 mile. Note that the boundary intersect is exact regardless of radius: a point inside a published FUDS boundary is flagged even at radius 1, which is how a parcel inside a former bombing range is caught when no property point is anywhere near it. Example: 1.",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "includePropertyDetail": {
+            "type": "boolean",
+            "description": "Emit a fuds_property detail row for each FUDS property inside the radius, carrying its eligibility, ownership, boundary availability and joined MMRP/IRP project roll-up. Defaults to true. Each row is a billable result. Example: true."
+          },
+          "includeMunitionsSiteDetail": {
+            "type": "boolean",
+            "description": "Emit a munitions_response_site detail row for each MRS boundary intersecting the radius, flagging whether it actually contains your point. Defaults to true. Each row is a billable result. Example: true."
+          },
+          "maxPropertiesPerAsset": {
+            "type": "integer",
+            "description": "Cap on fuds_property detail rows emitted per site, nearest first. The asset_summary counts always cover every property found, so a cap never distorts the totals. Defaults to 50. Example: 50.",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "maxSitesPerAsset": {
+            "type": "integer",
+            "description": "Cap on munitions_response_site detail rows emitted per site. The asset_summary counts always cover every site found. Defaults to 50. Example: 50.",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "maxAssets": {
+            "type": "integer",
+            "description": "Safety cap on how many of the supplied sites are screened in one run, to bound both runtime and spend. Defaults to 250. Example: 250.",
+            "minimum": 1,
+            "maximum": 250
+          },
+          "skipDriftChecks": {
+            "type": "boolean",
+            "description": "Diagnostic only. The drift gate verifies layer identity, row-count bands, closed vocabularies, a positive canary and a negative control before any billable row is emitted. Turning it off means a silently changed upstream can produce a confident wrong answer. Leave it off (false). Example: false."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam that forces one or all FUDS layers to fail, so the null-vs-false contract can be re-proved on demand instead of only during a real outage. Use none for normal runs. Example: \"none\".",
+            "enum": [
+              "none",
+              "properties",
+              "polygons",
+              "mrs",
+              "projects",
+              "all"
+            ]
+          }
+        },
+        "required": [
+          "assets"
+        ]
       }
     },
     {
@@ -2528,7 +2986,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Caps the rows written to the dataset (and, on a national sweep, the sites fetched at 100 per request). Default 2000. With a named agency and completeAgencies on, the whole agency is fetched regardless and this only limits output rows. Raise to 20000 to sweep all ~29,600 federal sites in ~300 requests with your own free key. Example: 1000.",
+            "description": "Caps the rows written to the dataset (and, on a national sweep, the sites fetched at 100 per request). Defaults to 2000, which is also the ceiling the code applies when the field is omitted — at this actor's list price that bounds one run at roughly $10. With a named agency and completeAgencies on, the whole agency is fetched regardless and this only limits output rows. Raise to 20000 to sweep all ~29,600 federal sites in ~300 requests with your own free key. Example: 1000. Applied by default if omitted: 2000.",
             "minimum": 1,
             "maximum": 20000
           }
@@ -2597,6 +3055,21 @@
             "description": "Maximum number of assets processed in one run (1-2000). One result row is emitted (and billed) per asset. Default 500. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 2000
+          },
+          "allowTruncatedLineFallback": {
+            "type": "boolean",
+            "description": "The transmission-line answer comes from a national layer of 94,619 lines. If that layer is unavailable, the only backup is a 2023 copy that contains NO line below 100 kV — 44.8% of the US grid, and the sub-transmission most mid-size solar, BESS and EV-charging projects actually interconnect to. At Storm Lake IA it reports the nearest line 2.545 mi away at 161 kV when the truth is 0.649 mi at 69 kV. By default (false) such a run FAILS and bills nothing. Set true to receive rows instead, in which every complete-universe field (nearest_line_distance_miles, lines_within_radius, max_voltage_within_radius_kv, ...) is null, grid_tier reads DEGRADED, and only the nearest_ge100kv_line_* columns are populated. Applied by default if omitted: false."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam for verifying the reliability behaviour on demand rather than waiting for a real outage. \"none\" (default) is a genuine no-op. \"primary\" forces the primary line layer to appear down; \"drift\" forces the live drift gate to measure a truncated layer (the run then fails and bills nothing); \"gate\" forces the drift probes to be unreachable; \"both\" combines primary and gate. Leave as none for normal use. Applied by default if omitted: \"none\".",
+            "enum": [
+              "none",
+              "primary",
+              "drift",
+              "gate",
+              "both"
+            ]
           }
         },
         "required": [
@@ -2785,9 +3258,18 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of site rows to return. Applied by default if omitted: 5000.",
+            "description": "Maximum number of site rows to return. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 100000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam for verifying the failure path. \"none\" (the default) is a genuine no-op and is what every normal run uses. \"all\" makes the first page unavailable and \"page2\" makes the continuation unavailable, so the loud-failure behaviour can be proven on demand: the run FAILS, emits no rows, and bills nothing. Example: \"none\".",
+            "enum": [
+              "none",
+              "all",
+              "page2"
+            ]
           }
         }
       }
@@ -2827,7 +3309,7 @@
           },
           "state": {
             "type": "string",
-            "description": "Filter by full state name exactly as HRSA stores it, e.g. 'Alabama', 'California', 'Texas'. Leave blank for all states (large result set). Example: \"Alabama\"."
+            "description": "REQUIRED. Full state name exactly as HRSA stores it, e.g. \"Alabama\", \"California\", \"Texas\". There is no default and no \"all states\" mode: a nationwide HPSA/MUA pull is tens of thousands of designations, so the state must be named explicitly. Run one state per run and combine the datasets. Example: \"Alabama\"."
           },
           "minScore": {
             "type": "integer",
@@ -2865,11 +3347,14 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of designation records to fetch/emit (before rollup). Paginates the ArcGIS layers in pages of 1000. Example: 5000.",
+            "description": "Maximum number of designation records to fetch/emit (before rollup). Paginates the ArcGIS layers in pages of 1000. Example: 5000. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 100000
           }
-        }
+        },
+        "required": [
+          "state"
+        ]
       }
     },
     {
@@ -2970,6 +3455,107 @@
       }
     },
     {
+      "slug": "hud-section8-contract-expiration-monitor",
+      "actorId": "malonestar/hud-section8-contract-expiration-monitor",
+      "title": "HUD Section 8 Contract Expiration Monitor + Owner Contacts",
+      "description": "Every HUD project-based Section 8, 202 and 811 HAP contract with its true term end (not the funding increment), assisted units, rent-vs-FMR position, owner and management-agent contacts, and a new-since-last-run delta.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/hud-section8-contract-expiration-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "description": "Two-letter state or territory codes, matched against the HUD PROPERTY record (CA, NY, TX, PR, VI, GU, MP, DC). Do not use the first two characters of the contract number: they disagree with the property's own state on 229 of 24,315 contracts. Example: [\"CA\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "expirationBasis": {
+            "type": "string",
+            "description": "HUD publishes two different expiration dates. 'overall' is the CONTRACT TERM END - the genuine renewal / opt-out decision point, and the default. 'current' is the end of the current funding increment, which is earlier on 63.2% of contracts: a 24-month screen on it returns 18,939 contracts / 1,184,903 units against 4,627 / 126,711 on the term end. Starrett City's increment ends 2027-01-31 while its contract runs to 2041. Applied by default if omitted: \"overall\".",
+            "enum": [
+              "overall",
+              "current",
+              "either"
+            ]
+          },
+          "expiringWithinMonths": {
+            "type": "integer",
+            "description": "Return contracts whose chosen expiration date falls between today and N months from today. Leave blank to apply no window. Not defaulted: an unrequested window would silently narrow every query. Example: 36.",
+            "minimum": 1,
+            "maximum": 600
+          },
+          "expiringFiscalYears": {
+            "type": "array",
+            "description": "Federal fiscal years (beginning 1 October) in which the chosen expiration date falls, for example [\"2027\",\"2028\"]. Combined with the month window as an OR.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "programGroups": {
+            "type": "array",
+            "description": "Program type group codes or detailed program names. Groups: PRAC, 202, S8NC, LMSA, HFDA, 515, S8 RAD Conv, PRAD, S8SR, PD, PRES, PAC, Pension Fund. Leave empty for all.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "contractStatuses": {
+            "type": "array",
+            "description": "TRACS statuses to keep: Active, Expired, Pending, Suspended, Terminated, Executed. Leave empty for all statuses - not defaulted to Active, because a hidden status filter is a hidden answer. Example: [\"Active\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minAssistedUnits": {
+            "type": "integer",
+            "description": "Only return contracts with at least this many assisted units. Leave blank for no minimum.",
+            "minimum": 0
+          },
+          "contractNumbers": {
+            "type": "array",
+            "description": "Look up specific 11-character HUD TRACS contract numbers, for example [\"NY36M000277\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "propertyIds": {
+            "type": "array",
+            "description": "Look up every contract on specific HUD property ids, for example [\"800015895\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "ownerSearch": {
+            "type": "string",
+            "description": "Case-insensitive substring matched against the owner organisation, owner individual, management agent organisation and management agent individual names."
+          },
+          "deltaOnly": {
+            "type": "boolean",
+            "description": "Return only contracts that are new or whose term end, funding increment end, assisted units or status moved since the previous run's full-universe baseline. On the very first run there is no baseline, so this returns nothing rather than billing the whole file as new. Applied by default if omitted: false."
+          },
+          "includeContacts": {
+            "type": "boolean",
+            "description": "Include owner and management-agent name, address, phone and email. Turn off to emit the same row shape with those values nulled and a status of 'suppressed_by_input'. Applied by default if omitted: true."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Caps how many matching contracts are emitted and billed. Every row carries matched_rows_total and results_truncated, so a capped answer is never mistaken for a complete one. Example: 300. Applied by default if omitted: 1000.",
+            "minimum": 1,
+            "maximum": 30000
+          },
+          "simulateDrift": {
+            "type": "boolean",
+            "description": "Diagnostic only. When true, the live drift gate is forced to fail so the fail-loudly path can be verified on demand: the run FAILS, emits zero rows and bills nothing. It can only make the gate stricter, never looser. Leave false for normal use. Applied by default if omitted: false."
+          }
+        }
+      }
+    },
+    {
       "slug": "interconnection-queue-tracker",
       "actorId": "malonestar/interconnection-queue-tracker",
       "title": "US Interconnection Queue Tracker - 7 ISO Queues & Deltas API",
@@ -3015,7 +3601,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of queue records to fetch across ALL selected ISOs combined. The cap is applied in ISO order, so a low value truncates the last ISOs: any ISO that is cut short or never reached is marked iso_status=truncated / not_fetched on its iso_summary row and is excluded from withdrawn-project detection for that run. Leave at the default to pull the whole federation (~18,200 records). Applied by default if omitted: 100000.",
+            "description": "Maximum number of queue records to fetch across ALL selected ISOs combined. The cap is applied in ISO order, so a low value truncates the last ISOs: any ISO that is cut short or never reached is marked iso_status=truncated / not_fetched on its iso_summary row and is excluded from withdrawn-project detection for that run. The default is deliberately low (500) so an unconfigured call cannot run away; raise it to about 20000 to pull the whole federation (~18,200 records). Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 500000
           }
@@ -3352,7 +3938,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of records to emit. One record = one billable result. Applied by default if omitted: 5000.",
+            "description": "Maximum number of records to emit. One record = one billable result. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 200000
           }
@@ -3415,6 +4001,42 @@
           "skipDriftAssertions": {
             "type": "boolean",
             "description": "Diagnostic escape hatch. By default the Actor runs 11 live checks against the CMS datastore before emitting anything billable (columns present, sort actually applied, feed freshness, a known-good NDC returning a known price, a known-empty NDC returning nothing) and fails the run rather than ranking prices on a drifted source. Turn this on only if you believe a check is a false positive and you need the data anyway - every emitted row still carries dataset_status and data_complete. Applied by default if omitted: false."
+          }
+        }
+      }
+    },
+    {
+      "slug": "national-tunnel-inventory-risk-monitor",
+      "actorId": "malonestar/national-tunnel-inventory-risk-monitor",
+      "title": "National Tunnel Inventory Risk Monitor — FHWA/NTAD",
+      "description": "Tunnel inventory & tunnel risk screening for every US road tunnel in the FHWA National Tunnel Inventory (NTAD). One row per tunnel with a composite 0-100 risk score plus hazmat, load-posting, low-clearance and overdue-inspection flags. For freight/hazmat routing, insurers and asset managers.",
+      "categories": [
+        "DEVELOPER_TOOLS",
+        "AGENTS",
+        "REAL_ESTATE"
+      ],
+      "storeUrl": "https://apify.com/malonestar/national-tunnel-inventory-risk-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "description": "US states to scan for tunnels. Accepts postal codes ('CA'), full names ('California'), or 2-digit FIPS codes ('06'). Leave empty to scan the entire national tunnel inventory (~580 tunnels, bounded by Max results). Example: [\"CA\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "minRiskScore": {
+            "type": "integer",
+            "description": "Only output tunnels whose composite tunnel_risk_score (0-100) is at or above this value. Applied after scoring. Leave empty to return all tunnels in the selected states.",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Maximum number of tunnels to return, taken from the highest-risk end after ranking. A safety bound for cost control — each returned tunnel is one billable result. Example: 2000.",
+            "minimum": 1,
+            "maximum": 5000
           }
         }
       }
@@ -3748,7 +4370,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "US states to profile, as 2-letter postal codes or full names (e.g. \"CO\" or \"Colorado\"). At least one is required for the run to return data; if empty the actor exits with zero results. Defaults to [\"Colorado\"] so an API call with no states still returns data instead of an empty dataset. Example: [\"Colorado\"].",
+            "description": "REQUIRED. US states to profile, as 2-letter postal codes or full names (e.g. [\"CO\"] or [\"Colorado\"]). NCEI publishes one bulk file per year and each is filtered per state, so naming the states is what bounds the run. At least one is required — there is no nationwide mode. Example: [\"Colorado\"].",
             "items": {
               "type": "string"
             }
@@ -3789,7 +4411,10 @@
             "minimum": 1,
             "maximum": 20000
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -3931,6 +4556,68 @@
       }
     },
     {
+      "slug": "ntad-fra-rail-crossing-risk-screener",
+      "actorId": "malonestar/ntad-fra-rail-crossing-risk-screener",
+      "title": "Railroad Grade Crossing Risk Screener - FRA Accident History",
+      "description": "Screens any US coordinate or geography against the 242,108-crossing FRA/NTAD grade crossing inventory joined to 50 years of FRA Form 57 accident history. Returns warning devices, traffic and train exposure, fatalities and a per-crossing risk score. A zero is a verified negative.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/ntad-fra-rail-crossing-risk-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "One object per site: {\"lat\": 39.7392, \"lon\": -104.9903, \"label\": \"Denver site\", \"radiusMiles\": 1}. Every railroad grade crossing within the radius is returned, joined to its FRA accident history. Supply either this or a state. Coordinates are decimal degrees (WGS84); 0,0 is rejected because it is the NTAD unlocatable sentinel. Example: [{\"label\":\"Denver Union Station district\",\"lat\":39.7392,\"lon\":-104.9903,\"radiusMiles\":1},{\"label\":\"RTD Colorado Station, Denver\",\"lat\":39.776004,\"lon\":-104.943325,\"radiusMiles\":0.5}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "Radius used for any site that does not carry its own radiusMiles. Capped at 25 miles. Left unset, the actor uses 1 mile and records search_radius_source on every row so the value is never silently applied. Example: 1.",
+            "minimum": 1,
+            "maximum": 25
+          },
+          "state": {
+            "type": "string",
+            "description": "Two-letter code such as CO, or the full FRA state name such as COLORADO. Lists every crossing in that state instead of screening coordinates. Ignored when assets are supplied."
+          },
+          "county": {
+            "type": "string",
+            "description": "Optional county filter, matched against the FRA spelling in uppercase with no \"County\" suffix, e.g. DENVER. Requires state."
+          },
+          "city": {
+            "type": "string",
+            "description": "Optional city filter, matched against the FRA spelling in uppercase, e.g. DENVER. Requires state."
+          },
+          "includeCrossingRows": {
+            "type": "boolean",
+            "description": "Emit a detailed row for every crossing found, with inventory attributes, warning devices, exposure and its FRA incident rollup. Turn off to get only the per-site summary rows. Example: true."
+          },
+          "includeIncidentDetail": {
+            "type": "boolean",
+            "description": "Also emit a row per individual FRA Form 57 accident report at the matched crossings, with narrative, speeds, casualties and conditions. Increases the row count and therefore the cost. Example: false."
+          },
+          "incidentSinceYear": {
+            "type": "integer",
+            "description": "Narrows the accident window, e.g. 2005. Left unset the full FRA corpus from 1975 is used, and incident_window_since is published as null so a narrowed answer is never mistaken for the full history.",
+            "minimum": 1975,
+            "maximum": 2100
+          },
+          "maxCrossings": {
+            "type": "integer",
+            "description": "Safety cap on how many crossings are returned per site (or per geography query). When it bites, matched_rows_total still reports the true total and results_truncated is set, so a capped answer is never read as a complete one. Example: 500.",
+            "minimum": 1,
+            "maximum": 20000
+          }
+        }
+      }
+    },
+    {
       "slug": "ntad-gas-pipeline-proximity-screener",
       "actorId": "malonestar/ntad-gas-pipeline-proximity-screener",
       "title": "Natural Gas Pipeline Proximity Screener — US EIA/NTAD Lines",
@@ -4057,7 +4744,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Two-letter state codes to search. Configured: ND (North Dakota / Bakken), CO (Colorado). Empty = all configured states. Example: [\"ND\"].",
+            "description": "REQUIRED. Two-letter state codes to search. Configured: ND (North Dakota / Bakken), CO (Colorado). Name the states explicitly — there is no default, so a run can never quietly answer about one basin when you meant several. Example: [\"ND\"].",
             "items": {
               "type": "string"
             }
@@ -4100,7 +4787,10 @@
             "type": "boolean",
             "description": "When scheduled, emit only wells/permits not seen in previous runs — a recurring new-permit alert backed by a key-value store of seen IDs. Applied by default if omitted: false."
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -4234,6 +4924,53 @@
         "required": [
           "addresses"
         ]
+      }
+    },
+    {
+      "slug": "pbgc-pension-failure-monitor",
+      "actorId": "malonestar/pbgc-pension-failure-monitor",
+      "title": "PBGC Trusteed Pension Plan Monitor — Failed DB Plan Tracker",
+      "description": "PBGC trusteed pension plan tracker: every defined-benefit plan taken over by PBGC, with sponsor, state, trusteeship date, participants and case number. Delta mode surfaces newly failed plans each run — a hard corporate-distress signal for credit, vendor-risk and distressed-debt teams.",
+      "categories": [
+        "LEAD_GENERATION",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/pbgc-pension-failure-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sinceDate": {
+            "type": "string",
+            "description": "Only include plans trusteed on or after this date. Accepts YYYY-MM-DD, YYYY-MM, YYYY or MM/DD/YYYY. Leave blank (or omit the field) to search the full trusteed-plans history back to 1975 — omitting it applies NO date filter. An unparseable value fails the run loudly rather than silently returning a wrong subset. Example: \"2023-01-01\"."
+          },
+          "states": {
+            "type": "array",
+            "description": "Optional list of US states (2-letter code or full name) to filter plan sponsors by. Leave empty for all states. Applied by default if omitted: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sponsorQuery": {
+            "type": "string",
+            "description": "Optional case-insensitive substring match against the plan sponsor/employer name (e.g. \"Steel\" or \"Airlines\")."
+          },
+          "minParticipants": {
+            "type": "integer",
+            "description": "Optional minimum plan-participant count. Plans with an unknown/missing participant count are excluded when this is set.",
+            "minimum": 0
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Maximum number of trusteed-plan rows to return in this run. Example: 500.",
+            "minimum": 1,
+            "maximum": 50000
+          },
+          "deltaOnly": {
+            "type": "boolean",
+            "description": "When true, only emit plans that appeared in the PBGC file since your last run (tracked in the named key-value store 'pbgc-trusteed-baseline', so it works across scheduled runs). The FIRST run has no baseline to compare against: it stores one and fails with an explanatory message rather than billing you for the whole list labelled 'new'. When false (default), emit every plan matching the filters, each flagged with is_new_since_last_run. Applied by default if omitted: false."
+          }
+        }
       }
     },
     {
@@ -4388,7 +5125,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "US states to pull. Supported: TX (roster + daily new applications + delta) and FL (weekly roster CSV + delta). Default TX. Example: [\"TX\"].",
+            "description": "REQUIRED. US states to pull. Supported: TX (roster + daily new applications + delta) and FL (weekly roster CSV + delta). Name the states explicitly — there is no default, so a run cannot quietly return Texas when you asked for Florida. Example: [\"TX\"].",
             "items": {
               "type": "string"
             }
@@ -4443,7 +5180,10 @@
             "minimum": 100,
             "maximum": 500000
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -4708,7 +5448,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of merged per-ticker records to return after filtering. Each record is one (ticker, settlement date) row and is one billable result. The series is sorted by symbol then date, so a cap on an all-symbols run returns an ALPHABETICAL subset - the run logs a TRUNCATED warning and stamps results_truncated=true on every row. Applied by default if omitted: 5000.",
+            "description": "Maximum number of merged per-ticker records to return after filtering. Each record is one (ticker, settlement date) row and is one billable result. The series is sorted by symbol then date, so a cap on an all-symbols run returns an ALPHABETICAL subset - the run logs a TRUNCATED warning and stamps results_truncated=true on every row. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 200000
           },
@@ -4788,7 +5528,7 @@
           },
           "states": {
             "type": "array",
-            "description": "State codes to query. Supported: CO, CT, NY, OR, PA, DE (official state open-data business registries). Every requested state is health-checked live before any result is returned, and a state that does not answer is named in states_failed on every row rather than silently dropped. Example: [\"CO\",\"CT\",\"NY\"].",
+            "description": "REQUIRED. State codes to query. Supported: CO, CT, NY, OR, PA, DE (official state open-data business registries). Every requested state is queried independently and its per-state outcome is reported on the row. Name at least one — there is no default. Example: [\"CO\",\"CT\",\"NY\"].",
             "items": {
               "type": "string"
             }
@@ -4821,7 +5561,10 @@
             "type": "string",
             "description": "Optional free Socrata app token to raise rate limits."
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -5153,6 +5896,95 @@
       }
     },
     {
+      "slug": "usgs-groundwater-depth-screener",
+      "actorId": "malonestar/usgs-groundwater-depth-screener",
+      "title": "Depth to Groundwater Screener - USGS Water Levels, Phase I ESA",
+      "description": "Depth to groundwater near any US coordinate from USGS monitoring wells. Returns depth below land surface in feet, the measurement date, its age, datum and approval status, plus shallowest and median depth in radius. Stale, dry, pumping and artesian readings are labelled, never passed off as current.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/usgs-groundwater-depth-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "One object per site: {\"lat\": 40.7891, \"lon\": -73.1350, \"label\": \"Long Island NY site\", \"radiusMiles\": 1}. lat/lon are WGS84 decimal degrees and are validated numerically before any query is built. label is free text echoed on every output row. radiusMiles is optional and overrides the run-level radius for that site only. Example: [{\"lat\":40.7891,\"lon\":-73.135,\"label\":\"Long Island NY - current USGS water-level network\",\"radiusMiles\":1},{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver CO downtown - data exists but is archival\",\"radiusMiles\":1},{\"lat\":29.7604,\"lon\":-95.3698,\"label\":\"Houston TX - Gulf Coast aquifer, historical record\",\"radiusMiles\":1},{\"lat\":30,\"lon\":-140,\"label\":\"Mid-Pacific control - genuinely no USGS wells\",…(truncated).",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "integer",
+            "description": "Run-level search radius in statute miles, used for any site that does not carry its own radiusMiles. Accepts 1 to 25; ASTM E1527-21 physical-setting review commonly uses 0.5 or 1 mile. If omitted the actor uses 1 mile. A square bounding box fetches candidates and every candidate is then re-filtered by true haversine distance, so this is a real circle. Example: 1.",
+            "minimum": 1,
+            "maximum": 25
+          },
+          "includeWellDetail": {
+            "type": "boolean",
+            "description": "When true, each site summary row is followed by one row per USGS monitoring location inside the radius, nearest first, with the well's depth, aquifer, land-surface altitude and datum, its most recent static water level, that reading's date, age, approval status and condition qualifiers. When false (the actor's behaviour if omitted) only the one summary row per site is emitted. Every row is a billable result, so leave this off for large-radius portfolio screens. Example: true."
+          },
+          "maxWellsPerAsset": {
+            "type": "integer",
+            "description": "Caps how many per-location detail rows are emitted for each site when includeWellDetail is on. Locations are always emitted nearest-first, so the cap keeps the closest ones. If omitted the actor uses 50. Example: 8.",
+            "minimum": 1,
+            "maximum": 2000
+          },
+          "maxAssets": {
+            "type": "integer",
+            "description": "Safety cap on how many sites a single run will screen. Extra sites are skipped with a warning in the log. If omitted the actor uses 25. Example: 25.",
+            "minimum": 1,
+            "maximum": 200
+          },
+          "includeHistory": {
+            "type": "boolean",
+            "description": "When true the actor also retrieves the complete depth-to-water record for the nearest few locations and reports the observed minimum, maximum, median and total fluctuation - the seasonal range dewatering and basement design actually need, which a single latest reading cannot give you. Costs one extra USGS request per well. If omitted this is off. Example: true."
+          },
+          "historyWellCount": {
+            "type": "integer",
+            "description": "Number of nearest locations (that have any water-level data) to retrieve a full history for when includeHistory is on. If omitted the actor uses 3. Example: 2.",
+            "minimum": 1,
+            "maximum": 25
+          },
+          "maxAgeYearsForCurrent": {
+            "type": "integer",
+            "description": "USGS groundwater records are historical - many wells were last measured decades ago. A reading older than this many years is counted as stale, and a site where EVERY reading is older gets all_readings_stale = true. This never suppresses a reading; it labels it. If omitted the actor uses 5 years. Example: 5.",
+            "minimum": 1,
+            "maximum": 100
+          },
+          "shallowGroundwaterThresholdFeet": {
+            "type": "integer",
+            "description": "Depth at or above which the shallowest measured water level raises shallow_groundwater_flag. If omitted the actor uses 15 feet. The flag is null - never false - whenever no usable static depth was found, so a site with no data is never reported as having deep groundwater. Example: 15.",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "apiKey": {
+            "type": "string",
+            "description": "Optional. The USGS OGC API is keyless, but the anonymous quota is 1,000 requests per hour PER IP ADDRESS and Apify runs from shared addresses, so a busy hour can return HTTP 429 through no fault of your run. A free key from https://api.waterdata.usgs.gov/signup/ moves you to a private quota. Leave blank to use the anonymous quota."
+          },
+          "skipDriftChecks": {
+            "type": "boolean",
+            "description": "Diagnostic only. The actor normally verifies the live API before emitting anything: the four required collections are present, parameter code 72019 still means depth below land surface in feet, two pinned canary wells return their pinned identity and earliest measurement, a mid-Pacific negative control returns zero, and a cursor walk is proved to terminate. Skipping them removes the guarantee that the answers came from an undegraded source. Example: false."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Permanent diagnostic seam used to prove the failure path without waiting for a real outage. 'measurements' fails the water-level read, 'locations' fails the monitoring-location read, 'both' fails both, 'none' is the normal behaviour. With 'both' the run fails loudly and emits nothing. Example: \"none\".",
+            "enum": [
+              "none",
+              "measurements",
+              "locations",
+              "both"
+            ]
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
       "slug": "usgs-historical-topo-records-review",
       "actorId": "malonestar/usgs-historical-topo-records-review",
       "title": "Historical Topographic Map Chronology - ASTM Phase I ESA 8.3.4",
@@ -5219,12 +6051,14 @@
           },
           "simulateOutage": {
             "type": "string",
-            "description": "Diagnostic seam for proving the failure path without waiting for a real outage. 'none' is normal operation. Any other value forces the named source to fail through the same code path a genuine outage takes, so you can confirm the run fails loudly, emits no rows and bills nothing. Leave on 'none' for real work. Example: \"none\".",
+            "description": "Diagnostic seam for proving the failure paths without waiting for a real outage. 'none' is normal operation. The three source options force a site lookup to fail through the same code path a genuine outage takes. The two drift options force an upstream-verification probe to time out: the negative-control option must still SUCCEED with drift_gate_status=verified_degraded, and the load-bearing option must FAIL, emitting nothing and billing nothing. Leave on 'none' for real work. Example: \"none\".",
             "enum": [
               "none",
               "historical",
               "us_topo",
-              "both"
+              "both",
+              "drift_negative_control",
+              "drift_load_bearing"
             ]
           }
         },
@@ -5436,6 +6270,107 @@
       }
     },
     {
+      "slug": "usmin-mine-feature-proximity-screener",
+      "actorId": "malonestar/usmin-mine-feature-proximity-screener",
+      "title": "USMIN Mine Feature Proximity Screener",
+      "description": "Screens any US coordinate against USGS USMIN topographic mine symbols - adits, shafts, prospects, tailings, quarries - for Phase I ESA, geotechnical and land due diligence.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/usmin-mine-feature-proximity-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "Sites to screen. Each item needs lat, lon, and an optional label. Required - the actor cannot answer without at least one coordinate. Example: [{\"lat\":39.2508,\"lon\":-106.2925,\"label\":\"Leadville CO - historic Lake County silver-lead district\"},{\"lat\":40.5225,\"lon\":-112.1489,\"label\":\"Bingham Canyon UT - Kennecott open-pit copper mine\"},{\"lat\":37.6872,\"lon\":-97.3301,\"label\":\"Wichita KS - clear control, no mining history\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "number",
+            "description": "How far around each asset to search for mapped mine features, in statute miles. If omitted the actor applies a 2-mile default in code (never a schema default, so a caller who omits it gets a documented, logged fallback rather than a silently injected value). Must be greater than 0 and at most 25. Example: 2.",
+            "minimum": 0.05,
+            "maximum": 25
+          },
+          "includeFeatureDetail": {
+            "type": "boolean",
+            "description": "When true (default), emit one row per matched mine feature in addition to the one asset-summary row. When false, only the summary row is emitted (cheaper for a pure go/no-go screen). Applied by default if omitted: true."
+          },
+          "maxFeaturesPerAsset": {
+            "type": "integer",
+            "description": "Caps the number of per-feature detail rows billed per asset, ordered nearest-first among point-layer hits (polygon-layer hits, which have no computed distance, are appended after). 0 means unlimited - every matched feature is returned and billed. The asset-summary row always reports the TRUE total matched and retrieved counts and sets feature_detail_rows_truncated honestly, regardless of this cap. Applied by default if omitted: 0.",
+            "minimum": 0,
+            "maximum": 5000
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
+      "slug": "uspto-patent-lapse-fto-monitor",
+      "actorId": "malonestar/uspto-patent-lapse-fto-monitor",
+      "title": "USPTO Patent Maintenance-Fee Lapse Monitor — FTO Tracker",
+      "description": "Expired patent tracker: US patents lapsed for non-payment of maintenance fees — now public domain. Weekly USPTO bulk events filtered to lapse/reinstatement, with grant date, patent age, entity size and Google Patents links.",
+      "categories": [
+        "LEAD_GENERATION",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/uspto-patent-lapse-fto-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "Which maintenance-fee events to return: 'lapsed' = patents that EXPIRED for non-payment (public-domain/FTO signal), 'reinstated' = patents reinstated after an earlier expiration, 'all_events' = every event including fee payments (no filtering by event type). Example: \"lapsed\".",
+            "enum": [
+              "lapsed",
+              "reinstated",
+              "all_events"
+            ]
+          },
+          "lookbackWeeks": {
+            "type": "integer",
+            "description": "Size of the event-date window to return, in weeks. Measured back from the USPTO snapshot that actually answered (published weekly; may be a week or two behind today if the newest file's download quota is exhausted), NOT from today. Every row carries window_start, window_end and snapshot_lag_days so the covered period is explicit. Example: 4.",
+            "minimum": 1,
+            "maximum": 52
+          },
+          "grantYearMin": {
+            "type": "integer",
+            "description": "Only include patents granted in or after this year. Recently granted patents that already lapsed are usually the most valuable FTO signal. Leave blank for no lower bound.",
+            "minimum": 1976,
+            "maximum": 2026
+          },
+          "grantYearMax": {
+            "type": "integer",
+            "description": "Only include patents granted in or before this year. Leave blank for no upper bound.",
+            "minimum": 1976,
+            "maximum": 2026
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Maximum number of maintenance-fee event rows to return across all files scanned. Example: 500.",
+            "minimum": 1,
+            "maximum": 50000
+          },
+          "allowFullFile": {
+            "type": "boolean",
+            "description": "If no weekly delta files can be resolved, fall back to USPTO's single cumulative MaintFeeEvents.zip covering ALL history. This file is hundreds of MB and can take several minutes to stream-process even though it is never fully loaded into memory. Off by default -- most use cases only need recent weekly deltas. Example: false."
+          },
+          "odpApiKey": {
+            "type": "string",
+            "description": "FREE API key for api.uspto.gov (register at data.uspto.gov, ~2 min). Required since USPTO retired bulkdata.uspto.gov in 2026. Leave blank to use the actor default key if configured by the owner."
+          }
+        }
+      }
+    },
+    {
       "slug": "uswtdb-turbine-proximity-screener",
       "actorId": "malonestar/uswtdb-turbine-proximity-screener",
       "title": "USWTDB Wind Turbine Proximity Screener — Nearest by Coordinate",
@@ -5524,7 +6459,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of WARN notices to fetch. The budget is split evenly across the selected states, so a small value returns some of every state rather than all of the first one. Rows carry source_truncated when a state was cut short. Applied by default if omitted: 100000.",
+            "description": "Maximum number of WARN notices to fetch. The budget is split evenly across the selected states, so a small value returns some of every state rather than all of the first one. Rows carry source_truncated when a state was cut short. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 500000
           },

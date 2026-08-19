@@ -18,8 +18,9 @@
   },
   "scripts": {
     "start": "node src/index.js",
-    "test": "node --test test/tools.test.js test/apify.test.js",
-    "catalog": "node tools/gen-catalog.cjs"
+    "test": "node --test test/tools.test.js test/apify.test.js test/catalog.test.js",
+    "catalog": "node tools/gen-catalog.cjs",
+    "check:catalog": "node tools/check-catalog-live.cjs"
   },
   "keywords": [
     "mcp",
