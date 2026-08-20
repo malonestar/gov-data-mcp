@@ -120,3 +120,27 @@ test('the ten actors whose scope field became REQUIRED say so', () => {
             `${slug}: "${field}" still advertises an injected default`);
     }
 });
+
+test('server.json satisfies the MCP registry constraints', () => {
+    // Learned the expensive way on v1.0.1: the registry rejects a publish with
+    // HTTP 422 `expected length <= 100` on body.description. Every other gate had
+    // passed and npm had already published, so the release half-succeeded and the
+    // registry entry silently did not exist. The constraint belongs here, where it
+    // costs nothing to discover, not in CI after an irreversible npm publish.
+    const server = JSON.parse(
+        readFileSync(new URL('../server.json', import.meta.url), 'utf8'));
+    const pkg = JSON.parse(
+        readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
+
+    assert.ok(server.description.length <= 100,
+        `server.json description is ${server.description.length} chars; the MCP registry caps it at 100`);
+    assert.equal(server.name, pkg.mcpName,
+        'server.json name must equal package.json mcpName — the registry verifies the pair');
+    assert.equal(server.version, pkg.version, 'server.json version must track package.json');
+    assert.equal(server.packages[0].version, pkg.version,
+        'server.json packages[0].version must track package.json too');
+    // No tool count in the description: nothing gates it, so a number would rot
+    // every time the portfolio grows. It already read "95" against a live 114.
+    assert.ok(!/\b\d{2,}\b/.test(server.description),
+        'server.json description should carry no tool count — it cannot be kept true');
+});

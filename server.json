@@ -2,19 +2,19 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.malonestar/gov-data-mcp",
   "title": "US Government Data",
-  "description": "95 US government open-data tools as MCP tools: EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, NRCS, CMS, county assessor rolls and state licensing boards. Environmental due diligence, hazard screening, energy siting, banking and licensing.",
+  "description": "US government open-data APIs as MCP tools: EPA, FEMA, USGS, NOAA, FDIC, HUD, CMS and more.",
   "websiteUrl": "https://apify.com/malonestar",
   "repository": {
     "url": "https://github.com/malonestar/gov-data-mcp",
     "source": "github"
   },
-  "version": "1.0.1",
+  "version": "1.0.2",
   "packages": [
     {
       "registryType": "npm",
       "registryBaseUrl": "https://registry.npmjs.org",
       "identifier": "gov-data-mcp",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"
