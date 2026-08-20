@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-19T03:44:54.885Z",
+  "generatedAt": "2026-08-20T08:40:28.823Z",
   "owner": "malonestar",
-  "count": 109,
+  "count": 114,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
@@ -150,7 +150,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Only return notices published on or after this date (maps to the Federal Register publication_date filter). Use for recurring monitoring windows. Empty = no lower bound."
+            "description": "Only return notices published on or after this date (maps to the Federal Register publication_date filter). MUST be YYYY-MM-DD, e.g. 2025-01-15 (an unpadded 2026-1-15 is accepted and padded for you). Any other format is rejected and the run fails without billing, rather than being silently reinterpreted by the Federal Register's own server-side date parser. Slash forms are rejected on purpose: live-measured 2026-08-20, an ambiguous 05/06/2026 is silently read as May 6 (US order) and returns 448 documents where the June 5 (EU) reading returns 312 - a 136-document difference on an HTTP 200, with nothing in the response indicating a format was guessed. Jan 2026 is silently read as January 1. Use for recurring monitoring windows. Empty = no lower bound. Example: \"2026-01-01\"."
           },
           "caseNumber": {
             "type": "string",
@@ -214,7 +214,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Only return enforcement actions dated on or after this day (matches the action's start/effective date). Use for recurring monitoring windows. Empty = no lower bound. Example: \"2024-01-01\"."
+            "description": "Only return enforcement actions dated on or after this day (matches the action's start/effective date). MUST be YYYY-MM-DD (e.g. 2024-01-15); 2024-1-15 is accepted and zero-padded. ANY other format FAILS the run before anything is fetched or billed - it is never guessed at. The value is compared against ISO action dates, so an unrejected bad format is invisible: measured on this actor's own code, 01/15/2024 returned 12 of 12 test actions labelled as a filtered answer, Jan 2024 returned 0 of 12, and 2024/01/01 returned a plausible-looking 4 of 12, against a true 6. Slash forms are rejected on purpose - 05/06/2025 is ambiguous between US (May 6) and EU (June 5) order, so guessing would trade a loud error for a silent one-month window shift. Empty = no lower bound (the whole feed). Example: \"2024-01-01\"."
           },
           "actionTypes": {
             "type": "array",
@@ -298,7 +298,7 @@
           },
           "sinceModified": {
             "type": "string",
-            "description": "Return only claims created/updated on or after this date — use for new-claim monitoring."
+            "description": "Return only claims created/updated on or after this date — use for new-claim monitoring. MUST be YYYY-MM-DD (e.g. 2026-06-01) - any other format is rejected and the run fails without billing, rather than being silently reinterpreted by ArcGIS's own date parser. Slash forms are rejected on purpose: live-measured, an ambiguous 05/06/2025 is silently read as May 6 (US order) and differs from the June 5 (EU) reading by 6.0% of matching claims, with nothing in the response indicating a format was guessed. Empty = no lower bound. Example: \"2026-01-01\"."
           },
           "includeClosed": {
             "type": "boolean",
@@ -746,7 +746,7 @@
           },
           "since": {
             "type": "string",
-            "description": "Only return licenses issued/started after this date, per each city's issue-date column. Use on a schedule to get a fresh new-business lead feed. Leave empty for the most recent records overall."
+            "description": "Only return licenses issued/started after this date, per each city's issue-date column. MUST be YYYY-MM-DD (e.g. 2025-01-15) - any other format is rejected and the run fails without billing, rather than silently returning every licence in the city as a new lead. Leave empty for the most recent records overall. Example: \"2025-01-01\"."
           },
           "name": {
             "type": "string",
@@ -1230,7 +1230,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional. Only include cases whose findings end date is after this date (e.g. \"2023-01-01\"). Use it to pull only recent enforcement activity. Example: \"2023-01-01\"."
+            "description": "Optional. Only include cases whose findings end date is after this date. MUST be YYYY-MM-DD (e.g. 2023-01-01) - any other format FAILS the run without billing, rather than being guessed at. The value is compared against DOL's own ISO date column and is also sent to DOL as a server-side 'gt' filter, so a bad format does not error upstream - it silently returns the WHOLE case set or NONE of it, and neither is visible in the output. Measured on this actor: 01/15/2023 returned 3 of 3 cases labelled as filtered; Jan 2023 returned 0 of 3, a confident 'no enforcement cases'. Slash forms are rejected on purpose: 05/06/2025 is ambiguous between US (May 6) and EU (June 5) order. 2023-1-1 is accepted and zero-padded. Leave blank for no date filter. Example: \"2023-01-01\"."
           },
           "repeatThreshold": {
             "type": "integer",
@@ -1277,7 +1277,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Only return shortages whose update date (or initial posting date when no update) is on or after this date. Use for recurring monitoring windows. Empty = no lower bound."
+            "description": "Only return shortages whose update date (or initial posting date when no update) is on or after this date. Accepted forms: 2025-01-15 (ISO, preferred), 2025-01, 2025, or 01/15/2025 (US month/day/year). Anything else FAILS the run rather than being guessed at — this value is compared against ISO dates, so an unusable format would silently return either the entire feed or nothing at all, with no error. Leave blank for no lower bound. Example: \"2025-01-15\"."
           },
           "maxResults": {
             "type": "integer",
@@ -1432,8 +1432,8 @@
     {
       "slug": "epa-contaminated-site-screener",
       "actorId": "malonestar/epa-contaminated-site-screener",
-      "title": "Phase I ESA Environmental Database Search — EPA by Address",
-      "description": "Environmental database report for any US address: EPA Superfund/NPL, RCRA CORRACTS/TSD/generators, TRI, UST, LUST, Brownfields, NPDES, AIR, TSCA, RMP — scored against ASTM E1527-21 search distances, plus on-site Superfund and institutional-control (AUL) boundary checks. No API key.",
+      "title": "Phase I ESA & Environmental Due Diligence: EPA Database Search",
+      "description": "Environmental due diligence by address: an environmental database report over EPA Superfund/NPL, RCRA CORRACTS/TSD/generators, TRI, UST, LUST, Brownfields, NPDES, AIR, TSCA and RMP, scored at ASTM E1527-21 search distances, plus on-site Superfund and AUL boundary checks. No API key.",
       "categories": [
         "AGENTS",
         "DEVELOPER_TOOLS",
@@ -1517,7 +1517,7 @@
       "slug": "epa-drinking-water-quality-screener",
       "actorId": "malonestar/epa-drinking-water-quality-screener",
       "title": "EPA Drinking Water Quality Screener - Violations, Lead & PFAS",
-      "description": "Screen any US coordinate for the public water system serving it: SDWA health-based violations, Lead & Copper Rule 90th-percentile results and UCMR5 PFAS detections. Built for Phase I ESA and real-estate due diligence. Never reports a clear result from a source that did not answer.",
+      "description": "Screen any US coordinate for the public water system serving it: SDWA health-based violations, Lead & Copper Rule 90th-percentile results and UCMR5 PFAS detections - the evidence base behind the LCRI (Nov 1, 2027) and PFAS NPDWR (Apr 26, 2027) deadlines. Never clears a source that did not answer.",
       "categories": [
         "BUSINESS",
         "DEVELOPER_TOOLS",
@@ -1768,6 +1768,95 @@
       }
     },
     {
+      "slug": "epa-rcra-corrective-action-cleanup-monitor",
+      "actorId": "malonestar/epa-rcra-corrective-action-cleanup-monitor",
+      "title": "RCRA Corrective Action Cleanup Timeline & Overdue Milestones",
+      "description": "Track RCRA corrective-action cleanups from EPA RCRAInfo: milestone dates, scheduled vs actual, schedule slip, overdue milestones, remedy status, engineering and institutional controls, and confirmed release media per facility.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/epa-rcra-corrective-action-cleanup-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "state": {
+            "type": "string",
+            "description": "Two-letter RCRAInfo activity location to screen, e.g. CO, TX, CA. RCRAInfo uses 59 location codes, which are the 50 states plus DC, AS, GU, PR, VI, NN (Navajo Nation), TT (Trust Territories) and the EPA administrative codes XH and XJ. Required, so an empty call can never start a national run. Pass the literal value ANY to look facilities up nationally - ANY is only accepted together with a non-empty Handler IDs list. Example: \"CO\"."
+          },
+          "handlerIds": {
+            "type": "array",
+            "description": "Specific 12-character RCRAInfo handler IDs, e.g. COD007079478. When supplied these are matched nationally and the activity location above is ignored, so this is the right input for looking up a named facility. Leave empty to screen the whole activity location. Example: [].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputMode": {
+            "type": "string",
+            "description": "facility = one rollup row per RCRA handler with the cleanup stage, every national milestone date and the past-due summary. event = one row per corrective-action event, the raw decoded timeline. both = facility rollups followed by the events of those same facilities, sharing one maximum-results budget: at most half of it (rounded up) goes to rollups and the rest to their events, and whichever side cannot fill its share hands the remainder to the other, so both always returns both kinds when both exist. Example: \"facility\".",
+            "enum": [
+              "facility",
+              "event",
+              "both"
+            ]
+          },
+          "onlyWithPastDueMilestones": {
+            "type": "boolean",
+            "description": "Keep only facilities where at least one corrective-action milestone has a scheduled date in the past and no completion date on file in RCRAInfo. Note the honest reading: that means EPA or the state records no completion, which can mean the milestone is genuinely outstanding OR that a completion was never entered. Example: true."
+          },
+          "onlyOpenCleanups": {
+            "type": "boolean",
+            "description": "Keep only facilities whose corrective action is still open - no CA900 performance-standards-attained event and no CA999 process-terminated event. Facilities whose events use only state-specific codes are excluded by this filter because their completion status is genuinely unknown rather than open. Example: false."
+          },
+          "includeFacilityDetails": {
+            "type": "boolean",
+            "description": "Resolve each emitted handler's facility name, street address, city, county and FRS registry ID from the EPA Facility Registry Service. One small request per facility. Turn off for a faster run; the facility_* fields then stay null with site_lookup_status set to not_requested rather than being guessed. Example: true."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on emitted rows, which is also the hard cap on what this run can bill. It is enforced identically in every output mode, including both, by one function every emitted row passes through - a run that cannot bound its own bill fails instead of emitting. Rows are ordered worst-overdue first, so a capped run keeps the most consequential facilities. matched_facilities_total and results_truncated on every row report what the cap left behind. Example: 60. Applied by default if omitted: 500.",
+            "minimum": 1,
+            "maximum": 20000
+          },
+          "maxFacilityLookups": {
+            "type": "integer",
+            "description": "Cap on EPA Facility Registry Service lookups per run. Facilities beyond the cap are still emitted with their full cleanup timeline; their facility_* fields stay null and site_lookup_status reads skipped_lookup_cap. Applied by default if omitted: 150.",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "maxSnapshotAgeDays": {
+            "type": "integer",
+            "description": "The run fails if the newest RCRAInfo bulk export EPA publishes is older than this. RCRAInfo refreshes weekly, and a superseded export URL keeps answering HTTP 200 with the older snapshot instead of 404ing, so this freshness assertion is what stops stale cleanup milestones being sold as current. Applied by default if omitted: 21.",
+            "minimum": 1,
+            "maximum": 120
+          },
+          "pinRunId": {
+            "type": "string",
+            "description": "Reproduce an earlier answer by naming a RCRAInfo export run, e.g. CSV-2026-08-16T03-00-00-0400. If the pinned run is no longer the one EPA publishes, the run fails loudly rather than quietly serving a superseded snapshot. Leave blank for the current export."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam that forces one drift probe to be unable to complete, so the failure path can be re-proved on demand instead of only during a real outage. none runs normally. Example: \"none\".",
+            "enum": [
+              "none",
+              "manifest_info",
+              "manifest_modules",
+              "module_download",
+              "stale_snapshot",
+              "dictionary",
+              "positive_canary",
+              "negative_control",
+              "site_lookup"
+            ]
+          }
+        },
+        "required": [
+          "state"
+        ]
+      }
+    },
+    {
       "slug": "epa-rcra-hazwaste-generator-rollup",
       "actorId": "malonestar/epa-rcra-hazwaste-generator-rollup",
       "title": "EPA RCRA Hazardous Waste Generator Rollup — Tons, Codes, LQG",
@@ -1812,6 +1901,134 @@
           "compareToPriorCycle": {
             "type": "boolean",
             "description": "Fetch the previous biennial cycle (2023 vs 2021) as well and add per-facility tonnage delta, percent change, generator-status change and a new-this-cycle flag. Doubles the upstream fetch, so turn it off for very large states (California 2023 alone is 285,108 rows). When the prior-cycle fetch fails, every prior-cycle field is null rather than 0. Example: true."
+          }
+        },
+        "required": [
+          "states"
+        ]
+      }
+    },
+    {
+      "slug": "epa-repowering-brownfield-to-solar-site-finder",
+      "actorId": "malonestar/epa-repowering-brownfield-to-solar-site-finder",
+      "title": "EPA Brownfield-to-Solar Site Finder - RE-Powering Mapper",
+      "description": "Find EPA RE-Powering pre-screened contaminated land, landfills and abandoned mine sites with renewable-energy redevelopment potential. Filter 190,976 sites by state, technology, acreage, solar and wind resource and 2022 interconnection context, ranked as development candidates.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/epa-repowering-brownfield-to-solar-site-finder",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "description": "Two-letter US state or territory codes to screen, for example [\"CO\"] or [\"PA\",\"WV\"]. Required, and capped at 6 per run, so that a bare {} call can never run against all 190,976 national sites and bill for it. Example: [\"CO\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "counties": {
+            "type": "array",
+            "description": "Optional county names to narrow the search, matched exactly and case-insensitively against EPA's County column, for example [\"EL PASO\",\"DENVER\"]. Leave empty for all counties in the chosen states.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cities": {
+            "type": "array",
+            "description": "Optional city names to narrow the search, matched exactly and case-insensitively against EPA's City column. Note that 19,675 sites carry no city, so a city filter will exclude them.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "technologies": {
+            "type": "array",
+            "description": "Keep only sites EPA flagged for at least one of these technologies. Valid values: utility_solar, distributed_solar, offgrid_solar, utility_wind, community_wind, facility_wind, biopower, biorefinery. Leave empty for every technology. Note that EPA's summary Solar column is 'Y' on all 190,976 sites and carries no information, so this actor filters on the scale-specific columns instead. Example: [\"utility_solar\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "programCategories": {
+            "type": "array",
+            "description": "Keep only sites whose EPA program falls in these categories. Valid values: abandoned_mine_land, brownfield, landfill, superfund, rcra_corrective_action, underground_storage_tank, institutional_control, state_cleanup_program. Applied in memory after the query, because the category is derived from EPA's 49 verbatim program names.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "landfillOnly": {
+            "type": "boolean",
+            "description": "Keep only the 18,298 sites EPA flags as a known landfill. Landfill-to-solar is the deepest-precedent redevelopment archetype."
+          },
+          "abandonedMineLandOnly": {
+            "type": "boolean",
+            "description": "Keep only the 17,756 sites EPA flags as known Abandoned Mine Land."
+          },
+          "minAcreage": {
+            "type": "integer",
+            "description": "Minimum site acreage. EPA writes acreage 0 as a null sentinel on 108,888 sites (it means 'acreage unknown', not 'zero acres'), so any minimum-acreage filter necessarily excludes every site with unknown acreage. Example: 20.",
+            "minimum": 1
+          },
+          "minGhi": {
+            "type": "integer",
+            "description": "Minimum maximum-annual Global Horizontal Irradiance. Measured range across the layer is 2.0 to 6.9 kWh/m2/day.",
+            "minimum": 0,
+            "maximum": 10
+          },
+          "minWindSpeed100m": {
+            "type": "integer",
+            "description": "Minimum modelled wind speed at 100 m hub height. Roughly 6.5 m/s and above is where utility-scale wind becomes interesting.",
+            "minimum": 0,
+            "maximum": 20
+          },
+          "maxSubstationDistanceMiles": {
+            "type": "integer",
+            "description": "Maximum distance to the nearest substation. This is EPA's FROZEN 2022 precomputation, not a live measurement, and it must not be used to size an interconnection. Run hifld-grid-proximity-screener on the returned coordinates for the live figure.",
+            "minimum": 0
+          },
+          "maxTransmissionDistanceMiles": {
+            "type": "integer",
+            "description": "Maximum distance to the nearest transmission line, again from EPA's frozen 2022 precomputation rather than a live measurement.",
+            "minimum": 0
+          },
+          "minTransmissionKv": {
+            "type": "integer",
+            "description": "Minimum voltage of the nearest transmission line from EPA's 2022 precomputation. Note that 16,803 sites publish a voltage while reporting the line status as NOT AVAILABLE, which this actor flags on the row rather than silently resolving.",
+            "minimum": 0
+          },
+          "sortBy": {
+            "type": "string",
+            "description": "How to order the returned sites. Valid values: score_desc (default), acreage_desc, ghi_desc, wind_speed_desc, interconnection_distance_asc, state_then_county. Sites with a missing value always sort last. Example: \"score_desc\".",
+            "enum": [
+              "score_desc",
+              "acreage_desc",
+              "ghi_desc",
+              "wind_speed_desc",
+              "interconnection_distance_asc",
+              "state_then_county"
+            ]
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Maximum number of sites to return and bill for. Every row also carries matched_sites_total and results_truncated, so a capped answer can never be mistaken for a complete one. Applied by default if omitted: 500.",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam that forces a specific drift probe or the paging step to fail, so the failure paths can be re-proved on demand rather than only during a real outage. Valid values: none (default), total_floor, positive_canary, sentinel_integrity, negative_control, filter_narrows, pv_plateau_integrity, all_probes, paging. Example: \"none\".",
+            "enum": [
+              "none",
+              "total_floor",
+              "positive_canary",
+              "sentinel_integrity",
+              "negative_control",
+              "filter_narrows",
+              "pv_plateau_integrity",
+              "all_probes",
+              "paging"
+            ]
           }
         },
         "required": [
@@ -1914,6 +2131,90 @@
         },
         "required": [
           "assets"
+        ]
+      }
+    },
+    {
+      "slug": "epa-tsca-cdr-chemical-site-screener",
+      "actorId": "malonestar/epa-tsca-cdr-chemical-site-screener",
+      "title": "EPA TSCA CDR Chemical Site Screener - Manufacture & Import",
+      "description": "Which TSCA chemicals are manufactured or imported at a site, in what production volume, by whom, and with what worker-exposure context. Screens EPA's 2024 Chemical Data Reporting bulk file by radius, CASRN or state, and keeps a CBI-withheld volume distinct from a real zero.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/epa-tsca-cdr-chemical-site-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "How to query the 2024 TSCA Chemical Data Reporting file. 'radius' screens coordinates and returns every CDR site within the radius; 'chemical' maps every US site that manufactures or imports a given CASRN; 'state' lists a state's CDR filers. Required, so a bare {} call is rejected before the run starts and nothing is billed. Example: \"radius\".",
+            "enum": [
+              "radius",
+              "chemical",
+              "state"
+            ]
+          },
+          "assets": {
+            "type": "array",
+            "description": "Coordinates to screen. Each entry: {\"lat\": number, \"lon\": number, \"radiusMiles\": number, \"label\": string}. radiusMiles defaults to 5 in code (never a schema default, which Apify injects server-side) and is capped at 100. Maximum 100 assets per run: each asset emits one query_summary row inside the maxResults budget, so maxResults must be at least the number of assets. Used only when mode = radius. Example: [{\"lat\":40.8249,\"lon\":-111.9238,\"radiusMiles\":3,\"label\":\"Salt Lake City refinery corridor\"},{\"lat\":29.99435,\"lon\":-90.40726,\"radiusMiles\":3,\"label\":\"Norco LA petrochemical corridor\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chemicalIds": {
+            "type": "array",
+            "description": "CASRNs to reverse-map, with or without dashes, e.g. [\"7704-34-9\"] for Sulfur. Every US site reporting manufacture or import of the substance is returned, including sites whose identity EPA withholds as CBI. Maximum 100 per run: each chemical emits one query_summary row inside the maxResults budget. Used only when mode = chemical.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "states": {
+            "type": "array",
+            "description": "Two-letter postal codes, e.g. [\"CO\"]. Rows whose site state is claimed confidential cannot be assigned to any state and are therefore absent from every state total. Maximum 60 per run: each state emits one query_summary row inside the maxResults budget. Used only when mode = state.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "chemicalFilter": {
+            "type": "array",
+            "description": "Optional CASRN list applied on top of any mode, so a radius or state query can be narrowed to specific substances. Leave empty to return every chemical reported at the matched sites.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "siteQuery": {
+            "type": "string",
+            "description": "Optional case-insensitive substring match on the published site name. Rows whose site name is claimed confidential can never match a name filter and are excluded when this is set."
+          },
+          "includeSitesWithoutCoordinates": {
+            "type": "boolean",
+            "description": "In radius mode, also emit records whose coordinates are blank or published as the 0/0 null-island sentinel, flagged with site_coordinate_status and a null distance. They cannot be confirmed to be inside the radius, so this is off unless requested."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "The hard cap on total rows this run emits, which is also the hard cap on the bill. It counts EVERY emitted row, including the one query_summary row each asset, chemical or state produces: those are reserved off the top and the remainder is spent on site-chemical records. It is a whole-run cap, never per scope. Applied in code (200 when omitted) rather than as a schema default, so an API or MCP caller who omits it cannot be billed for a national dump. Must be at least the number of scopes in the request. Maximum 5000. Example: 150.",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam that forces one drift-gate failure path so the fail-closed behaviour can be re-proved on demand instead of only during a real outage. Leave as 'none' for normal use; any other value makes the run fail and bill nothing. Example: \"none\".",
+            "enum": [
+              "none",
+              "primary",
+              "corroborating",
+              "header_contract",
+              "cbi_sentinel",
+              "row_floor",
+              "zip_entries"
+            ]
+          }
+        },
+        "required": [
+          "mode"
         ]
       }
     },
@@ -2329,11 +2630,11 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Explicit delta anchor in YYYY-MM-DD form, e.g. 2025-07-25. Overrides sinceDays. Only events on or after this date are returned."
+            "description": "Explicit delta anchor. Overrides sinceDays. Only events on or after this date are returned. Accepted forms: 2026-01-15 (ISO, preferred), 2026-01 (first of that month), 2026 (1 January), or 01/15/2026 (US month/day/year). Anything else FAILS the run rather than being guessed at — this value is compared against ISO dates and sent verbatim to FDIC, so a format we cannot read silently returns the wrong window instead of an error. Day-first (15/01/2026) is rejected as genuinely ambiguous. A calendar-invalid date such as 2026-02-30 or 2026-13-01 is rejected too, even though it looks like ISO. Leave blank to use sinceDays instead."
           },
           "untilDate": {
             "type": "string",
-            "description": "End of the window in YYYY-MM-DD form, e.g. 2026-07-25. Defaults to today."
+            "description": "End of the window. Defaults to today when blank. Accepted forms: 2026-07-25 (ISO, preferred), 2026-07 (first of that month), 2026 (1 January), or 07/25/2026 (US month/day/year). Anything else FAILS the run rather than being guessed at — this value is compared against ISO dates and sent verbatim to FDIC, so a format we cannot read silently returns the wrong window instead of an error. A calendar-invalid date such as 2026-13-01 is rejected even though it has the right shape. An untilDate earlier than sinceDate also fails, loudly, before any request is made."
           },
           "dateField": {
             "type": "string",
@@ -2432,11 +2733,11 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Lower date bound. Maps to min_date (receipts/disbursements) or min_receipt_date (filings). Drives the delta/monitoring window. Empty = no lower bound."
+            "description": "Lower date bound. Maps to min_date (receipts/disbursements) or min_receipt_date (filings), and is also compared against each row's ISO date in delta mode. MUST be YYYY-MM-DD (e.g. 2023-01-15) - any other format FAILS the run before anything is fetched or billed, rather than silently returning the whole fetched window or none of it. Measured on 3 fixture rows whose true answer was 2: \"01/15/2023\" returned 3, \"Jan 2023\" returned 0, \"2023-13-45\" returned 1, and the unpadded \"2023-1-1\" returned 1. An unpadded 2023-1-1 IS accepted and zero-padded (it is unambiguous); slash forms are rejected on purpose because 05/06/2025 is ambiguous between US and EU order. Empty = no lower bound. Example: \"2026-01-01\"."
           },
           "untilDate": {
             "type": "string",
-            "description": "Upper date bound. Maps to max_date (receipts/disbursements) or max_receipt_date (filings). Empty = no upper bound."
+            "description": "Upper date bound. Maps to max_date (receipts/disbursements) or max_receipt_date (filings). MUST be YYYY-MM-DD (e.g. 2023-12-31) - any other format FAILS the run before anything is fetched or billed. An unpadded 2023-1-1 IS accepted and zero-padded; slash forms are rejected on purpose because 05/06/2025 is ambiguous between US and EU order. Empty = no upper bound."
           },
           "minAmount": {
             "type": "string",
@@ -2531,6 +2832,68 @@
       }
     },
     {
+      "slug": "fema-repetitive-loss-flood-market-screener",
+      "actorId": "malonestar/fema-repetitive-loss-flood-market-screener",
+      "title": "FEMA NFIP Repetitive Loss & Flood Insurance Market Screener",
+      "description": "Resolve any US coordinate to its NFIP community, then return that community's repetitive-loss and severe-repetitive-loss property rollup, CRS class and premium discounts, NFIP participation status, and county flood-insurance market penetration. Four FEMA OpenFEMA datasets joined in one call.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/fema-repetitive-loss-flood-market-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "Sites to screen. Each item is {\"lat\": <number>, \"lon\": <number>, \"label\": \"<your reference>\"}. Each site is resolved to the NFIP community whose published boundary contains it, then answered at community and county scope. FEMA redacts repetitive-loss property coordinates to one decimal place (roughly +/-5 to +/-55 km), so no radius or nearest-property distance is derivable from this data and none is offered. Maximum 25 sites per run; each distinct state costs one community-boundary download. Example: [{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver City Hall, CO\"},{\"lat\":39.7047,\"lon\":-105.0814,\"label\":\"Lakewood, CO (city inside Jefferson County)\"},{\"lat\":40.015,\"lon\":-105.2705,\"label\":\"Boulder, CO\"},{\"lat\":40.53,\"lon\":-104.3,\"label\":\"Rural Weld County, CO (unincorporated)\"},{\"lat\":29.9511,\"lon\":-90.0715,\"label\":\"New Orleans, LA\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includeCountyCommunity": {
+            "type": "boolean",
+            "description": "When a site sits inside an incorporated place, the county or parish is usually ALSO an NFIP community covering unincorporated areas, with its own CRS class and its own repetitive-loss rollup. Leave on to receive a profile row for both. Turn off to receive only the governing municipal community. Defaults to on when omitted. Example: true."
+          },
+          "includeTribalEtjLayer": {
+            "type": "boolean",
+            "description": "FEMA publishes 608 tribal nation, extraterritorial-jurisdiction and special land-use-authority community polygons with no state or county code, so a state-scoped boundary read is structurally blind to them. Leave on to include them (one extra request per state). When off, tribal/ETJ coverage is reported as not checked rather than as a negative. Defaults to on when omitted. Example: true."
+          },
+          "includeLossProperties": {
+            "type": "boolean",
+            "description": "Off by default. When on, every repetitive-loss and severe-repetitive-loss property FEMA publishes for each matched community is emitted as its own row, with designation, flood zone, occupancy, loss count, insured and mitigated status, and the redacted coordinate together with its measured decimal precision. This multiplies the billable row count, so a per-community cap applies. Example: false."
+          },
+          "maxLossPropertiesPerCommunity": {
+            "type": "integer",
+            "description": "Caps how many individual repetitive-loss property rows are emitted per community when 'Also emit one row per repetitive-loss property' is on. The community rollup is always computed over every property FEMA publishes, not over this capped subset. Range 0 to 2000; 100 when omitted. Example: 100.",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam for verifying that this actor fails loudly rather than publishing an unverified answer. Leave as 'none' for normal use. Any other value forces the named source or drift probe to fail so the failure path can be re-proved on demand instead of only during a real outage. Example: \"none\".",
+            "enum": [
+              "none",
+              "catalog",
+              "schema",
+              "community_layer",
+              "status_book",
+              "penetration",
+              "multiple_loss",
+              "geo",
+              "canary",
+              "negative_control",
+              "tribal_etj"
+            ]
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
       "slug": "fhlbank-membership-delta-monitor",
       "actorId": "malonestar/fhlbank-membership-delta-monitor",
       "title": "FHLBank Membership Roster & Delta Monitor",
@@ -2575,7 +2938,7 @@
           },
           "memberSince": {
             "type": "string",
-            "description": "Optional YYYY-MM-DD cutoff. Only include members whose FHFA-published membership date is on or after this date. Leave blank for no cutoff."
+            "description": "Optional cutoff. Only include members whose FHFA-published membership date is on or after this date. MUST be YYYY-MM-DD (e.g. 2020-01-15) - any other format is rejected and the run FAILS without billing, rather than silently returning every member or none of them. It is string-compared against ISO membership dates: an unvalidated '01/15/2020' returned the WHOLE matching set (as if no cutoff were applied) and 'Jan 2020' returned ZERO rows, both labelled a successful filtered answer. Slash forms are rejected on purpose - 05/06/2025 is ambiguous between US and EU order. Leave blank for no cutoff."
           },
           "quarter": {
             "type": "string",
@@ -3078,6 +3441,136 @@
       }
     },
     {
+      "slug": "historic-land-use-sic-contaminant-screener",
+      "actorId": "malonestar/historic-land-use-sic-contaminant-screener",
+      "title": "Historic Land Use Screener - Contaminating SIC/NAICS Sites",
+      "description": "Screens a coordinate or address radius against EPA FRS SIC and NAICS classifications to find dry cleaners, gas stations, plating shops, auto shops, printers and other recognised contaminating land uses, for ASTM E1527-21 Section 8.3 prior-use review.",
+      "categories": [
+        "REAL_ESTATE",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/historic-land-use-sic-contaminant-screener",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "assets": {
+            "type": "array",
+            "description": "Locations to screen for contaminating industrial land uses. Each item is EITHER {\"lat\": 39.7392, \"lon\": -104.9903, \"label\": \"...\"} OR {\"address\": \"1438 Tremont Pl, Denver, CO 80202\", \"label\": \"...\"}. Addresses are geocoded with the free US Census geocoder; a coordinate is faster and more precise. Required - a run without it is rejected before it starts, so nothing is billed. Example: [{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver CBD parcel (CO)\"},{\"lat\":40.7274,\"lon\":-74.159,\"label\":\"Newark Ironbound parcel (NJ)\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "radiusMiles": {
+            "type": "number",
+            "description": "Distance from each property within which EPA FRS facilities are screened. ASTM E1527-21 Section 8.3 concerns the subject property and adjoining properties, so 0.25 mi is the working default; 1 mi is the maximum and 0.02 mi the minimum. Example: 0.25.",
+            "minimum": 0.02,
+            "maximum": 1
+          },
+          "landUseClasses": {
+            "type": "array",
+            "description": "Optional filter. Leave empty (the default behaviour) to screen against every class in the vocabulary. Unknown values are ignored rather than silently dropping every result.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "DRY_CLEANING",
+                "FUEL_DISPENSING_STORAGE",
+                "PETROLEUM_REFINING_PRODUCTION",
+                "METAL_PLATING_FINISHING",
+                "METAL_FABRICATION_FOUNDRY",
+                "AUTOMOTIVE_SERVICE",
+                "SALVAGE_SCRAP_RECYCLING",
+                "WOOD_PRESERVING",
+                "WOOD_PRODUCTS",
+                "PRINTING_PUBLISHING",
+                "CHEMICAL_MANUFACTURING",
+                "EXPLOSIVES_ORDNANCE",
+                "WASTE_MANAGEMENT_LANDFILL",
+                "ELECTRONICS_SEMICONDUCTOR",
+                "BATTERY_MANUFACTURING",
+                "LEATHER_TEXTILE_FINISHING",
+                "MANUFACTURED_GAS_UTILITY",
+                "TRANSPORT_TERMINAL",
+                "AIRPORT_AVIATION",
+                "PHOTOFINISHING",
+                "PESTICIDE_APPLICATION",
+                "PLASTICS_RUBBER",
+                "PULP_PAPER",
+                "NATIONAL_SECURITY_FEDERAL"
+              ]
+            }
+          },
+          "programs": {
+            "type": "array",
+            "description": "OPT-IN. Leave empty (the working default) and this actor behaves exactly as before: ASTM E1527-21 Section 8.3 prior uses only. Add \"state\" to also screen the ASTM Section 8.2 STATE AND TRIBAL EQUIVALENT record class - the ~57 state and tribal agency program systems EPA normalises into the same registry. Coverage is uneven and is measured live every run: every summary row carries state_coverage (complete / partial / none), the systems actually searched, and the systems EPA publishes for that state. MEASURED 2026-08-20, EPA publishes NO state or tribal agency system at all for AK, CO, DC, MI, SD, VT, WV or the US territories - for those, state_coverage reads \"none\" and every state count is null, so a zero can never be mistaken for a searched-and-clear result. Adds 2 requests per state (not per property) and no extra rows. Example: [].",
+            "items": {
+              "type": "string",
+              "enum": [
+                "state"
+              ],
+              "enumTitles": [
+                "State and tribal equivalent record sources (ASTM E1527-21 Section 8.2)"
+              ]
+            }
+          },
+          "includeSecondaryClassifications": {
+            "type": "boolean",
+            "description": "EPA marks each SIC/NAICS code on a facility PRIMARY, SECONDARY or UNKNOWN. When true (the working default) a secondary contaminating code still counts as a hit and is labelled as secondary on the row. Set false to count only PRIMARY codes. Example: true."
+          },
+          "includeUnclassifiedFacilities": {
+            "type": "boolean",
+            "description": "When false (the working default) only facilities carrying a contaminating classification are emitted, plus one summary row per property. When true, every FRS facility in the radius is emitted, including those EPA publishes no SIC/NAICS for. This multiplies the row count and therefore the bill. Example: false."
+          },
+          "crossStateRecords": {
+            "type": "string",
+            "description": "EPA geocodes a substantial share of FRS records to the operator's mailing address rather than the operating site - measured 2026-08-18, 90 of 188 records within 402 m of downtown Denver are Wyoming well pads stacked on one Denver office coordinate. \"flag\" (working default) emits them with location_confidence=state_mismatch and excludes them from the verdict; \"exclude\" drops them; \"include\" counts them toward the verdict. Example: \"flag\".",
+            "enum": [
+              "flag",
+              "exclude",
+              "include"
+            ]
+          },
+          "coordinateStackThreshold": {
+            "type": "integer",
+            "description": "How many distinct facilities sharing one identical coordinate marks that coordinate as an address-level geocode rather than a site-specific location. Stacked facilities are emitted with location_confidence=coordinate_stack and are excluded from the verdict. Example: 5.",
+            "minimum": 2,
+            "maximum": 1000
+          },
+          "maxFacilitiesPerAsset": {
+            "type": "integer",
+            "description": "Cap on facility rows emitted per property, nearest first. When the cap truncates the result the summary row says so and the verdict cannot read as a clean negative. Example: 100.",
+            "minimum": 1,
+            "maximum": 500
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on total dataset rows across the whole run, which is also the hard cap on the bill. One row is one billable result. Example: 1000.",
+            "minimum": 1,
+            "maximum": 20000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Permanent diagnostic seam for proving the failure paths on demand instead of only during a real outage. \"none\" is a genuine no-op. The other values force the named source or drift probe to fail so the loud-failure and degraded-disclosure paths can be re-verified. Example: \"none\".",
+            "enum": [
+              "none",
+              "frs_interests",
+              "frs_sic",
+              "frs_naics",
+              "geocoder",
+              "drift_load_bearing",
+              "drift_negative_control",
+              "drift_fail",
+              "state_programs",
+              "drift_state_leg"
+            ]
+          }
+        },
+        "required": [
+          "assets"
+        ]
+      }
+    },
+    {
       "slug": "hmda-fair-lending-disparity-rollup",
       "actorId": "malonestar/hmda-fair-lending-disparity-rollup",
       "title": "HMDA Fair Lending Disparity Analysis — Denial & Pricing",
@@ -3332,7 +3825,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Delta mode. When set, only returns designations that were newly Designated or newly Withdrawn on/after this date (compared against last-update and withdrawal dates). Adds a status_change field. A withdrawal = loss of Medicare originating-site / NHSC eligibility — a real recurring alert. Leave blank for a full snapshot. Example: \"\"."
+            "description": "Delta mode. When set, only returns designations that were newly Designated or newly Withdrawn on/after this date (compared against last-update and withdrawal dates). MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run FAILS without billing, rather than silently returning a confident empty or a plausible-looking wrong subset. It is string-compared against ISO designation dates: an unvalidated 'Jan 2025' returned 0 of 3 fixture designations (a confident empty) and '2025-13-45' returned a plausible-looking wrong 1 of 3, both labelled a successful delta answer. Slash forms are rejected on purpose - 05/06/2025 is ambiguous between US and EU order. Adds a status_change field. A withdrawal = loss of Medicare originating-site / NHSC eligibility — a real recurring alert. Leave blank for a full snapshot. Example: \"\"."
           },
           "rollupBy": {
             "type": "string",
@@ -3871,7 +4364,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional YYYY-MM-DD floor. Pending feeds: applications submitted/received on or after this date. Active feeds: licenses issued on or after this date."
+            "description": "Optional floor on the notice date. Pending feeds: applications submitted/received on or after this date. Active feeds: licenses issued on or after this date. MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into a live query. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order."
           },
           "maxResults": {
             "type": "integer",
@@ -4775,7 +5268,7 @@
           },
           "sinceModified": {
             "type": "string",
-            "description": "Return only wells spudded or updated on or after this date — use for new-permit monitoring. Applies only to states with a date field (currently North Dakota)."
+            "description": "Return only wells spudded or updated on or after this date — use for new-permit monitoring. Applies only to states with a date field (currently North Dakota); ignored for others, but MUST still be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being silently reinterpreted by ArcGIS's own date parser. Slash forms are rejected on purpose: live-measured against North Dakota, an ambiguous 05/06/2025 is silently read as May 6 (US order) and differs from the June 5 (EU) reading by 8.0% of matching wells, with nothing in the response indicating a format was guessed. Empty = no lower bound."
           },
           "maxResults": {
             "type": "integer",
@@ -5082,7 +5575,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Only return proceedings whose petition was filed on or after this date. Drives the delta/monitoring window. Empty = no lower bound. Example: \"\"."
+            "description": "Only return proceedings whose petition was filed on or after this date. MUST be YYYY-MM-DD (e.g. 2025-01-15) - any other format is rejected and the run fails without billing, rather than silently returning the whole docket or none of it. Drives the delta/monitoring window. Empty = no lower bound. Example: \"2025-01-01\"."
           },
           "priorItems": {
             "type": "array",
@@ -5304,11 +5797,11 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Only return loans with approval_date on or after this date. Empty = no lower bound."
+            "description": "Only return loans with approval_date on or after this date. MUST be YYYY-MM-DD (e.g. 2023-01-15) - any other format is rejected and the run FAILS without billing, rather than silently returning the whole portfolio or none of it. It is string-compared against ISO approval dates, so a wrong format is invisible in the output: '01/15/2023' returned every loan and 'Jan 2023' returned none, both labelled as a successful filtered answer. Slash forms are rejected on purpose - 05/06/2025 is ambiguous between US and EU order. Empty = no lower bound."
           },
           "untilDate": {
             "type": "string",
-            "description": "Only return loans with approval_date on or before this date. Empty = no upper bound."
+            "description": "Only return loans with approval_date on or before this date. MUST be YYYY-MM-DD (e.g. 2023-12-31) - any other format is rejected and the run FAILS without billing. It is string-compared against ISO approval dates, so a wrong format here returned ZERO rows ('01/15/2023') or the entire portfolio ('Jan 2023') with no sign in the output; a buyer reads that empty as a fact about SBA lending rather than as a rejected input. Must be on or after sinceDate - an inverted window also fails rather than returning a confident empty. Empty = no upper bound."
           },
           "minAmount": {
             "type": "integer",
@@ -5468,8 +5961,8 @@
     {
       "slug": "site-due-diligence-bundle",
       "actorId": "malonestar/site-due-diligence-bundle",
-      "title": "Site Due-Diligence Bundle — 20-Layer Fatal-Flaw Scorecard",
-      "description": "One call (lat/lon + radius) returns a go/caution/no-go verdict and a 0-100 site score across 20 federal layers: EPA contamination, FEMA flood, NWI wetlands, ESA habitat, NAAQS nonattainment, NRHP historic, karst, landslide, levee, dams, CBRS, tanks, pipelines, seismic.",
+      "title": "Environmental Due Diligence Bundle: 20-Layer Site Scorecard",
+      "description": "Environmental due diligence in one call: lat/lon plus radius returns a go/caution/no-go fatal-flaw verdict and a 0-100 site score across 20 federal layers - EPA contamination, FEMA flood, NWI wetlands, ESA habitat, NAAQS nonattainment, NRHP historic, karst, landslide, levee, dams, CBRS, pipelines.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
@@ -5545,7 +6038,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Explicit start date (YYYY-MM-DD). Overrides 'days back'."
+            "description": "Explicit start date. MUST be YYYY-MM-DD (e.g. 2023-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into the live Socrata query. Slash forms are rejected on purpose: 05/06/2025 is ambiguous between US and EU order. Overrides 'days back'. Empty = use days back."
           },
           "maxPerState": {
             "type": "integer",
@@ -6123,14 +6616,14 @@
         "properties": {
           "sites": {
             "type": "array",
-            "description": "List of USGS NWIS site (station) numbers to pull, e.g. [\"01646500\"] (Potomac River at Little Falls). Provide this OR a State code. Site numbers are the 8-15 digit USGS station IDs. Every site you list gets a row: one USGS did not answer for is returned with data_status \"not_returned\" rather than silently omitted. Example: [\"01646500\",\"09380000\",\"06752260\"]. Applied by default if omitted: [].",
+            "description": "List of USGS site (station) numbers to pull, e.g. [\"01646500\"] (Potomac River at Little Falls). Provide this OR a State code. Site numbers are the 8-15 digit USGS station IDs; the agency prefix is added automatically. Every site you list gets a row - one USGS did not answer for is returned with data_status \"not_returned\" rather than silently omitted, so silence is never mistaken for an all-clear. Example: [\"01646500\",\"09380000\",\"06752260\"]. Applied by default if omitted: [].",
             "items": {
               "type": "string"
             }
           },
           "stateCd": {
             "type": "string",
-            "description": "USPS two-letter state code (e.g. \"VA\") to pull every gaging site in that state for the chosen parameter. Used only when no site numbers are supplied. A statewide pull can return hundreds of sites. Applied by default if omitted: \"\"."
+            "description": "USPS two-letter state code (e.g. \"VA\") to pull every gaging site in that state for the chosen parameter. Used only when no site numbers are supplied. A statewide pull can return hundreds of sites - Colorado discharge returns 615. An unrecognised code is rejected rather than silently widened to a national query. Applied by default if omitted: \"\"."
           },
           "parameterCd": {
             "type": "string",
@@ -6138,7 +6631,7 @@
           },
           "service": {
             "type": "string",
-            "description": "Which USGS Water Services endpoint to use: 'iv' for near real-time instantaneous values, or 'dv' for daily values. Applied by default if omitted: \"iv\".",
+            "description": "Which USGS data set to read: \"iv\" for near real-time continuous (instantaneous) values, or \"dv\" for daily values. Instantaneous reads the latest-continuous collection; daily reads latest-daily and returns the daily MEAN (statistic 00003). Applied by default if omitted: \"iv\".",
             "enum": [
               "iv",
               "dv"
@@ -6146,11 +6639,11 @@
           },
           "period": {
             "type": "string",
-            "description": "Optional ISO-8601 duration to widen the window so a prior reading is available for the change delta, e.g. \"PT2H\" (2 hours) or \"P1D\" (1 day). Leave blank to fetch only the latest reading per site. Applied by default if omitted: \"\"."
+            "description": "Optional ISO-8601 duration to widen the window so a prior reading is available for the change delta, e.g. \"PT2H\" (2 hours), \"PT30M\" or \"P1D\" (1 day). Maximum 30 days. Leave blank to fetch only the latest reading per site. An unparseable value is REJECTED, not ignored - silently dropping it would return a single reading with no delta while appearing to honour the request. Applied by default if omitted: \"\"."
           },
           "thresholdValue": {
             "type": "string",
-            "description": "Optional flood-stage / alert threshold applied to every site (in the parameter's unit, e.g. cfs for 00060 or feet for 00065). Sets above_threshold=true and amount_over_threshold when the latest value meets or exceeds it. Example: \"5000\". Applied by default if omitted: \"\"."
+            "description": "Optional flood-stage / alert threshold applied to every site, in the parameter's own unit (cubic feet per second for 00060, feet for 00065). Sets above_threshold and amount_over_threshold when the latest reading meets or exceeds it. A reading that is stale, future-dated or flagged untrustworthy by USGS gets above_threshold NULL with an explanation, never false. Example: \"5000\". Applied by default if omitted: \"\"."
           },
           "siteThresholds": {
             "type": "object",
@@ -6158,11 +6651,11 @@
           },
           "onlyAlerts": {
             "type": "boolean",
-            "description": "When true, only sites whose latest reading is at or above their threshold are returned (useful for flood-alert monitoring). Requires a global or per-site threshold. Applied by default if omitted: false."
+            "description": "When true, only sites whose latest reading is at or above their threshold are returned. Requires a global or per-site threshold. Sites you asked about that USGS did not answer for are still returned even in this mode - that is precisely where silence must not read as an all-clear. Applied by default if omitted: false."
           },
           "siteStatus": {
             "type": "string",
-            "description": "Which USGS gages to include. 'all' (default, unchanged behaviour) includes DISCONTINUED gages whose most recent reading can be decades old - a Colorado statewide discharge pull returns 615 sites of which 268 last reported over a year ago, the oldest in 1987. Use 'active' to restrict to gages USGS still operates. Example: \"all\".",
+            "description": "Which gages to include. \"all\" (default) returns everything, including gages that stopped reporting years ago - a Colorado discharge pull returns 615 sites of which 268 last reported over a year ago, the oldest in 1987. \"active\" and \"inactive\" are DERIVED, because the USGS OGC API publishes no operator-status flag: active means USGS has not flagged the gage DISCONTINUED and it has reported within your staleness threshold. A gage whose status cannot be judged is returned only by \"all\". Example: \"all\".",
             "enum": [
               "all",
               "active",
@@ -6171,7 +6664,7 @@
           },
           "staleHours": {
             "type": "integer",
-            "description": "A reading older than this many hours is flagged is_stale=true and data_status='stale'. Default 72h: a healthy instantaneous gage reports every 15-60 minutes and a daily-values gage once a day. Rows are still returned - use 'Maximum reading age' to exclude them. Example: 72.",
+            "description": "A reading older than this many hours is flagged is_stale=true, data_status=\"stale\", and its threshold verdict is withheld (above_threshold becomes null, not false). Default 72h: a healthy continuous gage reports every 15-60 minutes and a daily gage once a day. Rows are still returned - use \"Maximum reading age\" to drop them entirely. Example: 72.",
             "minimum": 1
           },
           "maxReadingAgeHours": {
@@ -6181,11 +6674,11 @@
           },
           "reportMissingSites": {
             "type": "boolean",
-            "description": "When you supply explicit site numbers, emit a row for each one USGS returned nothing for, with data_status 'not_returned'. Keeps silence from being read as an all-clear. Ignored for statewide pulls. Example: true."
+            "description": "When you supply explicit site numbers, emit a row for each one USGS returned nothing for, with data_status \"not_returned\". Keeps silence from being read as an all-clear, and is what makes the result set provably complete for a site-scoped run. Ignored for statewide pulls. Example: true."
           },
           "includeNoDataSites": {
             "type": "boolean",
-            "description": "Include sites whose latest reading is the USGS no-data sentinel (-999999). These carry a qualifier explaining why - ZFL zero flow, Ice, Eqp equipment malfunction, Dis discontinued, Rat rating under development, Ssn out of season. Off by default (unchanged behaviour). Applied by default if omitted: false."
+            "description": "Include sites whose latest reading is missing. The USGS OGC API publishes these as a JSON null (the retired legacy feed used the -999999 sentinel); each carries a qualifier explaining why - zero flow, dry, ice, equipment malfunction, discontinued, rating under development, or out of season. Off by default. Applied by default if omitted: false."
           }
         }
       }
@@ -6444,7 +6937,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional lower bound (YYYY-MM-DD) on the notice date. When set, only notices on or after this date are fetched. Leave blank for all available notices."
+            "description": "Optional lower bound on the notice date. When set, only notices on or after this date are fetched. MUST be YYYY-MM-DD (e.g. 2026-01-15); 2026-1-1 is accepted and zero-padded. Any other format FAILS the run before anything is fetched and bills nothing, rather than being spliced unverified into the live Socrata query - measured, 01/15/2026 and Jan 2026 both return HTTP 400 query.soql.type-mismatch from Socrata mid-fetch. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. A bare year (2026) is rejected too, even though Socrata happens to coerce it to Jan 1. Leave blank for all available notices."
           },
           "priorItems": {
             "type": "array",

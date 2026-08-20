@@ -71,13 +71,38 @@ test('search ranks a slug hit above a description-only hit', () => {
   assert.ok(r.length > 0, 'no wetlands match');
   assert.equal(r[0].tool, 'fws-wetlands-proximity-screener');
 
-  // "seismic" is the discriminating case: the slug match (usgs-seismic-design-screener)
-  // sorts alphabetically AFTER a description-only match (site-due-diligence-bundle), so
-  // it can only come first if slug hits genuinely outweigh description hits rather than
-  // tying and falling through to the alphabetical tiebreak.
-  const s = searchCatalog(index, 'seismic', 10);
-  assert.equal(s[0].tool, 'usgs-seismic-design-screener');
-  assert.ok(s.some(x => x.tool === 'site-due-diligence-bundle'), 'the description-only match should still be returned, just ranked lower');
+  // This used to hard-code "seismic" -> usgs-seismic-design-screener ranking above
+  // site-due-diligence-bundle. That broke for a reason with nothing to do with
+  // ranking: the bundle's Store description is capped at 300 characters and now
+  // lists 12 of its 20 layers, so "seismic" simply is not in it any more. The test
+  // was asserting a fact about Store COPY while claiming to assert ranking.
+  //
+  // So derive the discriminating case from the catalog instead. We need a term with
+  // exactly one slug hit that sorts alphabetically AFTER at least one
+  // description-only hit — the slug match can then only come first if slug hits
+  // genuinely outweigh description hits, rather than tying and falling through to
+  // the alphabetical tiebreak.
+  const terms = new Set();
+  for (const a of catalog.actors) {
+    for (const w of a.slug.split('-')) if (w.length > 4) terms.add(w);
+  }
+  let probe = null;
+  for (const t of terms) {
+    const slugHits = catalog.actors.filter((a) => a.slug.includes(t));
+    if (slugHits.length !== 1) continue;
+    const re = new RegExp(t, 'i');
+    const descBefore = catalog.actors.filter((a) => !a.slug.includes(t)
+      && re.test(`${a.description} ${a.title}`)
+      && a.slug < slugHits[0].slug);
+    if (descBefore.length) { probe = { term: t, slug: slugHits[0].slug, other: descBefore[0].slug }; break; }
+  }
+  assert.ok(probe, 'no discriminating term in the catalog — ranking cannot be tested');
+
+  const s = searchCatalog(index, probe.term, 20);
+  assert.equal(s[0].tool, probe.slug,
+    `"${probe.term}": the slug hit ${probe.slug} must outrank ${probe.other}, which sorts earlier alphabetically`);
+  assert.ok(s.some((x) => x.tool === probe.other),
+    'the description-only match should still be returned, just ranked lower');
 });
 
 test('search finds actors by agency name that is not in the slug', () => {
