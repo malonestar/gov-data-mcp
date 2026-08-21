@@ -1,6 +1,6 @@
 {
   "name": "gov-data-mcp",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "mcpName": "io.github.malonestar/gov-data-mcp",
   "description": "MCP server exposing 95 US government open-data tools (EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, state licensing boards) as agent-callable tools, backed by published Apify Actors.",
   "type": "module",
@@ -20,7 +20,8 @@
     "start": "node src/index.js",
     "test": "node --test test/tools.test.js test/apify.test.js test/catalog.test.js",
     "catalog": "node tools/gen-catalog.cjs",
-    "check:catalog": "node tools/check-catalog-live.cjs"
+    "check:catalog": "node tools/check-catalog-live.cjs",
+    "readme": "node tools/gen-readme-coverage.cjs"
   },
   "keywords": [
     "mcp",

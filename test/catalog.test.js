@@ -144,3 +144,28 @@ test('server.json satisfies the MCP registry constraints', () => {
     assert.ok(!/\b\d{2,}\b/.test(server.description),
         'server.json description should carry no tool count — it cannot be kept true');
 });
+
+test('README coverage matches the catalog — every actor linked, no phantom links', () => {
+    // The README shipped claiming "95 US government open-data tools" against a
+    // live 114, on both the npm page and the GitHub page — the two places a
+    // stranger evaluates this project. It is generated now
+    // (tools/gen-readme-coverage.cjs); these assertions stop it drifting again.
+    const md = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+
+    const headline = md.match(/\*\*(\d+) US government open-data tools, as one MCP server\.\*\*/);
+    assert.ok(headline, 'README headline count is missing or reworded');
+    assert.equal(Number(headline[1]), catalog.count,
+        `README headline says ${headline[1]} tools; the catalog holds ${catalog.count}`);
+
+    const linked = new Set(
+        [...md.matchAll(/\]\(https:\/\/apify\.com\/malonestar\/([a-z0-9-]+)\)/g)].map((m) => m[1]));
+    const slugs = new Set(catalog.actors.map((a) => a.slug));
+
+    const phantom = [...linked].filter((s) => !slugs.has(s));
+    assert.deepEqual(phantom, [],
+        `README links actors that are not in the catalog — those are 404s on a public page: ${phantom.join(', ')}`);
+
+    const missing = [...slugs].filter((s) => !linked.has(s));
+    assert.deepEqual(missing, [],
+        `${missing.length} published actor(s) are not linked from the README, so nobody reading it can find them: ${missing.slice(0, 5).join(', ')}`);
+});
