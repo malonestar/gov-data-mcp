@@ -30,10 +30,17 @@ const MUTATIONS = [
   { file: 'src/tools.js', from: '      annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },', to: '', why: 'featured tools stop declaring what calling them does to the world' },
   { file: 'src/tools.js', from: '  BILLED_LIVE_READ: { readOnlyHint: false,', to: '  BILLED_LIVE_READ: { readOnlyHint: true,', why: 'a tool that spends the caller money claims to be read-only' },
   { file: 'src/tools.js', from: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }', to: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }', why: 'a bundled catalog read claims to reach the open world' },
-  { file: 'src/tools.js', from: 'Reads live from the official government source. ${COST_NOTE}', to: 'Reads live from the official government source. ${\'\'}', why: 'billing stops being disclosed on the tools that bill' },
+  { file: 'src/tools.js', from: 'Reads live from the official government source. ${costNote(a.pricing)}', to: 'Reads live from the official government source. ${\'\'}', why: 'billing stops being disclosed on the tools that bill' },
   { file: 'src/tools.js', from: "  'nhd-surface-water-404-screener':", to: "  'nhd-surface-water-404-screeners':", why: 'a routing note points at a tool name that does not exist' },
   { file: 'package.json', from: 'MCP server exposing published US government', to: 'MCP server exposing 95 published US government', why: 'the npm headline description carries a count that will rot' },
   { file: 'README.md', from: 'and it will search all ', to: 'and it will search all 95. Ignore: ', why: 'a stale catalog count is reintroduced into README prose' },
+
+  // --- pricing and naming, v1.1.0 ------------------------------------------
+  { file: 'src/tools.js', from: 'billed ${priceLine(pricing)}', to: 'billed at the rate on the Store page.', why: 'featured tools stop quoting a price an agent can actually read' },
+  { file: 'src/tools.js', from: "    usdPer1000Results: x.actor.pricing ? x.actor.pricing.usdPer1000 : null,", to: '', why: 'search hits stop carrying price, so an agent chooses blind' },
+  { file: 'src/tools.js', from: "  SEARCH: 'search-gov-data-tools',", to: "  SEARCH: 'search_gov_data_tools',", why: 'the naming convention splits in two again' },
+  { file: 'src/tools.js', from: '  if (RENAMED_IN_1_1[toolName]) {', to: '  if (false) {', why: 'a pre-1.1 tool name gets a bare "unknown tool" with no way to recover' },
+  { file: 'src/catalog.json', from: '"usdPerUnit": 0.01,', to: '"usdPerUnit": 10,', why: 'a 1000x overpriced rate reaches the shipped catalog' },
 ];
 
 let pass = 0, fail = 0;

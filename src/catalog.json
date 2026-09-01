@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-01T00:04:50.680Z",
+  "generatedAt": "2026-09-01T01:24:22.865Z",
   "owner": "malonestar",
   "count": 116,
   "actors": [
@@ -14,6 +14,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/absentee-owner-lead-list-builder",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.025,
+        "usdPer1000": 25,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.025,
+          "BRONZE": 0.02,
+          "SILVER": 0.0175,
+          "GOLD": 0.01375,
+          "PLATINUM": 0.01,
+          "DIAMOND": 0.0075
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:11:56.823Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -70,6 +87,23 @@
         "DEVELOPER_TOOLS"
       ],
       "storeUrl": "https://apify.com/malonestar/acris-deed-transfer-intel",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.015,
+        "usdPer1000": 15,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.015,
+          "BRONZE": 0.012,
+          "SILVER": 0.0105,
+          "GOLD": 0.00825,
+          "PLATINUM": 0.006,
+          "DIAMOND": 0.0045
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:27:24.170Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -141,6 +175,23 @@
         "NEWS"
       ],
       "storeUrl": "https://apify.com/malonestar/adcvd-trade-remedy-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:47.469Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -202,6 +253,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/bank-enforcement-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:48.286Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -259,6 +327,23 @@
         "DEVELOPER_TOOLS"
       ],
       "storeUrl": "https://apify.com/malonestar/blm-mining-claims",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:46.597Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -331,6 +416,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/blm-sage-grouse-siting-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.452Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -370,6 +472,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/blm-solar-siting-area-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.870Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -403,6 +522,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/boem-offshore-wind-lease-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.393Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -457,6 +593,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/bts-airline-ontime-delay-climatology",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Route climatology result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-31T06:29:33.064Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -530,6 +683,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/calfire-fhsz-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:59.523Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -573,6 +743,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/cbrs-coastal-barrier-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:54.877Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -634,6 +821,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/cdc-nndss-outbreak-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:51.883Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -693,6 +897,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/cdfi-nmtc-lowincome-energy-bonus-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.708Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -734,6 +955,23 @@
         "DEVELOPER_TOOLS"
       ],
       "storeUrl": "https://apify.com/malonestar/childcare-provider-leads",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:12:00.188Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -807,6 +1045,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/city-business-license-leads",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.661Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -865,6 +1120,23 @@
         "AUTOMATION"
       ],
       "storeUrl": "https://apify.com/malonestar/clinical-trials-meta-search",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:45.982Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -924,6 +1196,23 @@
         "AUTOMATION"
       ],
       "storeUrl": "https://apify.com/malonestar/cms-open-payments",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:47.103Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -975,6 +1264,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/cms-part-d-prescriber-delta",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.983Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1069,6 +1375,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/consolidated-screening-list-delta",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:48.096Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1120,6 +1443,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/distressed-property-signal-stacker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.025,
+        "usdPer1000": 25,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.025,
+          "BRONZE": 0.02,
+          "SILVER": 0.0175,
+          "GOLD": 0.01375,
+          "PLATINUM": 0.01,
+          "DIAMOND": 0.0075
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:27:23.071Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1185,6 +1525,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/dod-mirta-military-installation-siting-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Screened site",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-18T07:02:10.973Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1259,6 +1616,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/dol-enforcement-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:49.712Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1331,6 +1705,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/drug-shortage-delta-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:47.910Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1384,6 +1775,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/eia-v2-site-energy-economics",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:03:00.796Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1431,6 +1839,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/energy-corridor-368-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.988Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1470,6 +1895,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-airtoxscreen-cancer-risk-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Screened site",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-11T16:48:20.095Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1513,6 +1955,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-contaminated-site-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.905Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1597,6 +2056,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-drinking-water-quality-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Drinking water screening result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-05T04:08:16.709Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1685,6 +2161,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-ghgrp-emitter-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.043Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1762,6 +2255,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-impaired-waters-303d-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.623Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1801,6 +2311,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-nonattainment-air-permit-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.238Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1851,6 +2378,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-rcra-corrective-action-cleanup-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Cleanup record",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-19T04:21:32.288Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1940,6 +2484,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-rcra-hazwaste-generator-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.405Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -1992,6 +2553,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-repowering-brownfield-to-solar-site-finder",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "RE-Powering candidate site",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-19T04:07:48.836Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2120,6 +2698,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-sole-source-aquifer-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:56.670Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2169,6 +2764,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-tri-facility-release-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "TRI release row",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-18T07:02:12.712Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2218,6 +2830,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/epa-tsca-cdr-chemical-site-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "CDR site-chemical row",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-19T04:10:15.531Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2302,6 +2931,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/erns-nrc-release-incident-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result row",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-11T16:48:22.328Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2390,6 +3036,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/faa-drone-airspace-checker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.02,
+        "usdPer1000": 20,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.02,
+          "BRONZE": 0.016,
+          "SILVER": 0.014,
+          "GOLD": 0.011,
+          "PLATINUM": 0.008,
+          "DIAMOND": 0.006
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:52.245Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2450,6 +3113,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fdic-branch-network-churn-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.015,
+        "usdPer1000": 15,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.015,
+          "BRONZE": 0.012,
+          "SILVER": 0.0105,
+          "GOLD": 0.00825,
+          "PLATINUM": 0.006,
+          "DIAMOND": 0.0045
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-25T20:03:00.199Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2532,6 +3212,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fdic-ncua-health-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.305Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2618,6 +3315,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/fdic-sod-deposit-market-share-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:12:01.371Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2680,6 +3394,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fdic-structure-change-delta-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.015,
+        "usdPer1000": 15,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.015,
+          "BRONZE": 0.012,
+          "SILVER": 0.0105,
+          "GOLD": 0.00825,
+          "PLATINUM": 0.006,
+          "DIAMOND": 0.0045
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-25T20:02:59.304Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2762,6 +3493,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fec-campaign-finance-delta",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:49.944Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2863,6 +3611,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/fema-nri-county-risk-profile",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:54.091Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2915,6 +3680,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fema-repetitive-loss-flood-market-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-19T04:28:51.443Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -2977,6 +3759,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fhlbank-membership-delta-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Roster row",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-11T16:48:21.486Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3044,6 +3843,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/fhwa-nbi-bridge-risk-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:52.659Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3096,6 +3912,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/fuds-defense-site-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Screened site",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-11T16:48:20.729Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3171,6 +4004,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/fws-critical-habitat-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.719Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3214,6 +4064,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/fws-wetlands-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:54.382Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3263,6 +4130,23 @@
         "AI"
       ],
       "storeUrl": "https://apify.com/malonestar/gleif-ownership-graph",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:46.771Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3340,6 +4224,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/gsa-site-scanning-auditor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.005,
+        "usdPer1000": 5,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.005,
+          "BRONZE": 0.004,
+          "SILVER": 0.0035,
+          "GOLD": 0.00275,
+          "PLATINUM": 0.002,
+          "DIAMOND": 0.0015
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:52.432Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3440,6 +4341,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/hifld-grid-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.038Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3524,6 +4442,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/historic-land-use-sic-contaminant-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-19T04:28:51.817Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3654,6 +4589,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/hmda-fair-lending-disparity-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.229Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3784,6 +4736,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/hrsa-clinician-workforce-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:51.325Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3851,6 +4820,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/hrsa-shortage-designation-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.009,
+        "usdPer1000": 9,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.009,
+          "BRONZE": 0.0072,
+          "SILVER": 0.0063,
+          "GOLD": 0.00495,
+          "PLATINUM": 0.0036,
+          "DIAMOND": 0.0027
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.821Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3934,6 +4920,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/hud-affordable-housing-explorer",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:52.067Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -3998,6 +5001,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/hud-qct-lihtc-boost-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:56.109Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4031,6 +5051,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/hud-section8-contract-expiration-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Contract row",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-18T07:02:10.329Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4132,6 +5169,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/interconnection-queue-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:49.203Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4185,6 +5239,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ira-energy-community-bonus-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.364Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4218,6 +5289,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/karst-sinkhole-risk-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.794Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4254,6 +5342,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/kyb-company-verifier",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.003,
+        "usdPer1000": 3,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.003,
+          "BRONZE": 0.0024,
+          "SILVER": 0.0021,
+          "GOLD": 0.00165,
+          "PLATINUM": 0.0012,
+          "DIAMOND": 0.0009
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-08-24T23:57:42.560Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4295,6 +5400,23 @@
         "DEVELOPER_TOOLS"
       ],
       "storeUrl": "https://apify.com/malonestar/license-verifier",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:46.413Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4390,6 +5512,23 @@
         "DEVELOPER_TOOLS"
       ],
       "storeUrl": "https://apify.com/malonestar/liquor-license-new-openings-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.015,
+        "usdPer1000": 15,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.015,
+          "BRONZE": 0.012,
+          "SILVER": 0.0105,
+          "GOLD": 0.00825,
+          "PLATINUM": 0.006,
+          "DIAMOND": 0.0045
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:11:59.065Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4459,6 +5598,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/medicaid-exclusion-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:48.963Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4522,6 +5678,23 @@
         "AI"
       ],
       "storeUrl": "https://apify.com/malonestar/nadac-price-movers",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:46.934Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4582,6 +5755,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/national-tunnel-inventory-risk-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.588Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4618,6 +5808,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/nfip-flood-loss-risk-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.208Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4669,6 +5876,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/nhd-surface-water-404-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-25T20:02:59.709Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4712,6 +5936,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/nhtsa-vpic-vin-decoder",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.005,
+        "usdPer1000": 5,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.005,
+          "BRONZE": 0.004,
+          "SILVER": 0.0035,
+          "GOLD": 0.00275,
+          "PLATINUM": 0.002,
+          "DIAMOND": 0.0015
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:51.492Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4749,6 +5990,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/nid-dam-risk-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:51.695Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4810,6 +6068,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/noaa-efh-consultation-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:56.846Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4859,6 +6134,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/noaa-slr-inundation-threshold-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Screened site",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-05T05:18:48.583Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4931,6 +6223,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/noaa-storm-events-peril-climatology",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:54.547Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -4994,6 +6303,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/npm-package-health-scorer",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.487Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5026,6 +6352,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/nrel-pvwatts-solar-resource-scorer",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:59.695Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5093,6 +6436,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/nrhp-historic-place-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:56.510Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5132,6 +6492,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ntad-fra-rail-crossing-risk-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Crossing record",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-18T07:02:11.574Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5194,6 +6571,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ntad-gas-pipeline-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:59.345Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5239,6 +6633,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/nyc-landlord-registry-lead-list",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.015,
+        "usdPer1000": 15,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.015,
+          "BRONZE": 0.012,
+          "SILVER": 0.0105,
+          "GOLD": 0.00825,
+          "PLATINUM": 0.006,
+          "DIAMOND": 0.0045
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:27:25.106Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5305,6 +6716,23 @@
         "AUTOMATION"
       ],
       "storeUrl": "https://apify.com/malonestar/oil-gas-well-permits",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:47.278Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5389,6 +6817,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/orphaned-well-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-08-05T02:50:19.490Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5456,6 +6901,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/padus-protected-lands-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.939Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5489,6 +6951,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/parcel-owner-lookup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.02,
+        "usdPer1000": 20,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.02,
+          "BRONZE": 0.016,
+          "SILVER": 0.014,
+          "GOLD": 0.011,
+          "PLATINUM": 0.008,
+          "DIAMOND": 0.006
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:11:57.970Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5522,6 +7001,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/pbgc-pension-failure-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:03:00.255Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5569,6 +7065,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/pcaob-auditor-engagement-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-25T20:03:00.509Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5630,6 +7143,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ptab-trial-tracker",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:49.388Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5705,6 +7235,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/realtor-license-roster-delta",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:27:26.159Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5782,6 +7329,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/reg-cf-lifecycle-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Reg CF lifecycle result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-31T06:29:20.725Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5853,6 +7417,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ria-registration-delta-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-23T06:27:27.144Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -5924,6 +7505,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/sba-loan-portfolio-explorer",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:48.624Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6015,6 +7613,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/sbom-vulnerability-rollup",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.02,
+        "usdPer1000": 20,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.02,
+          "BRONZE": 0.016,
+          "SILVER": 0.014,
+          "GOLD": 0.011,
+          "PLATINUM": 0.008,
+          "DIAMOND": 0.006
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:47.733Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6069,6 +7684,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/short-interest-ftd-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:48.458Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6136,6 +7768,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/site-due-diligence-bundle",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.1,
+        "usdPer1000": 100,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.1,
+          "BRONZE": 0.08,
+          "SILVER": 0.07,
+          "GOLD": 0.055,
+          "PLATINUM": 0.04,
+          "DIAMOND": 0.03
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:58.041Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6175,6 +7824,23 @@
         "AUTOMATION"
       ],
       "storeUrl": "https://apify.com/malonestar/sos-registry-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.0025,
+        "usdPer1000": 2.5,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.0025,
+          "BRONZE": 0.002,
+          "SILVER": 0.00175,
+          "GOLD": 0.001375,
+          "PLATINUM": 0.001,
+          "DIAMOND": 0.00075
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-08-24T23:57:42.279Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6238,6 +7904,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/ssurgo-soil-suitability-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Soil screening result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-05T05:28:02.404Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6310,6 +7993,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/state-tank-spill-registry-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:59.161Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6376,6 +8076,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/tribal-land-jurisdiction-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.015Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6419,6 +8136,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/usace-levee-flood-risk-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:53.565Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6463,6 +8197,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usda-cdl-farmland-siting-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.007,
+        "usdPer1000": 7,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.007,
+          "BRONZE": 0.0056,
+          "SILVER": 0.0049,
+          "GOLD": 0.00385,
+          "PLATINUM": 0.0028,
+          "DIAMOND": 0.0021
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.539Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6527,6 +8278,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-bedrock-geology-lithology-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-07-25T20:02:59.970Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6566,6 +8334,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-groundwater-depth-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Groundwater result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-18T07:02:12.150Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6655,6 +8440,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-historical-topo-records-review",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-08-05T02:39:18.852Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6738,6 +8540,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-landslide-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:55.773Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6778,6 +8597,23 @@
         "MCP_SERVERS"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-nwis-streamflow-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:51.152Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6861,6 +8697,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/usgs-seismic-design-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:54.712Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6940,6 +8793,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/usmin-mine-feature-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Mine feature row",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": null,
+        "since": "2026-08-11T16:48:19.465Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -6983,6 +8853,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/uspto-patent-lapse-fto-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:03:00.497Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -7041,6 +8928,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/uswtdb-turbine-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.006,
+        "usdPer1000": 6,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.006,
+          "BRONZE": 0.0048,
+          "SILVER": 0.0042,
+          "GOLD": 0.0033,
+          "PLATINUM": 0.0024,
+          "DIAMOND": 0.0018
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:56.279Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -7084,6 +8988,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/warn-layoff-aggregator",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:50.121Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -7141,6 +9062,23 @@
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/water-rights-availability-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:59.871Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -7193,6 +9131,23 @@
         "REAL_ESTATE"
       ],
       "storeUrl": "https://apify.com/malonestar/wild-scenic-river-proximity-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0032,
+          "DIAMOND": 0.0024
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:57.186Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {
@@ -7236,6 +9191,23 @@
         "LEAD_GENERATION"
       ],
       "storeUrl": "https://apify.com/malonestar/wildfire-asset-exposure-screener",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": 0.00005,
+        "since": "2026-07-21T07:02:52.833Z"
+      },
       "inputSchema": {
         "type": "object",
         "properties": {

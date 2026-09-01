@@ -80,8 +80,12 @@ if (unmatched.length) {
 async function toolSurface() {
     const { FEATURED, META_TOOLS } = await import('../src/tools.js');
     const featured = FEATURED.length;
-    const meta = Object.keys(META_TOOLS).length;
-    return { featured, meta, exposed: featured + meta, reachable: catalog.count - featured };
+    const names = Object.values(META_TOOLS);
+    return {
+        featured, meta: names.length, names,
+        exposed: featured + names.length,
+        reachable: catalog.count - featured,
+    };
 }
 
 const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'];
@@ -91,9 +95,9 @@ async function main() {
 const surface = await toolSurface();
 
 let body = `## Coverage\n\n**${catalog.count} tools**, every one reading an official US government API or bulk file. `
-    + `The MCP server exposes ${surface.exposed} of them directly — ${word(surface.featured)} named tools plus \`search_gov_data_tools\`, `
-    + `\`describe_gov_data_tool\` and \`run_gov_data_tool\`, which reach the rest — because agents choose `
-    + `badly when handed more than about twenty tools.\n\n`
+    + `The MCP server exposes ${surface.exposed} of them directly — ${word(surface.featured)} named tools plus `
+    + `${surface.names.slice(0, -1).map(n => `\`${n}\``).join(', ')} and \`${surface.names[surface.names.length - 1]}\`, `
+    + `which reach the rest — because agents choose badly when handed more than about twenty tools.\n\n`
     + `Each entry links to its full input/output schema, pricing and worked examples.\n\n`;
 
 for (const [name, re] of BUCKETS) {
@@ -127,6 +131,15 @@ const REWRITES = [
         `**Plus ${word(surface.meta)} tools that reach the other ${surface.reachable}:**`],
     [/and it will search all \d+\./,
         `and it will search all ${catalog.count}.`],
+    // The meta tool names themselves are listed in the README, and they were
+    // renamed in v1.1.0. Derive them so a future rename cannot leave the docs
+    // telling agents to call a tool that no longer exists.
+    [/- `[a-z_-]+` — find a tool by keyword, agency or topic/,
+        `- \`${surface.names[0]}\` — find a tool by keyword, agency or topic`],
+    [/- `[a-z_-]+` — full input schema for any tool in the catalog/,
+        `- \`${surface.names[1]}\` — full input schema for any tool in the catalog`],
+    [/- `[a-z_-]+` — run any tool in the catalog/,
+        `- \`${surface.names[2]}\` — run any tool in the catalog`],
 ];
 for (const [re, replacement] of REWRITES) {
     if (!re.test(md)) {

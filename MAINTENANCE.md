@@ -19,8 +19,8 @@ on any README count that disagrees with the catalog, and on any digit in
 Run in this order. Each one has caught a real defect.
 
 ```bash
-npm test                      # 55 assertions
-node tools/mutate.cjs         # 18 mutations, all must be caught
+npm test                      # 63 assertions
+node tools/mutate.cjs         # 23 mutations, all must be caught
 npm run catalog -- <token>    # regenerate from the live Apify account
 npm run readme                # regenerate coverage + every derived count
 npm run check:catalog         # diff the catalog against live; exits 1 on drift
@@ -40,7 +40,8 @@ with "rewrite target not found", fix the pattern — do not delete the check.
 |---|---|---|
 | A new Actor is published to the portfolio | Regenerate the catalog, `npm run readme`, cut a release | Until then the server tells agents a real, published tool does not exist. Age is not the signal: the catalog that shipped wrong was **eight days old** |
 | An Actor's input schema changes (a field becomes required) | Same | An agent builds a call from the bundled schema, gets an HTTP 400 it could not have predicted, and cannot tell the schema moved |
-| An Actor is unpublished or renamed | Same, and check `FEATURED` in `src/tools.js` | `indexCatalog` reports missing featured tools on stderr at startup — that warning is the tripwire |
+| An Actor is unpublished or renamed | Same, and check `FEATURED` in `src/tools.js` | `indexCatalog` reports missing featured tools on stderr at startup — that warning is the tripwire. A rename also renames the MCP tool, since the name IS the slug |
+| **An Actor's price changes** | Regenerate the catalog and cut a release | Pricing moves independently of any build, so the catalog can be schema-perfect and still quote a rate the caller is not charged. `check:catalog` now diffs price per actor and fails on drift |
 | A featured tool is added or removed | `npm run readme` | The exposed-count prose is derived from `FEATURED.length`, but only when the generator runs |
 
 ## Quarterly, or when something feels stale
@@ -64,15 +65,16 @@ Be honest about these rather than assuming a green build covers them.
    listing, the awesome-mcp-servers entry. Code gates cannot see them.
 2. **Whether a published Actor still works.** This server reports failures faithfully,
    but it does not monitor them. That is the portfolio's own health sweep's job.
-3. **Tool naming consistency.** Meta tools are `snake_case`, catalog tools are
-   `hyphen-case`, because catalog tools are named by their Apify slug. A reviewer
-   flagged the split as arbitrary. Harmonising it is a breaking change for anyone
-   whose config names a tool, so it is a deliberate open decision, not an oversight.
-4. **Per-tool pricing.** The tool descriptions disclose *that* a call is billed and
-   point at the Store page for the rate; they do not carry the rate itself, because the
-   catalog does not fetch `pricingInfos`. Adding it would let an agent weigh cost before
-   calling — the single biggest remaining agent-legibility win, and it needs a
-   generator change plus a gate so the numbers cannot rot.
+3. **Whether a price is the *right* price.** The catalog now carries each tool's real
+   rate and `check:catalog` diffs it against live, so it cannot silently drift. What no
+   gate can tell you is whether the rate you set on Apify is the one you meant. The
+   $0.50–$200 per-1,000 band in `gen-catalog.cjs` catches the 1000x-overprice defect,
+   not a deliberate mispricing.
+4. **Tool naming, going forward.** Resolved in v1.1.0 — every tool is hyphen-case, and
+   for catalog tools the name **is** the Apify slug, which is also the `tool` argument
+   and the Store URL tail. Two tests pin that invariant. Renaming an Actor on Apify
+   therefore renames its MCP tool; the pre-1.1 meta names are answered with an explicit
+   rename notice rather than aliased, and that map should be kept, not tidied away.
 
 ## Releasing
 

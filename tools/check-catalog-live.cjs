@@ -28,6 +28,31 @@ if (!TOKEN) {
 
 const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'catalog.json'), 'utf8'));
 
+/**
+ * The list price from the ACTIVE pricing entry. Mirrors activePricing() in
+ * gen-catalog.cjs deliberately: pricingInfos is a history that can hold a
+ * future-dated scheduled change, actorChargeEvents is keyed with
+ * apify-actor-start first, and the tiered price hides one level down at
+ * eventTieredPricingUsd.FREE.tieredEventPriceUsd.
+ */
+function livePrice(detail) {
+    const infos = (detail.pricingInfos || [])
+        .filter((p) => p.startedAt && Date.parse(p.startedAt) <= Date.now())
+        .sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
+    const active = infos[infos.length - 1];
+    if (!active) return null;
+    const events = (active.pricingPerEvent && active.pricingPerEvent.actorChargeEvents) || {};
+    const entries = Object.entries(events);
+    const primary = entries.find(([, e]) => e.isPrimaryEvent)
+        || entries.find(([, e]) => e.eventTieredPricingUsd)
+        || entries.find(([k]) => k !== 'apify-actor-start');
+    if (!primary) return null;
+    const ev = primary[1];
+    const tiers = ev.eventTieredPricingUsd;
+    const price = tiers ? (tiers.FREE && tiers.FREE.tieredEventPriceUsd) : ev.eventPriceUsd;
+    return typeof price === 'number' ? price : null;
+}
+
 async function get(url, attempt = 1) {
     const res = await fetch(url, { headers: { Authorization: 'Bearer ' + TOKEN } });
     if (res.status === 429 || res.status >= 500) {
@@ -58,12 +83,17 @@ async function get(url, attempt = 1) {
         live.set(detail.name, {
             required: [...(input.required || [])].sort(),
             props: Object.keys(input.properties).sort(),
+            // A price the agent quotes must be the price the caller is charged.
+            // Pricing changes independently of any build, so a catalog can be
+            // schema-perfect and still quote a rate that moved weeks ago.
+            usdPerUnit: livePrice(detail),
         });
     }
 
     const inCatalog = new Map(catalog.actors.map((a) => [a.slug, {
         required: [...(a.inputSchema.required || [])].sort(),
         props: Object.keys(a.inputSchema.properties).sort(),
+        usdPerUnit: a.pricing ? a.pricing.usdPerUnit : null,
     }]));
 
     const problems = [];
@@ -79,6 +109,10 @@ async function get(url, attempt = 1) {
         if (l.required.join(',') !== c.required.join(',')) {
             problems.push(`REQUIRED ${slug}: live [${l.required.join(', ') || '-'}] vs catalog [${c.required.join(', ') || '-'}]`
                 + ' — an agent would build a call the actor rejects, or omit a field it thinks is mandatory');
+        }
+        if (l.usdPerUnit !== c.usdPerUnit) {
+            problems.push(`PRICE    ${slug}: live $${l.usdPerUnit} vs catalog $${c.usdPerUnit} per unit`
+                + ' — the server would quote an agent a rate the caller is not actually charged');
         }
         if (l.props.join(',') !== c.props.join(',')) {
             const added = l.props.filter((p) => !c.props.includes(p));

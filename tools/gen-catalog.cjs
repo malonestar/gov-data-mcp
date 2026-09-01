@@ -57,6 +57,67 @@ function sanitiseProperty(name, p) {
   return out;
 }
 
+/**
+ * Extract what a call actually costs, from the ACTIVE pricing entry.
+ *
+ * Three traps, all of them measured on this account:
+ *
+ * 1. `pricingInfos` is a HISTORY, not a value. Reading the last element blindly
+ *    can publish a price that is not yet in effect — Apify schedules a price
+ *    change with a FUTURE `startedAt` and a notification period, and the entry
+ *    sits in the array the whole time. The active entry is the latest one whose
+ *    `startedAt` has already passed.
+ * 2. `actorChargeEvents` is KEYED, and the first key is `apify-actor-start`, not
+ *    the result event. Reading [0] reports the wrong number for every actor.
+ * 3. `eventTieredPricingUsd.FREE` is an OBJECT — the price is one level deeper at
+ *    `.tieredEventPriceUsd`. Reading it like the flat `eventPriceUsd` yields
+ *    undefined for every tiered actor, which is all of them.
+ */
+function activePricing(detail, now = Date.now()) {
+  const infos = Array.isArray(detail.pricingInfos) ? detail.pricingInfos : [];
+  const started = infos
+    .filter(p => p.startedAt && Date.parse(p.startedAt) <= now)
+    .sort((a, b) => Date.parse(a.startedAt) - Date.parse(b.startedAt));
+  const active = started[started.length - 1];
+  if (!active) return null;
+
+  const events = (active.pricingPerEvent && active.pricingPerEvent.actorChargeEvents) || {};
+  const entries = Object.entries(events);
+  const primary = entries.find(([, e]) => e.isPrimaryEvent)
+    || entries.find(([, e]) => e.eventTieredPricingUsd)
+    || entries.find(([k]) => k !== 'apify-actor-start');
+  if (!primary) return null;
+
+  const [eventName, ev] = primary;
+  const tiers = ev.eventTieredPricingUsd || null;
+  const listPrice = tiers
+    ? (tiers.FREE && tiers.FREE.tieredEventPriceUsd)
+    : ev.eventPriceUsd;
+  if (typeof listPrice !== 'number' || !Number.isFinite(listPrice)) return null;
+
+  const startEvent = events['apify-actor-start'];
+  return {
+    model: active.pricingModel,
+    event: eventName,
+    unit: ev.eventTitle || 'result',
+    usdPerUnit: listPrice,
+    usdPer1000: Number((listPrice * 1000).toFixed(4)),
+    tierDiscountsUsdPerUnit: tiers
+      ? Object.fromEntries(Object.entries(tiers).map(([t, v]) => [t, v.tieredEventPriceUsd]))
+      : null,
+    actorStartUsd: startEvent ? startEvent.eventPriceUsd : null,
+    since: active.startedAt,
+  };
+}
+
+// A per-1k price far outside the portfolio's real band is the signature of the
+// 1000x overprice defect: a pricing PUT that sets per-1k dollars where Apify
+// expects per-EVENT dollars returns HTTP 200 and silently overcharges. Refuse to
+// publish a catalog carrying one — an agent quoting that price to a buyer is the
+// worst version of this bug.
+const MIN_USD_PER_1000 = 0.5;
+const MAX_USD_PER_1000 = 200;
+
 function toJsonSchema(input) {
   const props = {};
   for (const [k, v] of Object.entries(input.properties || {})) props[k] = sanitiseProperty(k, v);
@@ -87,6 +148,15 @@ function toJsonSchema(input) {
     const input = defn.input;
     if (!input || !input.properties) throw new Error(`${detail.name}: build ${buildId} has no input schema`);
 
+    // Cost is not optional metadata. An agent that cannot see the price cannot
+    // weigh whether to call, and this catalog is the only place it could look.
+    const pricing = activePricing(detail);
+    if (!pricing) throw new Error(`${detail.name}: no active pricing could be resolved — refusing to publish a tool whose cost an agent cannot see`);
+    if (pricing.usdPer1000 < MIN_USD_PER_1000 || pricing.usdPer1000 > MAX_USD_PER_1000) {
+      throw new Error(`${detail.name}: $${pricing.usdPer1000}/1000 is outside the sane band $${MIN_USD_PER_1000}-$${MAX_USD_PER_1000}. `
+        + 'This is the signature of a pricing PUT that set per-1k dollars where Apify expects per-EVENT dollars (a 1000x error that returns HTTP 200). Check the actor before regenerating.');
+    }
+
     catalog.push({
       slug: detail.name,
       actorId: `${USERNAME}/${detail.name}`,
@@ -94,9 +164,10 @@ function toJsonSchema(input) {
       description: (detail.description || defn.description || '').trim(),
       categories: detail.categories || [],
       storeUrl: `https://apify.com/${USERNAME}/${detail.name}`,
+      pricing,
       inputSchema: toJsonSchema(input),
     });
-    console.error(`[gen] + ${detail.name} (${Object.keys(input.properties).length} inputs)`);
+    console.error(`[gen] + ${detail.name} (${Object.keys(input.properties).length} inputs, $${pricing.usdPer1000}/1k)`);
   }
 
   catalog.sort((a, b) => a.slug.localeCompare(b.slug));

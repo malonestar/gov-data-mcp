@@ -29,10 +29,29 @@ export const FEATURED = [
   'license-verifier',
 ];
 
+/**
+ * Meta tools are hyphen-case for one reason: so that EVERY tool this server
+ * exposes follows a single rule, and for catalog tools the rule is stronger
+ * still — the tool name IS the Apify slug, which is also the value you pass to
+ * describe/run and the tail of the Store URL. The old snake_case meta names
+ * split the surface arbitrarily in two, which an independent review scored 2/5,
+ * and the alternative (snake_case everywhere) would have made 12 tool names
+ * differ from the slug they resolve to, trading one inconsistency for another.
+ *
+ * Renamed in v1.1.0. The pre-1.1 names are recognised in resolveCall and
+ * answered with an explicit rename notice rather than silently aliased — a
+ * caller with a hardcoded name deserves to be told, not quietly patched.
+ */
 export const META_TOOLS = {
-  SEARCH: 'search_gov_data_tools',
-  DESCRIBE: 'describe_gov_data_tool',
-  RUN: 'run_gov_data_tool',
+  SEARCH: 'search-gov-data-tools',
+  DESCRIBE: 'describe-gov-data-tool',
+  RUN: 'run-gov-data-tool',
+};
+
+export const RENAMED_IN_1_1 = {
+  search_gov_data_tools: 'search-gov-data-tools',
+  describe_gov_data_tool: 'describe-gov-data-tool',
+  run_gov_data_tool: 'run-gov-data-tool',
 };
 
 /** MCP tool names must match ^[a-zA-Z0-9_-]{1,64}$. Slugs already do. */
@@ -78,9 +97,30 @@ export const ANNOTATIONS = {
   BILLED_LIVE_READ: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
 };
 
+/** Format a price so an agent can compare tools without doing arithmetic. */
+export function priceLine(pricing) {
+  if (!pricing) return 'Price unavailable for this tool — check its Store page before calling.';
+  const per1k = pricing.usdPer1000;
+  const cheapest = pricing.tierDiscountsUsdPerUnit
+    ? Math.min(...Object.values(pricing.tierDiscountsUsdPerUnit))
+    : pricing.usdPerUnit;
+  const discount = cheapest < pricing.usdPerUnit
+    ? ` Lower on paid Apify plans, down to $${(cheapest * 1000).toFixed(2)} per 1,000.`
+    : '';
+  return `$${pricing.usdPerUnit} per ${pricing.unit} ($${per1k} per 1,000).${discount}`;
+}
+
+export function costNote(pricing) {
+  return 'COST AND SIDE EFFECTS: read-only with respect to the government source — it never writes to any external system — '
+    + `but each call starts a metered run on YOUR Apify account, billed ${priceLine(pricing)} `
+    + 'Nothing is charged when a run fails.';
+}
+
+/** The generic, price-free wording used by the run tool, which can run anything. */
 export const COST_NOTE =
   'COST AND SIDE EFFECTS: read-only with respect to the government source — it never writes to any external system — '
-  + 'but each call starts a metered run on YOUR Apify account and is billed per result row at the rate published on the Store page. '
+  + 'but each call starts a metered run on YOUR Apify account, billed per result row at the rate this tool reports. '
+  + 'Call describe-gov-data-tool first to see the exact price before running anything. '
   + 'Nothing is charged when a run fails.';
 
 /**
@@ -117,7 +157,7 @@ export function featuredToolDefinitions(index) {
     const routing = ROUTING[slug] ? ` ${ROUTING[slug]}` : '';
     return {
       name: toolNameFor(slug),
-      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. ${COST_NOTE} Store page: ${a.storeUrl}`,
+      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
       inputSchema: a.inputSchema,
       annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },
     };
@@ -161,7 +201,7 @@ export function metaToolDefinitions(index) {
         type: 'object',
         properties: {
           tool: { type: 'string', description: 'The tool name to run, e.g. "usgs-seismic-design-screener".' },
-          input: { type: 'object', description: 'Input object matching the schema returned by describe_gov_data_tool.' },
+          input: { type: 'object', description: `Input object matching the schema returned by ${META_TOOLS.DESCRIBE}.` },
           maxItems: { type: 'integer', description: 'Maximum rows to return. Default 200.', minimum: 1, maximum: 1000 },
         },
         required: ['tool', 'input'],
@@ -193,6 +233,9 @@ export function searchCatalog(index, query, limit = 10) {
     title: x.actor.title,
     description: truncate(x.actor.description, 300),
     categories: x.actor.categories,
+    // Price rides along on every search hit so an agent can weigh cost while
+    // choosing, rather than discovering it only after it has already called.
+    usdPer1000Results: x.actor.pricing ? x.actor.pricing.usdPer1000 : null,
     storeUrl: x.actor.storeUrl,
   }));
 }
@@ -212,6 +255,9 @@ export function describeTool(index, name) {
     title: actor.title,
     description: actor.description,
     categories: actor.categories,
+    pricing: actor.pricing
+      ? { ...actor.pricing, summary: priceLine(actor.pricing) }
+      : null,
     storeUrl: actor.storeUrl,
     inputSchema: actor.inputSchema,
   };
@@ -229,7 +275,12 @@ export function resolveCall(index, toolName, args) {
     }
     return { ok: true, slug, input: (args && args.input) || {}, maxItems: args && args.maxItems };
   }
-  return { ok: false, error: `Unknown tool "${toolName}".` };
+  // A caller with a hardcoded pre-1.1 name gets told what happened rather than
+  // silently aliased, so the hardcode gets fixed instead of quietly persisting.
+  if (RENAMED_IN_1_1[toolName]) {
+    return { ok: false, error: `"${toolName}" was renamed to "${RENAMED_IN_1_1[toolName]}" in gov-data-mcp v1.1.0, so that every tool on this server uses one naming convention. Call "${RENAMED_IN_1_1[toolName]}" instead — the arguments are unchanged.` };
+  }
+  return { ok: false, error: `Unknown tool "${toolName}". Call ${META_TOOLS.SEARCH} to list what this server offers.` };
 }
 
 /** Shape a run result into MCP text content. Never collapses a failure into an empty answer. */

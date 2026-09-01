@@ -51,9 +51,9 @@ Claude Desktop reads `claude_desktop_config.json`; Claude Code reads `.mcp.json`
 
 **Plus three tools that reach the other 104:**
 
-- `search_gov_data_tools` — find a tool by keyword, agency or topic
-- `describe_gov_data_tool` — full input schema for any tool in the catalog
-- `run_gov_data_tool` — run any tool in the catalog
+- `search-gov-data-tools` — find a tool by keyword, agency or topic
+- `describe-gov-data-tool` — full input schema for any tool in the catalog
+- `run-gov-data-tool` — run any tool in the catalog
 
 The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 116.
 
@@ -91,7 +91,7 @@ The underlying actors carry the same discipline: per-source status on every row,
 <!-- COVERAGE:START -->
 ## Coverage
 
-**116 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search_gov_data_tools`, `describe_gov_data_tool` and `run_gov_data_tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
+**116 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
 
 Each entry links to its full input/output schema, pricing and worked examples.
 

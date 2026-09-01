@@ -18,8 +18,9 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
 import {
-    FEATURED, META_TOOLS, ANNOTATIONS, COST_NOTE, ROUTING,
+    FEATURED, META_TOOLS, RENAMED_IN_1_1, ANNOTATIONS, COST_NOTE, ROUTING,
     indexCatalog, listTools, featuredToolDefinitions, metaToolDefinitions,
+    describeTool, searchCatalog, resolveCall, priceLine,
 } from '../src/tools.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../src/catalog.json', import.meta.url), 'utf8'));
@@ -65,10 +66,24 @@ test('every billed tool discloses cost and side effects in words, not just hints
             HINTS.reduce((o, h) => ({ ...o, [h]: t.annotations[h] }), {}),
             ANNOTATIONS.BILLED_LIVE_READ,
             `${t.name} starts a billed run and must be annotated as such`);
-        assert.ok(COST_NOTE_IN(t.description),
+        assert.match(t.description, /COST AND SIDE EFFECTS: read-only with respect to the government source/,
             `${t.name}: description does not disclose that calling it bills the caller`);
         assert.match(t.description, /Nothing is charged when a run fails/,
             `${t.name}: a caller must know a failure is free, or it will not retry a transient outage`);
+    }
+});
+
+test('every featured tool quotes its own real price, not a generic pointer', () => {
+    // Before v1.1 the tools said only "at the rate published on the Store page",
+    // which an agent cannot read. A price it has to leave the conversation to
+    // find is a price it will not weigh.
+    for (const t of featuredToolDefinitions(index)) {
+        const actor = index.bySlug.get(t.name);
+        assert.ok(actor.pricing, `${t.name}: catalog entry carries no pricing`);
+        assert.ok(t.description.includes(`$${actor.pricing.usdPerUnit} per ${actor.pricing.unit}`),
+            `${t.name}: description does not state the per-unit price`);
+        assert.ok(t.description.includes(`$${actor.pricing.usdPer1000} per 1,000`),
+            `${t.name}: description does not state the per-1,000 price an agent can compare on`);
     }
 });
 
@@ -159,3 +174,80 @@ test('README carries no orphaned tool count from an earlier catalog', () => {
 function COST_NOTE_IN(description) {
     return description.includes(COST_NOTE);
 }
+
+// --- pricing, and one naming convention ------------------------------------
+
+test('every catalog entry carries a price an agent can act on', () => {
+    for (const a of catalog.actors) {
+        assert.ok(a.pricing, `${a.slug}: no pricing — an agent cannot weigh whether to call it`);
+        assert.equal(typeof a.pricing.usdPerUnit, 'number', `${a.slug}: usdPerUnit is not a number`);
+        assert.ok(a.pricing.usdPerUnit > 0, `${a.slug}: a free price is almost certainly a parse failure`);
+        assert.equal(a.pricing.usdPer1000, Number((a.pricing.usdPerUnit * 1000).toFixed(4)),
+            `${a.slug}: per-1000 disagrees with per-unit`);
+        assert.ok(a.pricing.event !== 'apify-actor-start',
+            `${a.slug}: priced off the actor-start event. actorChargeEvents is KEYED and that key is first — `
+            + 'reading [0] reports the wrong number for every actor.');
+    }
+});
+
+test('no catalog price sits in the 1000x-overprice band', () => {
+    // A pricing PUT that sets per-1k dollars where Apify expects per-EVENT
+    // dollars returns HTTP 200 and silently overcharges by 1000x. It has
+    // happened on this account. An agent quoting that price to a buyer is the
+    // worst version of the bug, so the band is asserted in the shipped artifact
+    // as well as in the generator.
+    for (const a of catalog.actors) {
+        assert.ok(a.pricing.usdPer1000 >= 0.5 && a.pricing.usdPer1000 <= 200,
+            `${a.slug}: $${a.pricing.usdPer1000} per 1,000 is outside the portfolio's real band`);
+    }
+});
+
+test('describe and search both hand back the price', () => {
+    const d = describeTool(index, 'epa-contaminated-site-screener');
+    assert.ok(d.ok && d.pricing && d.pricing.summary, 'describe returns no pricing summary');
+    assert.match(d.pricing.summary, /\$\d/, 'the pricing summary states no figure');
+    for (const hit of searchCatalog(index, 'wetlands flood', 5)) {
+        assert.equal(typeof hit.usdPer1000Results, 'number',
+            `${hit.tool}: a search hit with no price makes an agent choose blind`);
+    }
+});
+
+test('priceLine surfaces the paid-tier discount rather than hiding it', () => {
+    const line = priceLine({ usdPerUnit: 0.01, usdPer1000: 10, unit: 'result',
+        tierDiscountsUsdPerUnit: { FREE: 0.01, DIAMOND: 0.003 } });
+    assert.match(line, /\$0\.01 per result \(\$10 per 1,000\)/);
+    assert.match(line, /down to \$3\.00 per 1,000/);
+});
+
+test('every tool name follows one convention', () => {
+    // The whole point of the v1.1.0 rename. Meta tools were snake_case while
+    // catalog tools were the hyphen-case Apify slug, which an independent
+    // review scored 2/5 for arbitrariness.
+    for (const t of listTools(index)) {
+        assert.match(t.name, /^[a-z0-9]+(-[a-z0-9]+)*$/,
+            `${t.name} is not hyphen-case — this server has exactly one naming convention`);
+        assert.ok(!t.name.includes('_'), `${t.name} still contains an underscore`);
+    }
+});
+
+test('a catalog tool name IS its Apify slug', () => {
+    // The invariant that made hyphen-case the right choice: the name an agent
+    // calls, the value it passes to describe/run, and the Store URL tail are
+    // all the same string. Nothing needs mapping.
+    for (const t of featuredToolDefinitions(index)) {
+        assert.ok(index.bySlug.has(t.name), `${t.name} is not a catalog slug`);
+        assert.ok(index.bySlug.get(t.name).storeUrl.endsWith('/' + t.name),
+            `${t.name}: store URL does not end in the tool name`);
+    }
+});
+
+test('a pre-1.1 tool name is answered with the rename, not a silent alias', () => {
+    for (const [old, current] of Object.entries(RENAMED_IN_1_1)) {
+        const r = resolveCall(index, old, {});
+        assert.equal(r.ok, false, `${old} still resolves — a silent alias leaves the caller's hardcode in place`);
+        assert.match(r.error, new RegExp(`renamed to "${current}"`),
+            `${old}: the error does not tell the caller what to call instead`);
+        assert.ok(Object.values(META_TOOLS).includes(current),
+            `${old} maps to "${current}", which is not a current tool name`);
+    }
+});
