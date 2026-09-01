@@ -41,13 +41,13 @@ const BUCKETS = [
     ['Banking, lending & credit',
         /fdic|ncua|fhlbank|hmda|sba-loan|bank-enforcement|deposit|branch-network|structure-change/],
     ['Securities, audit, pensions & sanctions',
-        /pcaob|ria-registration|short-interest|ftd|pbgc|pension|consolidated-screening|adcvd|trade-remedy|fec-campaign|debarment/],
+        /pcaob|ria-registration|short-interest|ftd|pbgc|pension|consolidated-screening|adcvd|trade-remedy|fec-campaign|debarment|reg-cf|crowdfunding|edgar/],
     ['Licensing, exclusion & workforce screening',
         /license|licence|realtor|liquor|medicaid-exclusion|kyb|gleif|sos-registry|clinician|hrsa|npi|nppes/],
     ['Real estate, parcels, deeds & leads',
         /parcel|acris|deed|landlord|absentee|distressed|childcare-provider|city-business-license|hud-|qct|lihtc|section8|affordable/],
     ['Infrastructure, transport & airspace',
-        /bridge|tunnel|dam|rail|crossing|drone|airspace|faa|gsa-site|ntad|mirta|installation|vpic|vin-decoder/],
+        /bridge|tunnel|dam|rail|crossing|drone|airspace|faa|gsa-site|ntad|mirta|installation|vpic|vin-decoder|airline|ontime|on-time|flight/],
     ['Health, clinical & drug supply',
         /clinical-trials|drug-shortage|nadac|cms-|part-d|open-payments|nndss|outbreak|usmin/],
     ['Patents, IP & company data',
@@ -73,8 +73,25 @@ if (unmatched.length) {
     process.exit(1);
 }
 
+// Counts are DERIVED from the live tool surface, never written down. The
+// hardcoded "15 ... twelve" that used to live here was correct on the day it
+// was typed and would have rotted silently the moment a 13th tool was
+// featured — the same failure this whole generator exists to prevent.
+async function toolSurface() {
+    const { FEATURED, META_TOOLS } = await import('../src/tools.js');
+    const featured = FEATURED.length;
+    const meta = Object.keys(META_TOOLS).length;
+    return { featured, meta, exposed: featured + meta, reachable: catalog.count - featured };
+}
+
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen'];
+const word = (n) => WORDS[n] || String(n);
+
+async function main() {
+const surface = await toolSurface();
+
 let body = `## Coverage\n\n**${catalog.count} tools**, every one reading an official US government API or bulk file. `
-    + `The MCP server exposes 15 of them directly — twelve named tools plus \`search_gov_data_tools\`, `
+    + `The MCP server exposes ${surface.exposed} of them directly — ${word(surface.featured)} named tools plus \`search_gov_data_tools\`, `
     + `\`describe_gov_data_tool\` and \`run_gov_data_tool\`, which reach the rest — because agents choose `
     + `badly when handed more than about twenty tools.\n\n`
     + `Each entry links to its full input/output schema, pricing and worked examples.\n\n`;
@@ -101,10 +118,31 @@ if (md.includes(START) && md.includes(END)) {
     md = md.replace(/## Coverage\n[\s\S]*?(?=\n## Development)/, `${block}\n`);
 }
 
+// Counts also live in prose OUTSIDE the generated block, and that is exactly
+// where they rotted: the README shipped "the other 83" and "search all 95"
+// against a live 114 long after the block itself was correct. Each rewrite
+// below MUST match — a silent no-op here is how the drift came back.
+const REWRITES = [
+    [/\*\*Plus \w+ tools that reach the other \d+:\*\*/,
+        `**Plus ${word(surface.meta)} tools that reach the other ${surface.reachable}:**`],
+    [/and it will search all \d+\./,
+        `and it will search all ${catalog.count}.`],
+];
+for (const [re, replacement] of REWRITES) {
+    if (!re.test(md)) {
+        console.error(`\nREADME rewrite target not found: ${re}\nThe sentence was reworded or removed. Fix the pattern in tools/gen-readme-coverage.cjs — do not leave a hand-maintained count in the README.`);
+        process.exit(1);
+    }
+    md = md.replace(re, replacement);
+}
+
 // The headline count lives in the intro too, and rotted there first.
 md = md.replace(/\*\*\d+ US government open-data tools, as one MCP server\.\*\*/,
     `**${catalog.count} US government open-data tools, as one MCP server.**`);
 
 fs.writeFileSync(readmePath, md);
 const linked = [...assigned.values()].reduce((n, l) => n + l.length, 0);
-console.log(`README coverage regenerated: ${linked} actors linked across ${assigned.size} groups, headline count ${catalog.count}.`);
+console.log(`README coverage regenerated: ${linked} actors linked across ${assigned.size} groups, headline count ${catalog.count}, ${surface.exposed} tools exposed (${surface.featured} featured + ${surface.meta} meta), ${surface.reachable} reachable via meta tools.`);
+}
+
+main().catch(err => { console.error(err); process.exit(1); });

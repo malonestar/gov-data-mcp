@@ -25,6 +25,15 @@ const MUTATIONS = [
   { file: 'src/apify.js', from: 'if (lastCount > 0) {\n          return {\n            ok: false,', to: 'if (false) {\n          return {\n            ok: false,', why: 'rows that never propagate get published as a zero instead of an error' },
   // The exact bug that shipped in the first draft: assume one envelope shape.
   { file: 'src/apify.js', from: "if (Array.isArray(json)) return json;\n    return json && Object.prototype.hasOwnProperty.call(json, 'data') ? json.data : json;", to: 'return json ? json.data : null;', why: 'the bare-array dataset envelope is read for a .data key and every row vanishes' },
+
+  // --- agent-surface defects, all of which had shipped at least once --------
+  { file: 'src/tools.js', from: '      annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },', to: '', why: 'featured tools stop declaring what calling them does to the world' },
+  { file: 'src/tools.js', from: '  BILLED_LIVE_READ: { readOnlyHint: false,', to: '  BILLED_LIVE_READ: { readOnlyHint: true,', why: 'a tool that spends the caller money claims to be read-only' },
+  { file: 'src/tools.js', from: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }', to: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }', why: 'a bundled catalog read claims to reach the open world' },
+  { file: 'src/tools.js', from: 'Reads live from the official government source. ${COST_NOTE}', to: 'Reads live from the official government source. ${\'\'}', why: 'billing stops being disclosed on the tools that bill' },
+  { file: 'src/tools.js', from: "  'nhd-surface-water-404-screener':", to: "  'nhd-surface-water-404-screeners':", why: 'a routing note points at a tool name that does not exist' },
+  { file: 'package.json', from: 'MCP server exposing published US government', to: 'MCP server exposing 95 published US government', why: 'the npm headline description carries a count that will rot' },
+  { file: 'README.md', from: 'and it will search all ', to: 'and it will search all 95. Ignore: ', why: 'a stale catalog count is reintroduced into README prose' },
 ];
 
 let pass = 0, fail = 0;
@@ -36,7 +45,7 @@ for (const m of MUTATIONS) {
   fs.writeFileSync(p, original.replace(m.from, m.to));
   let red = false;
   try {
-    execSync('node --test test/tools.test.js test/apify.test.js', { cwd: ROOT, stdio: 'pipe' });
+    execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js', { cwd: ROOT, stdio: 'pipe' });
   } catch { red = true; }
   fs.writeFileSync(p, original);
   if (red) { console.log(`RED   ${m.why}`); pass++; }
@@ -44,7 +53,7 @@ for (const m of MUTATIONS) {
 }
 
 // The suite must be green again after every restore.
-try { execSync('node --test test/tools.test.js test/apify.test.js', { cwd: ROOT, stdio: 'pipe' }); }
+try { execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js', { cwd: ROOT, stdio: 'pipe' }); }
 catch { console.error('FATAL: suite is red after restore'); process.exit(1); }
 
 console.log(`\n${pass} caught, ${fail} missed`);

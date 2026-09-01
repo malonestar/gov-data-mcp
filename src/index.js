@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 /**
- * gov-data-mcp — MCP server exposing 95 published US government open-data tools.
+ * gov-data-mcp — MCP server exposing every published US government open-data
+ * Actor in the bundled catalog. The count is deliberately NOT written down
+ * here; it is read from src/catalog.json at runtime, because a number in a
+ * comment rots the moment a batch ships and nothing fails when it does.
  *
  * Wiring only. All decision logic lives in src/tools.js (pure, offline-tested)
  * and src/apify.js (fetch injected). A test asserts this file holds no logic

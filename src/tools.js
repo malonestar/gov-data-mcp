@@ -4,10 +4,15 @@
  */
 
 /**
- * Actors promoted to first-class MCP tools. The catalog holds 95 actors; handing
- * an agent 95 tool definitions degrades tool selection and blows up the context
- * of every request. These are the highest-signal ones (revenue-proven plus the
- * flagships); the remaining 80 stay reachable through search/describe/run.
+ * Actors promoted to first-class MCP tools. The catalog holds well over a
+ * hundred actors; handing an agent that many tool definitions degrades tool
+ * selection and blows up the context of every request. These are the
+ * highest-signal ones (revenue-proven plus the flagships); every other actor
+ * stays reachable through search/describe/run.
+ *
+ * No count is written down in this file on purpose — the catalog is the only
+ * source of truth for how many there are, and prose counts here rotted from
+ * 95 to 109 to 114 to 116 without a single test going red.
  */
 export const FEATURED = [
   'site-due-diligence-bundle',
@@ -47,13 +52,74 @@ function truncate(s, n) {
   return s.length <= n ? s : s.slice(0, n - 1).trimEnd() + '…';
 }
 
+/**
+ * MCP tool annotations — the machine-readable half of "what does this do to the
+ * world before I call it".
+ *
+ * WHY `readOnlyHint: false` ON THE DATA TOOLS, despite them only ever reading:
+ * they never write to any government system, but every call starts a metered
+ * run on the caller's own Apify account and costs them money. `readOnlyHint`
+ * means "does not modify its environment", and an agent that reads `true`
+ * reasonably concludes the call is free to make speculatively — which is the
+ * one wrong conclusion that costs the caller real money. Billing is a side
+ * effect. We declare it rather than hide it behind a comfortable `true`, and
+ * `destructiveHint: false` carries the other half of the truth: nothing is
+ * destroyed, no external state is altered, and a call is always safe to make
+ * once you accept its cost.
+ *
+ * `idempotentHint: false` because these read live sources — the same input
+ * tomorrow can legitimately return different rows, and a caller must not cache
+ * a flood or sanctions answer as if it were fixed.
+ */
+export const ANNOTATIONS = {
+  /** Reads the bundled catalog. No network, no run, no charge. */
+  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
+  /** Starts a billed Apify run against a live government source. */
+  BILLED_LIVE_READ: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: true },
+};
+
+export const COST_NOTE =
+  'COST AND SIDE EFFECTS: read-only with respect to the government source — it never writes to any external system — '
+  + 'but each call starts a metered run on YOUR Apify account and is billed per result row at the rate published on the Store page. '
+  + 'Nothing is charged when a run fails.';
+
+/**
+ * Routing notes for tools whose scope genuinely overlaps.
+ *
+ * Four of the featured tools answer adjacent questions about the same
+ * coordinate, and an agent handed all four with no guidance picks by keyword
+ * overlap rather than by which regulatory question is actually being asked.
+ * These sentences say, in each tool's own description, when it is the wrong
+ * choice — which is the part a bare capability blurb never tells you.
+ */
+export const ROUTING = {
+  'site-due-diligence-bundle':
+    'CHOOSE THIS when you want one combined go / caution / no-go verdict for a coordinate across many unrelated layers. '
+    + 'It is NOT an ASTM records review: its contamination layer reads RCRA and TRI through ECHO only and omits coordinate-less Superfund records. '
+    + 'For a contamination-first question use epa-contaminated-site-screener.',
+  'epa-contaminated-site-screener':
+    'CHOOSE THIS for the ASTM E1527-21 Phase I records search at regulation distances around one or more properties. '
+    + 'For a single combined verdict across twenty unrelated layers use site-due-diligence-bundle; for drinking-water quality use epa-drinking-water-quality-screener.',
+  'fws-wetlands-proximity-screener':
+    'CHOOSE THIS for National Wetlands Inventory polygons and their decode columns within a radius. '
+    + 'It does NOT answer Clean Water Act §404 jurisdiction — for surface-water features and relative permanence use nhd-surface-water-404-screener. The two are usually needed together.',
+  'nhd-surface-water-404-screener':
+    'CHOOSE THIS for Clean Water Act §404 surface-water screening — streams, waterbodies and their relative permanence. '
+    + 'For mapped wetland polygons use fws-wetlands-proximity-screener.',
+  'epa-drinking-water-quality-screener':
+    'CHOOSE THIS for public water-system quality: SDWA violations, lead 90th-percentile results and PFAS occurrence. '
+    + 'It is NOT a property contamination screen — for soil and groundwater records at a site use epa-contaminated-site-screener.',
+};
+
 export function featuredToolDefinitions(index) {
   return FEATURED.filter(s => index.bySlug.has(s)).map(slug => {
     const a = index.bySlug.get(slug);
+    const routing = ROUTING[slug] ? ` ${ROUTING[slug]}` : '';
     return {
       name: toolNameFor(slug),
-      description: `${a.title}. ${truncate(a.description, 400)} Reads live from the official government source. Store page: ${a.storeUrl}`,
+      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. ${COST_NOTE} Store page: ${a.storeUrl}`,
       inputSchema: a.inputSchema,
+      annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },
     };
   });
 }
@@ -63,7 +129,8 @@ export function metaToolDefinitions(index) {
   return [
     {
       name: META_TOOLS.SEARCH,
-      description: `Search the full catalog of ${n} US government data tools by keyword, agency, or topic (e.g. "wetlands", "FDIC", "flood", "drone airspace", "business licenses"). Returns matching tool names with descriptions. Use this first when the task is not covered by one of the dedicated tools above.`,
+      description: `Search the full catalog of ${n} US government data tools by keyword, agency, or topic (e.g. "wetlands", "FDIC", "flood", "drone airspace", "business licenses"). Returns matching tool names with descriptions. Use this first when the task is not covered by one of the dedicated tools above. FREE: reads a catalog bundled with this server — no network call, no run, nothing charged.`,
+      annotations: { title: 'Search the government data catalog', ...ANNOTATIONS.CATALOG_LOCAL },
       inputSchema: {
         type: 'object',
         properties: {
@@ -75,7 +142,8 @@ export function metaToolDefinitions(index) {
     },
     {
       name: META_TOOLS.DESCRIBE,
-      description: `Return the full input schema and documentation for any one of the ${n} tools in the catalog. Call this before ${META_TOOLS.RUN} so the input is correctly shaped.`,
+      description: `Return the full input schema and documentation for any one of the ${n} tools in the catalog. Call this before ${META_TOOLS.RUN} so the input is correctly shaped. FREE: reads a catalog bundled with this server — no network call, no run, nothing charged.`,
+      annotations: { title: 'Describe one government data tool', ...ANNOTATIONS.CATALOG_LOCAL },
       inputSchema: {
         type: 'object',
         properties: {
@@ -86,7 +154,9 @@ export function metaToolDefinitions(index) {
     },
     {
       name: META_TOOLS.RUN,
-      description: `Run any one of the ${n} catalog tools with the given input and return its rows. Billed to your own Apify account at the tool's published rate.`,
+      description: `Run any one of the ${n} catalog tools with the given input and return its rows. Call ${META_TOOLS.DESCRIBE} first to shape the input. `
+        + `${COST_NOTE} A run that FAILS returns an error and no rows rather than an empty result, so a zero-row answer here always means the source was reached and genuinely matched nothing.`,
+      annotations: { title: 'Run any government data tool', ...ANNOTATIONS.BILLED_LIVE_READ },
       inputSchema: {
         type: 'object',
         properties: {

@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-08-20T08:40:28.823Z",
+  "generatedAt": "2026-09-01T00:04:50.680Z",
   "owner": "malonestar",
-  "count": 114,
+  "count": 116,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
@@ -447,6 +447,79 @@
       }
     },
     {
+      "slug": "bts-airline-ontime-delay-climatology",
+      "actorId": "malonestar/bts-airline-ontime-delay-climatology",
+      "title": "US Airline On-Time & Flight Delay Statistics by Route (BTS)",
+      "description": "Historical US flight delay, cancellation and on-time statistics from official BTS data. Rollups by route, airline or airport and month with full delay-cause breakdowns — carrier, weather, NAS, security, late aircraft — honest denominators, cancellation causes and data-vintage on every row.",
+      "categories": [
+        "TRAVEL",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/bts-airline-ontime-delay-climatology",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sinceMonth": {
+            "type": "string",
+            "description": "First month of BTS on-time data to include, as YYYY-MM (e.g. \"2026-05\"). Leave blank to default to the month before the latest published month. The BTS series begins 1987-10 and is published with a ~2-3 month lag; the run discovers the latest available month live and reports it on every row. An unusable value (slash dates, bare years, month 13) FAILS the run loudly — it is never silently ignored. Example: \"2026-05\"."
+          },
+          "untilMonth": {
+            "type": "string",
+            "description": "Last month of BTS on-time data to include, as YYYY-MM. Leave blank to default to the latest published month. A window spanning more than 12 months is rejected (each month is a ~30 MB BTS download). A month BTS has not yet published is reported as missing — with allowPartial false (the default) the run fails loudly rather than quietly narrowing your window. Example: \"2026-06\"."
+          },
+          "airlines": {
+            "type": "array",
+            "description": "Optional. BTS reporting-carrier codes to include, e.g. [\"WN\",\"AA\",\"DL\",\"UA\",\"B6\"]. Leave empty for all reporting carriers (13 in 2026-05: AA, AS, B6, DL, F9, G4, MQ, NK, OH, OO, UA, WN, YX). A code matching no flights fails the run with the list of carriers actually present — never a silent empty dataset. Example: [\"WN\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "origins": {
+            "type": "array",
+            "description": "Optional. IATA origin airport codes, e.g. [\"DEN\",\"MDW\"]. Leave empty for all origins.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dests": {
+            "type": "array",
+            "description": "Optional. IATA destination airport codes, e.g. [\"LGA\",\"DCA\"]. Leave empty for all destinations.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groupBy": {
+            "type": "string",
+            "description": "How to roll flights up. \"route\" = one row per (origin-dest x month) across airlines; \"airline\" = one row per (carrier x month); \"origin_airport\" / \"dest_airport\" = one row per (airport x month); \"airline_route\" = one row per (carrier x origin-dest x month). Omitted = \"route\". Example: \"route\".",
+            "enum": [
+              "route",
+              "airline",
+              "origin_airport",
+              "dest_airport",
+              "airline_route"
+            ]
+          },
+          "minFlights": {
+            "type": "integer",
+            "description": "Suppress groups with fewer than this many scheduled flights in a month (noise control — a 2-flight 'route' produces meaningless rates). Suppressed-group count is disclosed on every emitted row as groups_suppressed_below_min_flights. Set 0 to keep everything. Omitted = 30. Example: 30.",
+            "minimum": 0,
+            "maximum": 100000
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on emitted rows — each row is one billed result. Enforced by a single audited code path for every groupBy mode; when the cap bites, rows are dropped smallest-groups-first and every emitted row carries results_truncated=true. Omitted = 500. Example: 500.",
+            "minimum": 1,
+            "maximum": 20000
+          },
+          "allowPartial": {
+            "type": "boolean",
+            "description": "If a requested month cannot be retrieved (not yet published by BTS, or the download failed), the run FAILS loudly by default so a partial window is never mistaken for a complete one. Set true to proceed with the months that did arrive — every row then reports months_missing and data_complete=false. Applied by default if omitted: false."
+          }
+        }
+      }
+    },
+    {
       "slug": "calfire-fhsz-screener",
       "actorId": "malonestar/calfire-fhsz-screener",
       "title": "CalFire Fire Hazard Severity Zone (FHSZ) Screener — CA Parcels",
@@ -784,8 +857,8 @@
     {
       "slug": "clinical-trials-meta-search",
       "actorId": "malonestar/clinical-trials-meta-search",
-      "title": "Clinical Trials Meta-Search API — ClinicalTrials.gov + ISRCTN",
-      "description": "Clinical trials API: search ClinicalTrials.gov, ISRCTN and EU registries in one call and get deduplicated trial records in a unified schema, with optional patent linkage. Query by condition, drug, sponsor or status. Pay per unified trial. Keyless, official registries.",
+      "title": "Clinical Trials API - ClinicalTrials.gov, ISRCTN, EU CTIS",
+      "description": "Clinical trials API: search ClinicalTrials.gov, ISRCTN and the EU CTIS register in one call and get deduplicated trial records in a unified schema, with per-registry status on every row and optional patent linkage. Query by condition, drug, sponsor or status. Keyless, official registries.",
       "categories": [
         "AI",
         "DEVELOPER_TOOLS",
@@ -801,7 +874,7 @@
           },
           "sources": {
             "type": "array",
-            "description": "Which trial registries to include. More sources = broader coverage and more cross-registry deduplication. Applied by default if omitted: [\"clinicaltrials\",\"isrctn\",\"euctis\"].",
+            "description": "Which trial registries to include. ClinicalTrials.gov (US NIH), ISRCTN (UK/international) and EU CTIS are all keyless. The maxResults budget is shared FAIRLY across whichever you enable, so no single registry can fill the cap alone. Applied by default if omitted: [\"clinicaltrials\",\"isrctn\",\"euctis\"].",
             "items": {
               "type": "string",
               "enum": [
@@ -812,23 +885,23 @@
               "enumTitles": [
                 "ClinicalTrials.gov (US)",
                 "ISRCTN (UK/Intl)",
-                "EU CTIS (best-effort)"
+                "EU CTIS (EU/EEA)"
               ]
             }
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of deduplicated trial records to return. Applied by default if omitted: 100.",
+            "description": "Maximum number of deduplicated trial records to return. This is a true emit cap and therefore also your bill cap: one row written = one billable result. The budget is split max-min fairly across the registries you enabled, with trials found in 2+ distinct registries reserved off the top. Applied by default if omitted: 100.",
             "minimum": 1,
             "maximum": 5000
           },
           "onlyMultiRegistry": {
             "type": "boolean",
-            "description": "Return only trials that appear in more than one registry — the unique value of a meta-search. Applied by default if omitted: false."
+            "description": "Return only trials found in more than one DISTINCT registry - the unique value of a meta-search. Applied before the maxResults cap. Corrected 2026-08-25: this previously also kept trials whose two merged records came from the same registry. Applied by default if omitted: false."
           },
           "includePatents": {
             "type": "boolean",
-            "description": "Enrich each trial with related US patents matched on its interventions (requires a free PatentsView API key). Charged separately. Applied by default if omitted: false."
+            "description": "Enrich each trial with related US patents matched on its interventions. Requires a free PatentsView API key; setting this to true without a key FAILS the run rather than silently returning zero patents on every row. Patents add columns, not rows, so they do not change what you are billed. Applied by default if omitted: false."
           },
           "patentsViewApiKey": {
             "type": "string",
@@ -2310,7 +2383,7 @@
       "slug": "faa-drone-airspace-checker",
       "actorId": "malonestar/faa-drone-airspace-checker",
       "title": "FAA Drone Airspace Checker - Batch LAANC & No-Fly Verdicts",
-      "description": "Batch lat/lon to FAA UAS airspace verdicts: LAANC ceilings AND whether LAANC is actually offered, charted Class B/C/D/E surface areas, prohibited areas, national-defense TFR areas, special use airspace, NSUFR, stadium TFRs. Verdict is gated - it never reads clear when a layer did not answer.",
+      "description": "Batch lat/lon to FAA UAS airspace verdicts at $0.02 per check: LAANC ceilings AND whether LAANC is actually offered, charted Class B/C/D/E surface areas, prohibited areas, national-defense TFR areas, special use airspace, NSUFR, stadium TFRs. Never reads clear when a layer did not answer.",
       "categories": [
         "DEVELOPER_TOOLS",
         "LEAD_GENERATION",
@@ -5264,11 +5337,15 @@
           },
           "apiNumber": {
             "type": "string",
-            "description": "Look up one exact API well number (North Dakota) or facility number (Colorado)."
+            "description": "Look up one exact identifier. North Dakota matches its API well number (raw column api_no, e.g. 33-053-10805-00-00). Colorado matches its facility number (raw column fac_num, e.g. 4-8) — which is NOT an API number, so it is published in the facility_number output field and Colorado rows carry api_number: null."
           },
           "sinceModified": {
             "type": "string",
-            "description": "Return only wells spudded or updated on or after this date — use for new-permit monitoring. Applies only to states with a date field (currently North Dakota); ignored for others, but MUST still be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being silently reinterpreted by ArcGIS's own date parser. Slash forms are rejected on purpose: live-measured against North Dakota, an ambiguous 05/06/2025 is silently read as May 6 (US order) and differs from the June 5 (EU) reading by 8.0% of matching wells, with nothing in the response indicating a format was guessed. Empty = no lower bound."
+            "description": "Lower bound on the state's own date column. READ THIS BEFORE USING IT FOR PERMIT MONITORING: no state configured here publishes a permit-ISSUE date. North Dakota publishes SPUD_DATE only, so this window selects wells DRILLED since the date, not permits ISSUED since it — and because SQL treats a null date as not-greater-than, it structurally EXCLUDES all 630 permitted-but-not-yet-drilled (status LOC) wells, measured live 2026-08-25. For permitted inventory use status=\"LOC\", or set includeUndatedRecords to keep undated records (each labelled date_filter_match=\"undated_included\"). Colorado's layer has NO date column at all: a Colorado-only run with this field set now FAILS rather than returning an unfiltered result set labelled as filtered. Every row publishes date_filter_basis, date_filter_applied and date_filter_is_permit_issue_date. Format MUST be YYYY-MM-DD (e.g. 2026-01-15); any other format is rejected and the run fails without billing rather than being silently reinterpreted by ArcGIS's own date parser. Slash forms are rejected on purpose: live-measured against North Dakota, an ambiguous 05/06/2025 is silently read as May 6 (US order) and differs from the June 5 (EU) reading by 8.0% of matching wells, with nothing in the response indicating a format was guessed. Empty = no lower bound."
+          },
+          "includeUndatedRecords": {
+            "type": "boolean",
+            "description": "Only meaningful together with sinceModified, and only on a state that has a date column (North Dakota). When false (the default) a date window drops every record whose date is null — which on North Dakota means all 630 permitted-but-not-yet-drilled LOC wells, i.e. exactly the set a new-permit buyer wants. When true the window becomes (date > value OR date IS NULL) and each undated row is labelled date_filter_match=\"undated_included\", so a record that was never verified to fall inside the window is never presented as though it had been. Note this widens the result set: on North Dakota 6,988 of 43,835 wells carry a null spud date. Applied by default if omitted: false."
           },
           "maxResults": {
             "type": "integer",
@@ -5279,6 +5356,21 @@
           "monitor": {
             "type": "boolean",
             "description": "When scheduled, emit only wells/permits not seen in previous runs — a recurring new-permit alert backed by a key-value store of seen IDs. Applied by default if omitted: false."
+          },
+          "verifyUpstream": {
+            "type": "boolean",
+            "description": "Runs a live drift gate against each selected state layer BEFORE any billable row is fetched — a handful of cheap metadata, count-only and group-by requests, none of them billable. It checks that the layer still holds at least its measured floor of records (North Dakota 43,835 and Colorado 84,927 on 2026-08-25), still publishes every column this Actor reads, still returns one pinned canary record with its historical values intact, returns ZERO for an impossible status code, and still publishes its documented status vocabulary. A probe that completes and measures something wrong fails the run and bills nothing; a probe that never completes is treated as an availability problem, and only a load-bearing one of those is fatal. Turn this off only if you accept that a silently emptied or re-scoped layer would go undetected — every row then carries drift_gate_status=\"skipped\". Applied by default if omitted: true."
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic only. Forces one class of drift-probe outcome so the gate's own failure paths can be re-proved on demand instead of only during a real outage. 'drift_required_unavailable' and 'drift_positive_unavailable' must FAIL the run and bill nothing; 'drift_corroborating_unavailable' must SUCCEED with drift_gate_status=\"verified_degraded\"; 'drift_measured_wrong' forces a completed-but-wrong measurement and must fail the run. Leave as 'none' for normal use. Applied by default if omitted: \"none\".",
+            "enum": [
+              "none",
+              "drift_required_unavailable",
+              "drift_positive_unavailable",
+              "drift_corroborating_unavailable",
+              "drift_measured_wrong"
+            ]
           }
         },
         "required": [
@@ -5680,6 +5772,77 @@
       }
     },
     {
+      "slug": "reg-cf-lifecycle-monitor",
+      "actorId": "malonestar/reg-cf-lifecycle-monitor",
+      "title": "Reg CF Crowdfunding Lifecycle & Outcomes Monitor — SEC EDGAR",
+      "description": "Track US Regulation Crowdfunding beyond the offering feed: new Form C filings, C-U funding progress, C-AR annual reports with two-year revenue and net income, and C-TR/C-W terminations — straight from SEC EDGAR, keyless. Feed, issuer, outcomes and delta modes with honest per-row provenance.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/reg-cf-lifecycle-monitor",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "What to return. \"feed\" = Regulation Crowdfunding lifecycle events (Form C offerings, C-U progress updates, C-AR annual reports, C-TR terminations, C-W withdrawals) in a date window. \"outcomes\" = Form C-AR annual reports with the issuer's two-year financials (total assets, revenue, net income, debt) parsed from each filing's XML. \"issuer\" = every Reg CF filing for one company (by cik or issuerQuery), XML-enriched. \"delta\" = only filings new since your last run for this scope, tracked in the named key-value store 'reg-cf-lifecycle-baseline'; the FIRST delta run stores a baseline and fails with an explanatory message rather than billing the whole feed as new. Example: \"feed\".",
+            "enum": [
+              "feed",
+              "outcomes",
+              "issuer",
+              "delta"
+            ]
+          },
+          "formTypes": {
+            "type": "array",
+            "description": "Which Reg CF form types to include (feed and delta modes; outcomes mode always uses C-AR only). Allowed values: C (new offering), C-U (progress update), C-AR (annual report), C-TR (termination of reporting), C-W (offering withdrawal). Leave empty for all five. Amendments (e.g. C/A) are included under their base form and flagged is_amendment. Example: [\"C\",\"C-U\",\"C-AR\",\"C-TR\",\"C-W\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Only include filings filed on or after this date. STRICTLY YYYY-MM-DD (e.g. 2026-08-01) — slash dates, month names and compact dates are rejected with a loud failure because they cannot be applied unambiguously. Leave blank for no lower bound (Regulation Crowdfunding began 2016-05-16). Example: \"2026-08-01\"."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Only include filings filed on or before this date. STRICTLY YYYY-MM-DD. Leave blank for no upper bound (today). An unusable value fails the run loudly; nothing is billed."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional 2-letter US state/territory code (e.g. TX) filtering on the issuer's principal business address. Applied server-side via the EDGAR locationCodes parameter AND re-validated on every returned row — if EDGAR ever stops applying the filter the run fails loudly instead of shipping a national feed labelled as one state."
+          },
+          "portalQuery": {
+            "type": "string",
+            "description": "Optional funding-portal (intermediary) name, e.g. \"Wefunder Portal\" or \"Honeycomb Portal\". Matched as an exact phrase via EDGAR full-text search against the filing documents (the portal's legal name appears in every Form C / C-U XML), so use the portal's legal name as it appears in filings. This is a document-text match, not a structured field filter."
+          },
+          "cik": {
+            "type": "string",
+            "description": "SEC CIK number of the issuer for issuer mode, with or without leading zeros (e.g. 1373217). Find it on any EDGAR filing page. issuer mode requires cik or issuerQuery."
+          },
+          "issuerQuery": {
+            "type": "string",
+            "description": "Company-name phrase for issuer mode when you do not know the CIK, e.g. \"Bean Box\". Matched as a phrase via EDGAR full-text search; prefer cik for an exact match."
+          },
+          "enrichXml": {
+            "type": "boolean",
+            "description": "In feed/delta modes, also fetch each filing's primary_doc.xml to add issuer website, legal status, funding portal name/CIK/CRD, offering amounts and deadline, C-U progress-update text, and the two-year financials. Adds one polite EDGAR request per row (slower). outcomes and issuer modes always enrich. When off, those columns are null with xml_status=\"not_fetched\" — null means NOT FETCHED, never \"none\". Applied by default if omitted: false."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on rows emitted AND billed this run (newest filings first). Every row carries matched_total and results_truncated so a capped answer is never mistaken for a complete one. Example: 200.",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      }
+    },
+    {
       "slug": "ria-registration-delta-monitor",
       "actorId": "malonestar/ria-registration-delta-monitor",
       "title": "RIA Registration Delta Monitor — SEC Adviser Leads & AUM",
@@ -5793,7 +5956,7 @@
           },
           "query": {
             "type": "string",
-            "description": "Optional CKAN full-text search sent to data.sba.gov to prefilter rows before client-side filtering (e.g. a borrower or bank name). Speeds up narrow lender/borrower lookups over the large files. Empty = scan all rows up to the max."
+            "description": "Case-insensitive substring match over the borrower name AND the lender name, e.g. 'acme diner' or 'wells fargo'. A row is kept if EITHER name contains the text. data.sba.gov has no query API, so this is applied while the published CSVs are streamed - it narrows the answer, it does not speed up the scan. Combined with the other filters using AND. Empty = no free-text filter. Every emitted row reports query_applied so you can see it was honoured."
           },
           "sinceDate": {
             "type": "string",
@@ -5807,6 +5970,10 @@
             "type": "integer",
             "description": "Only return loans whose gross approval amount is at least this many dollars. Empty = no minimum.",
             "minimum": 0
+          },
+          "order": {
+            "type": "string",
+            "description": "Which SBA FOIA file the run reads FIRST: 'newest' (default) starts with the file covering the most recent fiscal years, 'oldest' starts with FY1991. Empty means newest. Any other value is rejected and the run FAILS without billing, rather than quietly giving you the opposite of what you asked for. This matters because results are the first N matches in read order: before this existed, files were read in SBA's own catalog order, which is oldest-first, so a bare {program:'7a', state:'CA'} returned loans approved in 1990. IMPORTANT - this orders FILES, not ROWS. SBA publishes each file ascending by ApprovalDate (measured 2026-08-25), and this Actor does not re-sort rows, so 'newest' returns the OLDEST rows of the NEWEST file. Use sinceDate / untilDate / fiscalYear to place a recent window. Every row reports file_order and row_order_note. Example: \"newest\"."
           },
           "mode": {
             "type": "string",
@@ -5824,13 +5991,13 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Hard cap on the number of loan records fetched and scanned (the source files are large — this bounds cost and runtime). In rollup modes, rollups are computed over the loans fetched under this cap. Example: 50. Applied by default if omitted: 1000.",
+            "description": "Hard cap on the number of rows EMITTED, and therefore on what the run can bill: one emitted row is one billable result. Applies to loan rows and rollup rows alike. Bounds emission only - use maxScanRows to bound how much of the (large) source files is read. In rollup modes, rollups are computed over the loans fetched under this cap. WHICH rows you get is decided by the read order: results are the first N matches in read order, which the `order` input controls (newest-first by default). Example: 50. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 200000
           },
           "maxScanRows": {
             "type": "integer",
-            "description": "Upper bound on how many CSV rows are scanned per FOIA file before stopping. Raise for exhaustive rollups over the full loan history; lower for faster, cheaper sampling. Only matters when filters match few rows. Applied by default if omitted: 500000.",
+            "description": "Upper bound on how many CSV rows are scanned per FOIA file before the scan of that file stops. This bounds READING, not emission, and it is not a cost cap - only maxResults bounds what a run can charge for. The read order (the `order` input) decides which file this budget lands on first: with the default newest-first it is spent on the most recent fiscal-year file. Raise for exhaustive rollups over the full loan history; lower for faster sampling. Only matters when filters match few rows. Applied by default if omitted: 500000.",
             "minimum": 1000,
             "maximum": 5000000
           }
@@ -5841,7 +6008,7 @@
       "slug": "sbom-vulnerability-rollup",
       "actorId": "malonestar/sbom-vulnerability-rollup",
       "title": "SBOM Vulnerability Scanner — Lockfile CVE Scan (OSV/KEV)",
-      "description": "SBOM vulnerability scanner: paste an npm, pip or go lockfile and get a prioritized CVE report with upgrade targets. Batch-queries OSV.dev, flags CISA KEV known-exploited vulns, adds NVD CVSS, and computes the minimum fix version per package plus a severity rollup. Keyless.",
+      "description": "SBOM vulnerability scanner at $0.02 per finding: paste an npm, pip or go lockfile and get a prioritized CVE report with upgrade targets. Batch-queries OSV.dev, flags CISA KEV known-exploited vulns, adds NVD CVSS, and computes the minimum fix version per package plus a severity rollup. Keyless.",
       "categories": [
         "DEVELOPER_TOOLS",
         "AI",
@@ -5962,7 +6129,7 @@
       "slug": "site-due-diligence-bundle",
       "actorId": "malonestar/site-due-diligence-bundle",
       "title": "Environmental Due Diligence Bundle: 20-Layer Site Scorecard",
-      "description": "Environmental due diligence in one call: lat/lon plus radius returns a go/caution/no-go fatal-flaw verdict and a 0-100 site score across 20 federal layers - EPA contamination, FEMA flood, NWI wetlands, ESA habitat, NAAQS nonattainment, NRHP historic, karst, landslide, levee, dams, CBRS, pipelines.",
+      "description": "Environmental due diligence at $0.10 per property - one row per site, not per layer. Lat/lon plus radius returns a go/caution/no-go fatal-flaw verdict and 0-100 score across 20 federal layers: EPA contamination, FEMA flood, NWI wetlands, ESA habitat, karst, landslide, levee, dams, CBRS, pipelines.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
