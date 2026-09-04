@@ -75,6 +75,18 @@ Each tool is a published [Apify Actor](https://apify.com/malonestar) that this s
 
 Every result carries the `run_id` and a `console.apify.com` URL, so any claim an agent makes from this server can be traced back to the exact run that produced it.
 
+### No Apify account? Agents can pay per run with x402
+
+Every tool in this catalog is eligible for Apify's [agentic payments](https://docs.apify.com/integrations/x402): an agent with a funded [Coinbase Agentic Wallet](https://docs.cdp.coinbase.com/agentic-wallet/welcome) (USDC on Base, $1 minimum) buys a prepaid Apify token over the x402 protocol and uses it as `APIFY_TOKEN` — no account, no billing setup, no API key. The ready-made skill is [apify.it/x402-awal](https://apify.com/apify.it/x402-awal):
+
+```bash
+npx -y awal auth login <email>            # one-time wallet auth
+npx awal x402 pay 'https://agi.apify.com/protocols/x402/prepaid-tokens?amount=5&currency=usd' --max-amount 5000000 --json
+# → returns a bearer token; export it as APIFY_TOKEN and start this server as usual
+```
+
+The prepaid balance is an absolute spending cap and expires after 14 days. Every tool here charges only per result — none pass platform usage through, none require full permissions, and none run in Standby mode, which are the three things that make an Actor ineligible. Prices are in the catalog (`usdPer1000Results` on every search hit), so an agent can see the cost before spending.
+
 ## On honest answers
 
 These actors are built around one rule: **a failure must never be presentable as "nothing was found."** That distinction matters most in exactly the cases people use this for — telling a buyer a property is clear of contamination, telling a pilot an airspace is uncontrolled, telling a lender a borrower is unlicensed.
