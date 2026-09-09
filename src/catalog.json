@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-01T01:24:22.865Z",
+  "generatedAt": "2026-09-09T06:58:12.843Z",
   "owner": "malonestar",
-  "count": 116,
+  "count": 120,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
@@ -504,6 +504,15 @@
             "description": "Safety cap on how many sites to screen in one run (1–5000). Extra sites beyond the cap are ignored. Example: 500.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam for proving the failure paths without waiting for a real BLM outage. 'none' is normal operation and is what you want for real work. The corroborating option forces the row-count and Denver-negative-control probes to time out: the run must still SUCCEED, with drift_gate_status=verified_degraded on every row and the skipped probes named. The load-bearing option forces the layer-metadata and ProposedPlan-vocabulary probes to time out: the run must FAIL, emitting nothing and billing nothing. Both are routed through the same code path a genuine outage takes. Example: \"none\".",
+            "enum": [
+              "none",
+              "drift_corroborating_probe",
+              "drift_load_bearing_probe"
+            ]
           }
         },
         "required": [
@@ -673,6 +682,95 @@
       }
     },
     {
+      "slug": "bts-db1b-fare-route-market-analytics",
+      "actorId": "malonestar/bts-db1b-fare-route-market-analytics",
+      "title": "US Airline Fare & Route-Market Analytics (BTS DB1B)",
+      "description": "Historical US airline fares and route economics by quarter, from the official BTS DB1B 10% ticket survey. Average and median fares, carrier market share and concentration (HHI), distance and estimated passengers by route, carrier or airport, with honest sample weighting. Not live booking prices.",
+      "categories": [
+        "TRAVEL",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/bts-db1b-fare-route-market-analytics",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Route fare-market result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-01T18:03:54.041Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "sinceQuarter": {
+            "type": "string",
+            "description": "First quarter of BTS DB1B data to include, as YYYY-Qn (e.g. \"2025-Q1\") or YYYY-n (e.g. \"2025-1\"), n being 1-4. Leave blank to default to the quarter before the latest published quarter. The DB1B Origin & Destination Survey begins 1993-Q1 and is published with a ~1-2 quarter lag; the run discovers the latest available quarter live and reports it on every row. An unusable value (a month form, slash date, bare year, or quarter 5) FAILS the run loudly — it is never silently ignored. Example: \"2025-Q2\"."
+          },
+          "untilQuarter": {
+            "type": "string",
+            "description": "Last quarter of BTS DB1B data to include, as YYYY-Qn or YYYY-n. Leave blank to default to the latest published quarter. A window spanning more than 4 quarters is rejected (each quarter is a ~100 MB, ~7-million-row BTS download). A quarter BTS has not yet published is reported as missing — with allowPartial false (the default) the run fails loudly rather than quietly narrowing your window. Example: \"2025-Q2\"."
+          },
+          "origins": {
+            "type": "array",
+            "description": "Optional. IATA origin airport codes, e.g. [\"LAX\",\"JFK\"]. Leave empty for all origins. Markets are DIRECTIONAL in DB1B, so LAX-JFK and JFK-LAX are separate rows. An unfiltered, all-routes run over a full quarter aggregates tens of thousands of markets and is memory-heavy; a filter keeps it light. Example: [\"LAX\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "dests": {
+            "type": "array",
+            "description": "Optional. IATA destination airport codes, e.g. [\"JFK\",\"ORD\"]. Leave empty for all destinations.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "carriers": {
+            "type": "array",
+            "description": "Optional. BTS ticketing-carrier codes to include, e.g. [\"WN\",\"AA\",\"DL\",\"UA\",\"B6\"]. Market share and fares are attributed to the TICKETING carrier (who sold the ticket); the operating carrier differs on ~27% of rows (codeshare/regional). Leave empty for all carriers (DB1B includes ~37 codes, incl. foreign carriers on US-endpoint itineraries and a \"--\" placeholder). A code matching no rows fails the run with the list of carriers actually present — never a silent empty dataset.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groupBy": {
+            "type": "string",
+            "description": "How to roll markets up. \"route\" = one row per (directional origin-dest x quarter) across carriers; \"carrier_route\" = one row per (ticketing carrier x origin-dest x quarter); \"origin_airport\" = one row per (origin airport x quarter, all its outbound markets); \"market\" = one row per (origin city-market x dest city-market x quarter), which groups multi-airport metros (e.g. all NYC airports together). Carrier market-share/HHI fields are meaningful for route/origin_airport/market (which span carriers) and trivial for carrier_route. Omitted = \"route\". Example: \"route\".",
+            "enum": [
+              "route",
+              "carrier_route",
+              "origin_airport",
+              "market"
+            ]
+          },
+          "minPassengers": {
+            "type": "integer",
+            "description": "Suppress groups with fewer than this many SAMPLE passengers in a quarter (noise control — a market with 2 sampled passengers gives a meaningless average fare). Remember DB1B is a 10% sample, so 10 sample passengers ~ 100 estimated. Suppressed-group count is disclosed on every emitted row as groups_suppressed_below_min_passengers. Set 0 to keep everything. Omitted = 10. Example: 10.",
+            "minimum": 0,
+            "maximum": 1000000
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on emitted rows — each row is one billed result. Enforced by a single audited code path for every groupBy mode; when the cap bites, rows are dropped smallest-groups-first and every emitted row carries results_truncated=true. Omitted = 500. Example: 500.",
+            "minimum": 1,
+            "maximum": 20000
+          },
+          "allowPartial": {
+            "type": "boolean",
+            "description": "If a requested quarter cannot be retrieved (not yet published by BTS, or the download failed), the run FAILS loudly by default so a partial window is never mistaken for a complete one. Set true to proceed with the quarters that did arrive — every row then reports quarters_missing and data_complete=false. Applied by default if omitted: false."
+          }
+        }
+      }
+    },
+    {
       "slug": "calfire-fhsz-screener",
       "actorId": "malonestar/calfire-fhsz-screener",
       "title": "CalFire Fire Hazard Severity Zone (FHSZ) Screener — CA Parcels",
@@ -735,7 +833,7 @@
     {
       "slug": "cbrs-coastal-barrier-screener",
       "actorId": "malonestar/cbrs-coastal-barrier-screener",
-      "title": "CBRS Coastal Barrier Screener - CBRA Flood Insurance Bar",
+      "title": "USFWS CBRS Coastal Barrier Screener - CBRA Flood Insurance Bar",
       "description": "Batch-screen coordinates against the USFWS Coastal Barrier Resources System. Returns System Unit vs Otherwise Protected Area, the flood-insurance prohibition date FEMA actually applies, the official 20 ft boundary buffer zone, distance to the CBRS boundary, and the official unit map link.",
       "categories": [
         "REAL_ESTATE",
@@ -889,7 +987,7 @@
     {
       "slug": "cdfi-nmtc-lowincome-energy-bonus-screener",
       "actorId": "malonestar/cdfi-nmtc-lowincome-energy-bonus-screener",
-      "title": "NMTC Low-Income Community Screener — IRA 48(e) Solar Bonus",
+      "title": "CDFI Fund NMTC Low-Income Community Screener - IRA 48(e) Bonus",
       "description": "Coordinate lookup for the IRA 48(e) low-income clean-energy bonus. Batch lat/lon against CDFI Fund NMTC Low-Income Communities (IRC 45D(e)); each returns in_nmtc_low_income_community, tract GEOID, poverty/MFI basis, Category 1 bonus flag, adder, and an optional HUD QCT flag. MCP-ready.",
       "categories": [
         "REAL_ESTATE",
@@ -1831,7 +1929,7 @@
     {
       "slug": "energy-corridor-368-screener",
       "actorId": "malonestar/energy-corridor-368-screener",
-      "title": "Section 368 Energy Corridor Screener - Federal ROW Siting Flag",
+      "title": "BLM Section 368 Energy Corridor Screener - Federal ROW Siting",
       "description": "Screens coordinates against BLM Section 368 West-wide Energy Corridors using BLM current designations plus the Argonne mirror. Returns corridor name, width, permitted use, whether a later plan amendment deleted it, distance to the nearest corridor and a ROW streamlining signal.",
       "categories": [
         "REAL_ESTATE",
@@ -2247,7 +2345,7 @@
     {
       "slug": "epa-impaired-waters-303d-screener",
       "actorId": "malonestar/epa-impaired-waters-303d-screener",
-      "title": "CWA 303(d) Impaired Waters Proximity Screener — NPDES/Phase-I",
+      "title": "EPA 303(d) Impaired Waters Proximity Screener - NPDES / Phase I",
       "description": "CWA Section 303(d) impaired-waters proximity API — screens coordinates against EPA ATTAINS impaired/threatened waters: nearest impaired stream or lake, distance, pollutant causes, TMDL status, and an NPDES/stormwater permitting flag for Phase-I ESA site due diligence.",
       "categories": [
         "REAL_ESTATE",
@@ -2370,7 +2468,7 @@
     {
       "slug": "epa-rcra-corrective-action-cleanup-monitor",
       "actorId": "malonestar/epa-rcra-corrective-action-cleanup-monitor",
-      "title": "RCRA Corrective Action Cleanup Timeline & Overdue Milestones",
+      "title": "EPA RCRA Corrective Action Cleanup Timeline & Overdue Events",
       "description": "Track RCRA corrective-action cleanups from EPA RCRAInfo: milestone dates, scheduled vs actual, schedule slip, overdue milestones, remedy status, engineering and institutional controls, and confirmed release media per facility.",
       "categories": [
         "REAL_ESTATE",
@@ -3205,7 +3303,7 @@
       "slug": "fdic-ncua-health-rollup",
       "actorId": "malonestar/fdic-ncua-health-rollup",
       "title": "Bank & Credit-Union Financial Health API — FDIC/NCUA QoQ",
-      "description": "Bank & credit-union financial-health API on keyless FDIC data (NCUA v1.1): unified per-institution assets, deposits, equity, ROA, ROE, NIM and asset quality, with quarter-over-quarter deltas, peer-percentile scoring, and derived health flags (deposit outflow, low ROA, rising NPL).",
+      "description": "Bank financial-stress screen on keyless FDIC data: capital ratios, CRE concentration (2006 guidance two-prong test), deposit runoff, ROA/ROE/NIM and asset quality per institution, with quarter-over-quarter deltas, peer-percentile scoring and health flags (deposit outflow, low ROA, rising NPL).",
       "categories": [
         "LEAD_GENERATION",
         "DEVELOPER_TOOLS",
@@ -3751,7 +3849,7 @@
     {
       "slug": "fhlbank-membership-delta-monitor",
       "actorId": "malonestar/fhlbank-membership-delta-monitor",
-      "title": "FHLBank Membership Roster & Delta Monitor",
+      "title": "FHFA FHLBank Membership Roster & Delta Monitor",
       "description": "FHLBank System membership roster and quarter-over-quarter delta tracker sourced from FHFA's published member file: joins, exits and attribute changes across all 11 districts, with CERT/FED_ID/NCUA_ID/NAIC_ID join keys for correspondent banking, KYB and competitive intel.",
       "categories": [
         "BUSINESS",
@@ -3904,7 +4002,7 @@
     {
       "slug": "fuds-defense-site-screener",
       "actorId": "malonestar/fuds-defense-site-screener",
-      "title": "FUDS Formerly Used Defense Sites Screener - UXO & Contamination",
+      "title": "USACE FUDS Formerly Used Defense Sites Screener - UXO Risk",
       "description": "Screen any US coordinate against the USACE Formerly Used Defense Sites inventory: on-property boundary intersect, nearest FUDS property, munitions response sites (MMRP/UXO) and contamination projects (IRP), split by hazard.",
       "categories": [
         "REAL_ESTATE",
@@ -4434,7 +4532,7 @@
     {
       "slug": "historic-land-use-sic-contaminant-screener",
       "actorId": "malonestar/historic-land-use-sic-contaminant-screener",
-      "title": "Historic Land Use Screener - Contaminating SIC/NAICS Sites",
+      "title": "EPA FRS Historic Land Use Screener - Contaminating SIC/NAICS",
       "description": "Screens a coordinate or address radius against EPA FRS SIC and NAICS classifications to find dry cleaners, gas stations, plating shops, auto shops, printers and other recognised contaminating land uses, for ASTM E1527-21 Section 8.3 prior-use review.",
       "categories": [
         "REAL_ESTATE",
@@ -4581,7 +4679,7 @@
     {
       "slug": "hmda-fair-lending-disparity-rollup",
       "actorId": "malonestar/hmda-fair-lending-disparity-rollup",
-      "title": "HMDA Fair Lending Disparity Analysis — Denial & Pricing",
+      "title": "CFPB HMDA Fair Lending Disparity Analysis - Denial & Pricing",
       "description": "Fair-lending exam analytics on CFPB HMDA data: denial-rate disparity index with two-proportion z-tests, denial reasons, higher-priced lending, LMI tract redlining screen, and lender-vs-market benchmarks by LEI, state, MSA, county or tract.",
       "categories": [
         "AGENTS",
@@ -5670,7 +5768,7 @@
     {
       "slug": "nadac-price-movers",
       "actorId": "malonestar/nadac-price-movers",
-      "title": "NADAC Drug Pricing API — Weekly NDC Price Movers",
+      "title": "CMS NADAC Drug Pricing API - Weekly NDC Price Movers",
       "description": "Drug pricing API built on CMS/Medicaid NADAC weekly data: per-NDC price time series, week-over-week deltas, and biggest-mover spike/drop detection. Filter by NDC or drug name over any date window to track generic drug price changes. Keyless, official source.",
       "categories": [
         "DEVELOPER_TOOLS",
@@ -5800,7 +5898,7 @@
     {
       "slug": "nfip-flood-loss-risk-screener",
       "actorId": "malonestar/nfip-flood-loss-risk-screener",
-      "title": "NFIP Flood Loss Risk Screener — Property Loss History Score",
+      "title": "FEMA NFIP Flood Loss Risk Screener - Claims History by Address",
       "description": "Flood loss history by property from FEMA NFIP paid claims: count, total paid, repetitive-loss flag, recency and a 0-100 flood-loss score within a radius of each lat/lon.",
       "categories": [
         "REAL_ESTATE",
@@ -5868,7 +5966,7 @@
     {
       "slug": "nhd-surface-water-404-screener",
       "actorId": "malonestar/nhd-surface-water-404-screener",
-      "title": "NHD Surface Water & Section 404 Wetland Screener",
+      "title": "USGS NHD Surface Water & Section 404 Wetland Screener",
       "description": "Screen any lat/lon against USGS NHDPlus HR surface water. 94 fields: exact distance to the nearest perennial, intermittent and ephemeral reach, waterbody type and purpose, mean annual flow, stream order, HUC-8/10/12, a jurisdictional-likelihood call with its reasoning, and a Section 404/WOTUS flag.",
       "categories": [
         "BUSINESS",
@@ -6344,7 +6442,7 @@
     {
       "slug": "nrel-pvwatts-solar-resource-scorer",
       "actorId": "malonestar/nrel-pvwatts-solar-resource-scorer",
-      "title": "Solar Resource & PVWatts Yield Scorer — Batch Site Screening",
+      "title": "NREL PVWatts Solar Resource & Yield Scorer - Batch Site Screen",
       "description": "Batch solar resource assessment via NREL PVWatts v8. Lat/lon list in; annual/monthly kWh yield, capacity factor, irradiance, and a solar-worthiness class out. The resource-quality layer for solar, storage, and data-center siting.",
       "categories": [
         "REAL_ESTATE",
@@ -6428,8 +6526,8 @@
     {
       "slug": "nrhp-historic-place-screener",
       "actorId": "malonestar/nrhp-historic-place-screener",
-      "title": "NRHP Historic Place Screener — Section 106 & Tax Credit",
-      "description": "Screen coordinates against the National Register of Historic Places. Per asset: nearest listed property, National Historic Landmark flag, listed-district point-in-polygon, plus Section 106 review and 20% historic tax-credit screening flags.",
+      "title": "NPS NRHP Historic Place Screener - Section 106 & Tax Credit",
+      "description": "Screen coordinates against the NPS National Register of Historic Places. Per asset: nearest listed property, National Historic Landmark flag, listed-district point-in-polygon, plus Section 106 review and 20% historic tax-credit screening flags.",
       "categories": [
         "AGENTS",
         "DEVELOPER_TOOLS",
@@ -6809,8 +6907,8 @@
     {
       "slug": "orphaned-well-proximity-screener",
       "actorId": "malonestar/orphaned-well-proximity-screener",
-      "title": "Orphaned Oil & Gas Well Proximity Screener - Phase I ESA",
-      "description": "Screen any US coordinate against 117,672 documented orphaned oil and gas wells. Returns count in radius, nearest-well distance and bearing, status, well type, positional accuracy and a Phase I ESA risk signal. Covers 27 states; a site outside coverage is reported as such, never as clear.",
+      "title": "USGS Orphaned Oil & Gas Well Proximity Screener - Phase I ESA",
+      "description": "Screen any US coordinate against 117,672 USGS-documented orphaned oil and gas wells. Returns count in radius, nearest-well distance and bearing, status, well type, positional accuracy and a Phase I ESA risk signal. Covers 27 states; a site outside coverage is reported as such, never as clear.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
@@ -6891,9 +6989,96 @@
       }
     },
     {
+      "slug": "osha-ita-injury-illness-establishment-monitor",
+      "actorId": "malonestar/osha-ita-injury-illness-establishment-monitor",
+      "title": "OSHA Injury & Illness Data (ITA Form 300A) Rate Monitor",
+      "description": "Establishment-level OSHA Form 300A injury and illness data from the OSHA Injury Tracking Application (ITA), CY2016 onward. Total Case Rate and DART injury rates from OSHA's own formula, a peer-industry median benchmark computed from the filers themselves, and a year-over-year delta. Keyless.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/osha-ita-injury-illness-establishment-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Establishment injury & illness record",
+        "usdPerUnit": 0.008,
+        "usdPer1000": 8,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.008,
+          "BRONZE": 0.0064,
+          "SILVER": 0.0056,
+          "GOLD": 0.0044,
+          "PLATINUM": 0.0044,
+          "DIAMOND": 0.0044
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-04T05:13:05.557Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "description": "REQUIRED. Two-letter state codes to return establishments for, e.g. [\"CO\"] or [\"TX\",\"NM\"]. OSHA publishes roughly 400,000 establishment records per calendar year, so an unscoped national run is rejected before it starts rather than billed. Matching is case-insensitive on purpose: the CY2022 file carries 24 mixed-case spellings such as \"Fl\", \"ca\" and \"Co\", and a case-sensitive filter silently drops those establishments. OSHA also publishes AS, GU, MP, PR, VI and the military codes AA, AE and AP. Example: [\"CO\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "years": {
+            "type": "array",
+            "description": "REQUIRED. Calendar years of Form 300A data, e.g. [\"2024\"]. OSHA collects one year at a time and publishes each year as a separate 12-85 MB download, so at most 3 years per run. Summary data exists from 2016 onward; the exact list of published years is read live from OSHA's own data page on every run and an unpublished year fails loudly with the list of years that do exist. In \"delta\" mode pass exactly one year — the prior year is fetched automatically. Example: [\"2024\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "type": "string",
+            "description": "\"establishments\" returns one row per establishment per calendar year, with the OSHA-formula Total Case Rate and DART rate plus a peer-industry benchmark. \"delta\" compares the requested year against the year before it and returns one row per establishment with the rate change and a filing_status of continuing / new_filer / stopped_filing. Omitted = \"establishments\". Example: \"establishments\".",
+            "enum": [
+              "establishments",
+              "delta"
+            ]
+          },
+          "naicsPrefixes": {
+            "type": "array",
+            "description": "Optional. Two- to six-digit NAICS prefixes, e.g. [\"23\"] for construction, [\"2382\"] for building-equipment contractors, [\"238310\"] for drywall contractors, [\"622\"] for hospitals. Matching is by PREFIX rather than exact code because OSHA stores three NAICS vintages side by side in the same file (2012, 2017 and 2022 codes all appear in CY2024, plus a \"0\" vintage sentinel), so an exact-code filter against one vintage's code list silently loses whole industries. Leave empty for all industries.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nameContains": {
+            "type": "string",
+            "description": "Optional. Case-insensitive substring matched against BOTH establishment_name and company_name, e.g. \"Kroger\" or \"Post Acute\". Useful for tracking one employer's whole establishment footprint across a state. Leave blank for all names."
+          },
+          "minEmployees": {
+            "type": "integer",
+            "description": "Optional. Keep only establishments reporting at least this many annual average employees. An establishment that reports no employee count is excluded when this is above 0, because an unreported count is not a small count. Note OSHA does not validate this figure — the CY2024 file contains a single establishment reporting 41,092,597 employees, which is flagged rather than corrected. Omitted or 0 = no employee filter.",
+            "minimum": 0,
+            "maximum": 10000000
+          },
+          "onlyWithRecordableCases": {
+            "type": "boolean",
+            "description": "When true, keep only establishments that reported at least one recordable case or death. Roughly 43% of CY2024 filers reported zero cases, and a zero-case filing is a real, meaningful answer, so this is off by default. Turning it on does not change any rate — it only narrows which establishments are returned and therefore what you are billed for. Applied by default if omitted: false."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on emitted rows — each row is one billed result. Enforced by a single audited code path for both modes plus a pre-push tripwire. When the cap bites, rows are ordered trustworthy-rate-first (an establishment reporting 547 employees against 6,571 hours produces an arithmetically valid but meaningless rate, and those sort below the sound ones rather than dominating the top of your results), and every emitted row carries results_truncated=true and matched_rows_total so a capped answer is never mistaken for a complete one. Omitted = 500. Example: 500.",
+            "minimum": 1,
+            "maximum": 20000
+          }
+        },
+        "required": [
+          "states",
+          "years"
+        ]
+      }
+    },
+    {
       "slug": "padus-protected-lands-screener",
       "actorId": "malonestar/padus-protected-lands-screener",
-      "title": "PAD-US Protected Lands Screener — Owner & GAP Status",
+      "title": "USGS PAD-US Protected Lands Screener - Owner & GAP Status",
       "description": "Protected lands + public land ownership screener. Point-in-polygon check of coordinates against USGS PAD-US: returns owner/manager agency, Federal/State/Local/Private type, designation, GAP status and public access per asset.",
       "categories": [
         "REAL_ESTATE",
@@ -7319,9 +7504,97 @@
       }
     },
     {
+      "slug": "reg-a-plus-lifecycle-monitor",
+      "actorId": "malonestar/reg-a-plus-lifecycle-monitor",
+      "title": "SEC EDGAR Reg A+ Offering Lifecycle & Outcomes Monitor",
+      "description": "Track SEC Regulation A / Reg A+ offerings end to end from EDGAR, keyless: 1-A offerings and 253G2 circulars, 1-K annual reports, 1-U material events and 1-Z exit reports with sell-through. Feed, issuer, outcomes and delta modes — the outcome lifecycle the offering-only incumbents never sell.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/reg-a-plus-lifecycle-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Reg A+ lifecycle result",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.004,
+          "DIAMOND": 0.003
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-01T18:03:54.675Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "What to return. \"feed\" = Regulation A / Reg A+ lifecycle events (1-A offering statements, 253G2 qualified offering circulars, 1-K annual reports, 1-SA semiannual reports, 1-U current reports, 1-Z exit reports) in a date window. \"outcomes\" = Form 1-K annual reports with issuer, reporting period, fiscal year end and securities-outstanding detail from each filing's XML — the survival / still-reporting signal (note: Reg A 1-K financial statements are filed as HTML/PDF exhibits, NOT structured XML, so financial columns are populated from the 1-A offering, not the 1-K). \"issuer\" = every Reg A lifecycle filing for one company (by cik or issuerQuery), XML-enriched. \"delta\" = only filings new since your last run for this scope, tracked in the named key-value store 'reg-a-plus-lifecycle-baseline'; the FIRST delta run stores a baseline and fails with an explanatory message rather than billing the whole feed as new. Example: \"feed\".",
+            "enum": [
+              "feed",
+              "outcomes",
+              "issuer",
+              "delta"
+            ]
+          },
+          "formTypes": {
+            "type": "array",
+            "description": "Which Reg A form types to include (feed and delta modes; outcomes mode always uses 1-K only). Allowed values: 1-A (offering statement), 253G1 / 253G2 / 253G3 / 253G4 (qualified offering circular), 1-K (annual report), 1-SA (semiannual report), 1-U (current report / material events), 1-Z (exit report), DOS (draft offering statement). Leave empty for the default lifecycle spine: 1-A, 253G2, 1-K, 1-SA, 1-U, 1-Z. Amendments (e.g. 1-A/A) are included under their base form and flagged is_amendment. Example: [\"1-A\",\"253G2\",\"1-K\",\"1-SA\",\"1-U\",\"1-Z\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Only include filings filed on or after this date. STRICTLY YYYY-MM-DD (e.g. 2026-01-01) — slash dates, month names and compact dates are rejected with a loud failure because they cannot be applied unambiguously. Leave blank for no lower bound (Reg A+ began 2015-06-19). Example: \"2026-01-01\"."
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Only include filings filed on or before this date. STRICTLY YYYY-MM-DD. Leave blank for no upper bound (today). An unusable value fails the run loudly; nothing is billed."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional 2-letter US state/territory code (e.g. TX) filtering on the issuer's principal business address. Applied server-side via the EDGAR locationCodes parameter AND re-validated on every returned row — if EDGAR ever stops applying the filter the run fails loudly instead of shipping a national feed labelled as one state."
+          },
+          "platformQuery": {
+            "type": "string",
+            "description": "Optional crowdfunding platform, broker-dealer or service-provider name, e.g. \"StartEngine\", \"DealMaker\" or \"Dalmore Group\". Matched as an exact phrase via EDGAR full-text search against the filing documents (Reg A does not carry a structured platform field, so this is a document-text match, not a structured filter). Use the platform's legal name as it appears in offering circulars."
+          },
+          "cik": {
+            "type": "string",
+            "description": "SEC CIK number of the issuer for issuer mode, with or without leading zeros (e.g. 2083128). Find it on any EDGAR filing page. issuer mode requires cik or issuerQuery."
+          },
+          "issuerQuery": {
+            "type": "string",
+            "description": "Company-name phrase for issuer mode when you do not know the CIK, e.g. \"Elio Motors\". Matched as a phrase via EDGAR full-text search; prefer cik for an exact match."
+          },
+          "enrichXml": {
+            "type": "boolean",
+            "description": "In feed/delta modes, also fetch each filing's primary_doc.xml to add the structured fields. 1-A adds offering tier, price, aggregate offering, jurisdiction count, auditor, and a one-year financial snapshot (total assets, revenue, net income, equity); 1-K adds reporting period, fiscal year end, shell-company flag and securities outstanding; 1-Z adds securities qualified vs sold, net proceeds, record holders and exit sell-through. Adds one polite EDGAR request per 1-A/1-K/1-Z row (slower). 253G2/1-SA/1-U/DOS have no structured XML (xml_status=not_applicable). outcomes and issuer modes always enrich. When off, those columns are null with xml_status=\"not_fetched\" — null means NOT FETCHED, never \"none\". Applied by default if omitted: false."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on rows emitted AND billed this run (newest filings first). Every row carries matched_total and results_truncated so a capped answer is never mistaken for a complete one. Example: 200.",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      }
+    },
+    {
       "slug": "reg-cf-lifecycle-monitor",
       "actorId": "malonestar/reg-cf-lifecycle-monitor",
-      "title": "Reg CF Crowdfunding Lifecycle & Outcomes Monitor — SEC EDGAR",
+      "title": "SEC EDGAR Reg CF Crowdfunding Lifecycle & Outcomes Monitor",
       "description": "Track US Regulation Crowdfunding beyond the offering feed: new Form C filings, C-U funding progress, C-AR annual reports with two-year revenue and net income, and C-TR/C-W terminations — straight from SEC EDGAR, keyless. Feed, issuer, outcomes and delta modes with honest per-row provenance.",
       "categories": [
         "BUSINESS",
@@ -7816,7 +8089,7 @@
     {
       "slug": "sos-registry-monitor",
       "actorId": "malonestar/sos-registry-monitor",
-      "title": "US Business Entity Search & New-Business Monitor (KYB API)",
+      "title": "Secretary of State Business Search & New-Business Monitor API",
       "description": "Business entity search & KYB API across official US Secretary of State registries. Search companies by name and monitor newly formed LLCs and corporations for lead generation. Bulk and date-range capable, sourced from state open-data portals — no anti-bot. Keyless.",
       "categories": [
         "LEAD_GENERATION",
@@ -7985,7 +8258,7 @@
     {
       "slug": "state-tank-spill-registry-screener",
       "actorId": "malonestar/state-tank-spill-registry-screener",
-      "title": "UST, LUST & Spill Registry Screener — National + NY/CA/TX/FL",
+      "title": "EPA UST Finder, LUST & Spill Registry Screener - NY/CA/TX/FL",
       "description": "Underground storage tank (UST/LUST) and spill registry screener. Screen any US coordinate against the national EPA UST Finder plus NY, CA, TX and FL state registries — tank leaks, spills, and cleanup cases with case type, status, contaminant, and distance per hit, for Phase I ESA due diligence.",
       "categories": [
         "REAL_ESTATE",
@@ -8122,6 +8395,87 @@
         },
         "required": [
           "assets"
+        ]
+      }
+    },
+    {
+      "slug": "uflpa-entity-list-monitor",
+      "actorId": "malonestar/uflpa-entity-list-monitor",
+      "title": "UFLPA Entity List Screener & Delta Tracker — DHS",
+      "description": "Screen suppliers against the official DHS UFLPA Entity List — the forced-labor import ban. Every barred entity by statutory sub-list with aliases, effective dates and source Federal Register notices, plus a delta mode that flags additions since your last run. Keyless and correctness-first.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/uflpa-entity-list-monitor",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "UFLPA screening result",
+        "usdPerUnit": 0.012,
+        "usdPer1000": 12,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.012,
+          "BRONZE": 0.0096,
+          "SILVER": 0.0084,
+          "GOLD": 0.0066,
+          "PLATINUM": 0.0048,
+          "DIAMOND": 0.0036
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-01T18:03:13.909Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "What to return. \"list\" = the full current DHS UFLPA Entity List, one row per entity-and-sub-list occurrence (name, aliases, statutory sub-list, effective date, originating Federal Register notice). \"search\" = filter the current list by a company-name query (matched against names AND aliases) and/or a statutory sub-list. \"delta\" = only entries new since your last run for the same scope, tracked in the named key-value store 'uflpa-entity-list-baseline'; the FIRST delta run stores a baseline and fails with an explanatory message rather than billing the whole list as new. Example: \"list\".",
+            "enum": [
+              "list",
+              "search",
+              "delta"
+            ]
+          },
+          "queries": {
+            "type": "array",
+            "description": "BATCH form of \"query\": screen several counterparties in ONE run instead of running this Actor once per name. Each name is screened INDEPENDENTLY against the whole list; every emitted row carries query_matched saying which name produced it, and every screened name also gets one screen_summary row carrying its own matches count — so a supplier that matches NOTHING is still an explicit, auditable clear rather than an absent row. Case-insensitive substring, matched against each entity's name, its full listed name, AND every published alias / former name, so a counterparty hiding under an alias is still caught. Names are de-duplicated case-insensitively; a blank or non-string entry FAILS the run loudly rather than being silently skipped. Up to 100 names. Combines with sublist / addedSince / addedUntil, which apply to every name. Cost: one row per match plus one summary row per name, so maxResults must be at least the number of names. Example: [\"Hoshine\",\"Aksu\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "query": {
+            "type": "string",
+            "description": "Single company-name phrase to screen against the list, e.g. \"Hoshine\" or \"Aksu\". Case-insensitive substring, matched against each entity's name, its full listed name, AND every published alias / former name — so a counterparty hiding under an alias is still caught. Required for search mode (a sub-list, or a \"queries\" list, also satisfies it). To screen several names in one run use \"queries\" instead; supplying both simply unions them."
+          },
+          "sublist": {
+            "type": "string",
+            "description": "Optional filter to one UFLPA Section 2(d)(2)(B) sub-list: i (Xinjiang entities that mine/produce/manufacture with forced labor), ii (entities working with the Xinjiang government to recruit/transport/harbor forced labor), iv (exporters into the US), v (facilities/entities sourcing material from Xinjiang or forced-labor programs). Leave blank for all sub-lists. Note (iii)/(iv) currently carry no separate DHS table.",
+            "enum": [
+              "i",
+              "ii",
+              "iv",
+              "v"
+            ]
+          },
+          "addedSince": {
+            "type": "string",
+            "description": "Only include entries whose effective (added) date is on or after this date. STRICTLY YYYY-MM-DD (e.g. 2025-01-01) — slash dates, month names and compact dates are rejected with a loud failure because they cannot be applied unambiguously. Leave blank for no lower bound (the list began 2022-06-21)."
+          },
+          "addedUntil": {
+            "type": "string",
+            "description": "Only include entries whose effective (added) date is on or before this date. STRICTLY YYYY-MM-DD. Leave blank for no upper bound. An unusable value fails the run loudly; nothing is billed."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on rows emitted AND billed this run. The whole current list is roughly 200 rows, so the default returns all of it; every row carries matched_total and results_truncated so a capped answer is never mistaken for a complete one. Example: 500.",
+            "minimum": 1,
+            "maximum": 2000
+          }
+        },
+        "required": [
+          "mode"
         ]
       }
     },
@@ -8432,7 +8786,7 @@
     {
       "slug": "usgs-historical-topo-records-review",
       "actorId": "malonestar/usgs-historical-topo-records-review",
-      "title": "Historical Topographic Map Chronology - ASTM Phase I ESA 8.3.4",
+      "title": "USGS Historical Topographic Map Chronology - ASTM Phase I ESA",
       "description": "Builds the full USGS historical topographic map chronology for any coordinate and runs an ASTM E1527-21 Sec. 8.3.4 historical records review: five-year interval coverage back to 1940, with data gaps explicitly identified. Every map year, scale, quadrangle and download URL. Keyless USGS data.",
       "categories": [
         "REAL_ESTATE",
@@ -8785,7 +9139,7 @@
     {
       "slug": "usmin-mine-feature-proximity-screener",
       "actorId": "malonestar/usmin-mine-feature-proximity-screener",
-      "title": "USMIN Mine Feature Proximity Screener",
+      "title": "USGS USMIN Mine Feature Proximity Screener - Shafts & Tailings",
       "description": "Screens any US coordinate against USGS USMIN topographic mine symbols - adits, shafts, prospects, tailings, quarries - for Phase I ESA, geotechnical and land due diligence.",
       "categories": [
         "REAL_ESTATE",
@@ -8920,7 +9274,7 @@
     {
       "slug": "uswtdb-turbine-proximity-screener",
       "actorId": "malonestar/uswtdb-turbine-proximity-screener",
-      "title": "USWTDB Wind Turbine Proximity Screener — Nearest by Coordinate",
+      "title": "USGS Wind Turbine Database (USWTDB) Proximity Screener by Site",
       "description": "Wind turbine proximity by coordinate from the US Wind Turbine Database (USWTDB): nearest wind turbine distance, count within a radius, tallest turbine, and total nearby capacity (MW) for each lat/lon. Keyless USGS/LBNL data for aviation, radar, setback and repowering screening.",
       "categories": [
         "REAL_ESTATE",
@@ -8981,7 +9335,7 @@
       "slug": "warn-layoff-aggregator",
       "actorId": "malonestar/warn-layoff-aggregator",
       "title": "US WARN Layoff Notice Aggregator & Delta Monitor (OR/TX API)",
-      "description": "Aggregate US state WARN Act layoff & closure notices into one normalized schema and track new / updated / removed deltas. Oregon & Texas live (keyless Socrata); CA/NY/WA/WI/IL/NJ scaffolded. For RevOps, recruiting, econ research and CRE. No API key.",
+      "description": "Aggregate US state WARN Act layoff & closure notices into one normalized schema and track new / updated / removed deltas. Oregon (HECC export) and Texas (Socrata) live and keyless; CA/NY/WA/WI/IL/NJ scaffolded. For RevOps, recruiting, econ research and CRE. No API key.",
       "categories": [
         "LEAD_GENERATION",
         "DEVELOPER_TOOLS",
@@ -9010,7 +9364,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Two-letter state codes to pull WARN notices for. Leave empty for all fully-wired sources (currently OR and TX). CA, NY, WA, WI, IL and NJ have config blocks but no machine-readable endpoint yet -- requesting only those FAILS the run loudly rather than returning zero rows. Example: [\"OR\",\"TX\"]. Applied by default if omitted: [].",
+            "description": "Two-letter state codes to pull WARN notices for. Leave empty for all fully-wired sources (currently OR and TX). Texas is a keyless Socrata API; Oregon is the keyless HECC Rapid Response xlsx export, which replaced the retired Socrata dataset ijbz-jpx8 in September 2026. CA, NY, WA, WI, IL and NJ have config blocks but no machine-readable endpoint yet -- requesting only those FAILS the run loudly rather than returning zero rows. Example: [\"OR\",\"TX\"]. Applied by default if omitted: [].",
             "items": {
               "type": "string"
             }
@@ -9025,7 +9379,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional lower bound on the notice date. When set, only notices on or after this date are fetched. MUST be YYYY-MM-DD (e.g. 2026-01-15); 2026-1-1 is accepted and zero-padded. Any other format FAILS the run before anything is fetched and bills nothing, rather than being spliced unverified into the live Socrata query - measured, 01/15/2026 and Jan 2026 both return HTTP 400 query.soql.type-mismatch from Socrata mid-fetch. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. A bare year (2026) is rejected too, even though Socrata happens to coerce it to Jan 1. Leave blank for all available notices."
+            "description": "Optional lower bound on the notice date. When set, only notices on or after this date are fetched. MUST be YYYY-MM-DD (e.g. 2026-01-15); 2026-1-1 is accepted and zero-padded. Any other format FAILS the run before anything is fetched and bills nothing, rather than being spliced unverified into the live Texas Socrata query - measured, 01/15/2026 and Jan 2026 both return HTTP 400 query.soql.type-mismatch from Socrata mid-fetch. For Oregon the bound is applied by this actor after the fetch, because the HECC export offers no date predicate; the result is the same either way. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. A bare year (2026) is rejected too, even though Socrata happens to coerce it to Jan 1. Leave blank for all available notices."
           },
           "priorItems": {
             "type": "array",
@@ -9123,7 +9477,7 @@
     {
       "slug": "wild-scenic-river-proximity-screener",
       "actorId": "malonestar/wild-scenic-river-proximity-screener",
-      "title": "Wild & Scenic River Proximity Screener - Section 7 Flag",
+      "title": "USFS Wild & Scenic River Proximity Screener - WSR Act Section 7",
       "description": "Wild & Scenic River proximity API: per lat/lon site, nearest designated Wild & Scenic River corridor - name, classification (Wild/Scenic/Recreational), managing agency and distance - plus a WSR Act Section 7 free-flow flag. USFS open data. For hydro, dredge, NEPA and land due-diligence.",
       "categories": [
         "AGENTS",
@@ -9183,7 +9537,7 @@
     {
       "slug": "wildfire-asset-exposure-screener",
       "actorId": "malonestar/wildfire-asset-exposure-screener",
-      "title": "Wildfire Asset Exposure Screener — Live Perimeter Distance",
+      "title": "NIFC Wildfire Asset Exposure Screener - Live Perimeter Distance",
       "description": "Screen assets - offices, homes, facilities, portfolios - against live NIFC wildfire perimeters plus USFS Wildfire Hazard Potential class and historical burn history. Per point: distance to nearest fire, hazard class, past burn year. MCP-ready wildfire risk API.",
       "categories": [
         "AGENTS",

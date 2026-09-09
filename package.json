@@ -1,6 +1,6 @@
 {
   "name": "gov-data-mcp",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "mcpName": "io.github.malonestar/gov-data-mcp",
   "description": "MCP server exposing published US government open-data tools (EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, state licensing boards) as agent-callable tools, backed by Apify Actors.",
   "type": "module",

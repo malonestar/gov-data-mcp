@@ -1,6 +1,6 @@
 # gov-data-mcp
 
-**116 US government open-data tools, as one MCP server.**
+**120 US government open-data tools, as one MCP server.**
 
 EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, NRCS, HRSA, CMS, county assessor rolls and state licensing boards — all reachable as agent-callable tools, all reading directly from official government APIs and bulk files. No scraping, no HTML parsing, no rate-limit roulette.
 
@@ -49,13 +49,13 @@ Claude Desktop reads `claude_desktop_config.json`; Claude Code reads `.mcp.json`
 | `parcel-owner-lookup` | Assessor-roll owner of record for an address |
 | `license-verifier` | 19 professional licensing boards across 9 states + OIG exclusions |
 
-**Plus three tools that reach the other 104:**
+**Plus three tools that reach the other 108:**
 
 - `search-gov-data-tools` — find a tool by keyword, agency or topic
 - `describe-gov-data-tool` — full input schema for any tool in the catalog
 - `run-gov-data-tool` — run any tool in the catalog
 
-The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 116.
+The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 120.
 
 ## Example prompts
 
@@ -103,7 +103,7 @@ The underlying actors carry the same discipline: per-source status on every row,
 <!-- COVERAGE:START -->
 ## Coverage
 
-**116 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
+**120 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
 
 Each entry links to its full input/output schema, pricing and worked examples.
 
@@ -131,9 +131,9 @@ Each entry links to its full input/output schema, pricing and worked examples.
 
 [bank-enforcement-tracker](https://apify.com/malonestar/bank-enforcement-tracker) · [fdic-branch-network-churn-rollup](https://apify.com/malonestar/fdic-branch-network-churn-rollup) · [fdic-ncua-health-rollup](https://apify.com/malonestar/fdic-ncua-health-rollup) · [fdic-sod-deposit-market-share-rollup](https://apify.com/malonestar/fdic-sod-deposit-market-share-rollup) · [fdic-structure-change-delta-monitor](https://apify.com/malonestar/fdic-structure-change-delta-monitor) · [fhlbank-membership-delta-monitor](https://apify.com/malonestar/fhlbank-membership-delta-monitor) · [hmda-fair-lending-disparity-rollup](https://apify.com/malonestar/hmda-fair-lending-disparity-rollup) · [sba-loan-portfolio-explorer](https://apify.com/malonestar/sba-loan-portfolio-explorer)
 
-**Securities, audit, pensions & sanctions** (8)
+**Securities, audit, pensions & sanctions** (10)
 
-[adcvd-trade-remedy-tracker](https://apify.com/malonestar/adcvd-trade-remedy-tracker) · [consolidated-screening-list-delta](https://apify.com/malonestar/consolidated-screening-list-delta) · [fec-campaign-finance-delta](https://apify.com/malonestar/fec-campaign-finance-delta) · [pbgc-pension-failure-monitor](https://apify.com/malonestar/pbgc-pension-failure-monitor) · [pcaob-auditor-engagement-monitor](https://apify.com/malonestar/pcaob-auditor-engagement-monitor) · [reg-cf-lifecycle-monitor](https://apify.com/malonestar/reg-cf-lifecycle-monitor) · [ria-registration-delta-monitor](https://apify.com/malonestar/ria-registration-delta-monitor) · [short-interest-ftd-monitor](https://apify.com/malonestar/short-interest-ftd-monitor)
+[adcvd-trade-remedy-tracker](https://apify.com/malonestar/adcvd-trade-remedy-tracker) · [consolidated-screening-list-delta](https://apify.com/malonestar/consolidated-screening-list-delta) · [fec-campaign-finance-delta](https://apify.com/malonestar/fec-campaign-finance-delta) · [pbgc-pension-failure-monitor](https://apify.com/malonestar/pbgc-pension-failure-monitor) · [pcaob-auditor-engagement-monitor](https://apify.com/malonestar/pcaob-auditor-engagement-monitor) · [reg-a-plus-lifecycle-monitor](https://apify.com/malonestar/reg-a-plus-lifecycle-monitor) · [reg-cf-lifecycle-monitor](https://apify.com/malonestar/reg-cf-lifecycle-monitor) · [ria-registration-delta-monitor](https://apify.com/malonestar/ria-registration-delta-monitor) · [short-interest-ftd-monitor](https://apify.com/malonestar/short-interest-ftd-monitor) · [uflpa-entity-list-monitor](https://apify.com/malonestar/uflpa-entity-list-monitor)
 
 **Licensing, exclusion & workforce screening** (10)
 
@@ -143,9 +143,9 @@ Each entry links to its full input/output schema, pricing and worked examples.
 
 [absentee-owner-lead-list-builder](https://apify.com/malonestar/absentee-owner-lead-list-builder) · [acris-deed-transfer-intel](https://apify.com/malonestar/acris-deed-transfer-intel) · [childcare-provider-leads](https://apify.com/malonestar/childcare-provider-leads) · [distressed-property-signal-stacker](https://apify.com/malonestar/distressed-property-signal-stacker) · [hud-affordable-housing-explorer](https://apify.com/malonestar/hud-affordable-housing-explorer) · [hud-qct-lihtc-boost-screener](https://apify.com/malonestar/hud-qct-lihtc-boost-screener) · [hud-section8-contract-expiration-monitor](https://apify.com/malonestar/hud-section8-contract-expiration-monitor) · [nyc-landlord-registry-lead-list](https://apify.com/malonestar/nyc-landlord-registry-lead-list) · [parcel-owner-lookup](https://apify.com/malonestar/parcel-owner-lookup)
 
-**Infrastructure, transport & airspace** (9)
+**Infrastructure, transport & airspace** (10)
 
-[bts-airline-ontime-delay-climatology](https://apify.com/malonestar/bts-airline-ontime-delay-climatology) · [dod-mirta-military-installation-siting-screener](https://apify.com/malonestar/dod-mirta-military-installation-siting-screener) · [faa-drone-airspace-checker](https://apify.com/malonestar/faa-drone-airspace-checker) · [fhwa-nbi-bridge-risk-monitor](https://apify.com/malonestar/fhwa-nbi-bridge-risk-monitor) · [gsa-site-scanning-auditor](https://apify.com/malonestar/gsa-site-scanning-auditor) · [national-tunnel-inventory-risk-monitor](https://apify.com/malonestar/national-tunnel-inventory-risk-monitor) · [nhtsa-vpic-vin-decoder](https://apify.com/malonestar/nhtsa-vpic-vin-decoder) · [nid-dam-risk-monitor](https://apify.com/malonestar/nid-dam-risk-monitor) · [ntad-fra-rail-crossing-risk-screener](https://apify.com/malonestar/ntad-fra-rail-crossing-risk-screener)
+[bts-airline-ontime-delay-climatology](https://apify.com/malonestar/bts-airline-ontime-delay-climatology) · [bts-db1b-fare-route-market-analytics](https://apify.com/malonestar/bts-db1b-fare-route-market-analytics) · [dod-mirta-military-installation-siting-screener](https://apify.com/malonestar/dod-mirta-military-installation-siting-screener) · [faa-drone-airspace-checker](https://apify.com/malonestar/faa-drone-airspace-checker) · [fhwa-nbi-bridge-risk-monitor](https://apify.com/malonestar/fhwa-nbi-bridge-risk-monitor) · [gsa-site-scanning-auditor](https://apify.com/malonestar/gsa-site-scanning-auditor) · [national-tunnel-inventory-risk-monitor](https://apify.com/malonestar/national-tunnel-inventory-risk-monitor) · [nhtsa-vpic-vin-decoder](https://apify.com/malonestar/nhtsa-vpic-vin-decoder) · [nid-dam-risk-monitor](https://apify.com/malonestar/nid-dam-risk-monitor) · [ntad-fra-rail-crossing-risk-screener](https://apify.com/malonestar/ntad-fra-rail-crossing-risk-screener)
 
 **Health, clinical & drug supply** (7)
 
@@ -155,9 +155,9 @@ Each entry links to its full input/output schema, pricing and worked examples.
 
 [npm-package-health-scorer](https://apify.com/malonestar/npm-package-health-scorer) · [ptab-trial-tracker](https://apify.com/malonestar/ptab-trial-tracker) · [sbom-vulnerability-rollup](https://apify.com/malonestar/sbom-vulnerability-rollup) · [uspto-patent-lapse-fto-monitor](https://apify.com/malonestar/uspto-patent-lapse-fto-monitor)
 
-**Labor & enforcement** (2)
+**Labor & enforcement** (3)
 
-[dol-enforcement-rollup](https://apify.com/malonestar/dol-enforcement-rollup) · [warn-layoff-aggregator](https://apify.com/malonestar/warn-layoff-aggregator)
+[dol-enforcement-rollup](https://apify.com/malonestar/dol-enforcement-rollup) · [osha-ita-injury-illness-establishment-monitor](https://apify.com/malonestar/osha-ita-injury-illness-establishment-monitor) · [warn-layoff-aggregator](https://apify.com/malonestar/warn-layoff-aggregator)
 <!-- COVERAGE:END -->
 
 ## Development
