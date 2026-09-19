@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T06:58:12.843Z",
+  "generatedAt": "2026-09-19T19:42:38.044Z",
   "owner": "malonestar",
   "count": 120,
   "actors": [
@@ -823,6 +823,15 @@
             "description": "Safety cap on how many assets to screen in one run. Example: 500.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic only - leave as 'none' for real screening. 'control' forces the corroborating Sacramento negative-control query to fail, which must leave the run SUCCEEDING with drift_gate_status=verified_degraded, because that probe cross-checks a conclusion the load-bearing probes already establish. 'all' forces every drift query to fail, which must FAIL the run with zero rows and zero billing because the load-bearing probes can then confirm nothing. Example: \"none\".",
+            "enum": [
+              "none",
+              "control",
+              "all"
+            ]
           }
         },
         "required": [
@@ -979,7 +988,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Hard cap on the number of disease-week rows returned across all pages (protects run time and cost). Default 1000. Example: 1000."
+            "description": "Hard cap on the number of disease-week rows returned across all pages (protects run time and cost). Default 1000. Example: 140. Applied by default if omitted: 1000."
           }
         }
       }
@@ -2103,7 +2112,7 @@
           },
           "maxHitsPerProgram": {
             "type": "integer",
-            "description": "Assets mode only: cap on the number of nearest site hits reported per program per asset (keeps output and billing bounded near dense industrial areas). The nearest sites are kept. Default 50. Range 1-1000. Example: 50.",
+            "description": "Assets mode only: cap on the number of nearest site hits reported per program per asset (keeps output and billing bounded near dense industrial areas). The nearest sites are kept. Default 50. Range 1-1000. Example: 10. Applied by default if omitted: 50.",
             "minimum": 1,
             "maximum": 1000
           },
@@ -3271,7 +3280,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Hard cap on the number of dataset rows emitted, for example 500. This is what you are billed for, so it defaults to 500 - the same number as the prefill - and never silently sweeps a whole state. Raise it deliberately for a full sweep (a large state can produce tens of thousands of rows). Example: 500.",
+            "description": "Hard cap on the number of dataset rows emitted. This is what you are billed for, so it never silently sweeps a whole state. The form is prefilled with 60 - a deliberately small, cheap demo that a free-tier account can run whole - while the default applied when you omit the field entirely is 500. Raise it deliberately for a full sweep (a large state can produce tens of thousands of rows). Example: 60. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 100000
           },
@@ -3468,7 +3477,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of dataset rows to emit (caps your cost). Areas are processed largest-deposits-first, so the cap keeps the biggest markets. When the cap bites, results_truncated=true is stamped on every row - the shares and HHI themselves are always computed over the COMPLETE market, never over the truncated output. Example: 500.",
+            "description": "Maximum number of dataset rows to emit (caps your cost). Areas are processed largest-deposits-first, so the cap keeps the biggest markets. When the cap bites, results_truncated=true is stamped on every row - the shares and HHI themselves are always computed over the COMPLETE market, never over the truncated output. Example: 80. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 100000
           },
@@ -3687,7 +3696,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of itemized rows to fetch before delta, concentration or graph processing. Rows come back NEWEST FIRST, so a cap gives you the most recent slice - not a ranked or representative sample. Concentration and graph rows computed over a capped fetch are labelled analysis_basis=\"sample\" rather than being presented as the population figure. Applied by default if omitted: 1000.",
+            "description": "Maximum number of itemized rows to fetch before delta, concentration or graph processing. Rows come back NEWEST FIRST, so a cap gives you the most recent slice - not a ranked or representative sample. Concentration and graph rows computed over a capped fetch are labelled analysis_basis=\"sample\" rather than being presented as the population figure. Example: 120. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 500000
           },
@@ -4891,7 +4900,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of site rows to return. Applied by default if omitted: 1000.",
+            "description": "Maximum number of site rows to return. Example: 140. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 100000
           },
@@ -6875,7 +6884,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of well/permit records to return per state. Applied by default if omitted: 1000.",
+            "description": "Maximum number of well/permit records to return per state. Example: 120. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 200000
           },
@@ -8769,12 +8778,14 @@
           },
           "simulateOutage": {
             "type": "string",
-            "description": "Permanent diagnostic seam used to prove the failure path without waiting for a real outage. 'measurements' fails the water-level read, 'locations' fails the monitoring-location read, 'both' fails both, 'none' is the normal behaviour. With 'both' the run fails loudly and emits nothing. Example: \"none\".",
+            "description": "Permanent diagnostic seam used to prove the failure path without waiting for a real outage. 'measurements' fails the water-level read, 'locations' fails the monitoring-location read, 'both' fails both, 'none' is the normal behaviour. With 'both' the run fails loudly and emits nothing. The two drift modes exercise the gate itself: 'drift_advisory_probe' forces the ADVISORY paging-exhaustion probe to fail, which must leave the run SUCCEEDING with the skip disclosed in drift_probes_unavailable, because that probe exercises the cursor at a page size production never uses; 'drift_load_bearing_probe' forces a load-bearing probe to fail, which must FAIL the run with zero rows and zero billing. Example: \"none\".",
             "enum": [
               "none",
               "measurements",
               "locations",
-              "both"
+              "both",
+              "drift_advisory_probe",
+              "drift_load_bearing_probe"
             ]
           }
         },
