@@ -35,6 +35,17 @@ const catalog = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'src', 'ca
  * apify-actor-start first, and the tiered price hides one level down at
  * eventTieredPricingUsd.FREE.tieredEventPriceUsd.
  */
+// { propName: [sorted enum values] } for every property with a closed
+// vocabulary, either on the property itself or on its array items.
+function enumsOf(properties) {
+    const out = {};
+    for (const [name, p] of Object.entries(properties || {})) {
+        const e = (p && p.enum) || (p && p.items && p.items.enum);
+        if (Array.isArray(e)) out[name] = e.map(String).sort();
+    }
+    return out;
+}
+
 function livePrice(detail) {
     const infos = (detail.pricingInfos || [])
         .filter((p) => p.startedAt && Date.parse(p.startedAt) <= Date.now())
@@ -83,6 +94,7 @@ async function get(url, attempt = 1) {
         live.set(detail.name, {
             required: [...(input.required || [])].sort(),
             props: Object.keys(input.properties).sort(),
+            enums: enumsOf(input.properties),
             // A price the agent quotes must be the price the caller is charged.
             // Pricing changes independently of any build, so a catalog can be
             // schema-perfect and still quote a rate that moved weeks ago.
@@ -93,6 +105,7 @@ async function get(url, attempt = 1) {
     const inCatalog = new Map(catalog.actors.map((a) => [a.slug, {
         required: [...(a.inputSchema.required || [])].sort(),
         props: Object.keys(a.inputSchema.properties).sort(),
+        enums: enumsOf(a.inputSchema.properties),
         usdPerUnit: a.pricing ? a.pricing.usdPerUnit : null,
     }]));
 
@@ -113,6 +126,19 @@ async function get(url, attempt = 1) {
         if (l.usdPerUnit !== c.usdPerUnit) {
             problems.push(`PRICE    ${slug}: live $${l.usdPerUnit} vs catalog $${c.usdPerUnit} per unit`
                 + ' — the server would quote an agent a rate the caller is not actually charged');
+        }
+        // Closed vocabularies. Added 2026-09-23 after liquor-license gained "CA"
+        // in its states enum and this gate stayed green: an agent reading the
+        // catalog was still told TX/NY/FL were the only legal values. A new
+        // value is invisible; a removed one makes the agent build a call the
+        // actor rejects.
+        for (const p of new Set([...Object.keys(l.enums), ...Object.keys(c.enums)])) {
+            const lv = l.enums[p] || []; const cv = c.enums[p] || [];
+            if (lv.join('|') !== cv.join('|')) {
+                const add = lv.filter((v) => !cv.includes(v)); const drop = cv.filter((v) => !lv.includes(v));
+                problems.push(`ENUM     ${slug}.${p}: ${add.length ? 'live adds ' + add.join(', ') : ''}`
+                    + `${add.length && drop.length ? '; ' : ''}${drop.length ? 'catalog has stale ' + drop.join(', ') : ''}`);
+            }
         }
         if (l.props.join(',') !== c.props.join(',')) {
             const added = l.props.filter((p) => !c.props.includes(p));

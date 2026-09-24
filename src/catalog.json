@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-19T19:42:38.044Z",
+  "generatedAt": "2026-09-24T04:13:45.505Z",
   "owner": "malonestar",
   "count": 120,
   "actors": [
@@ -997,7 +997,7 @@
       "slug": "cdfi-nmtc-lowincome-energy-bonus-screener",
       "actorId": "malonestar/cdfi-nmtc-lowincome-energy-bonus-screener",
       "title": "CDFI Fund NMTC Low-Income Community Screener - IRA 48(e) Bonus",
-      "description": "Coordinate lookup for the IRA 48(e) low-income clean-energy bonus. Batch lat/lon against CDFI Fund NMTC Low-Income Communities (IRC 45D(e)); each returns in_nmtc_low_income_community, tract GEOID, poverty/MFI basis, Category 1 bonus flag, adder, and an optional HUD QCT flag. MCP-ready.",
+      "description": "Coordinate lookup for the IRA 48(e) low-income clean-energy bonus. Batch lat/lon against the DOE/NREL 48(e) Category 1 layer (IRC 45D(e) NMTC low-income communities). Returns a tract GEOID, Category 1 bonus flag, adder, Census tract coverage and a HUD QCT flag. MCP-ready.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
@@ -1026,7 +1026,7 @@
         "properties": {
           "assets": {
             "type": "array",
-            "description": "List of points to check against CDFI Fund NMTC Low-Income Communities (LIC). Each item is an object with numeric lat and lon (WGS84 decimal degrees) and an optional label echoed into the output. One billable result row is produced per asset, telling you whether the coordinate falls in a NMTC low-income community and therefore qualifies for the IRA 48(e) Category 1 clean-energy ITC bonus. Example: [{\"lat\":40.815,\"lon\":-73.904,\"label\":\"South Bronx, NY (low-income community, also a LIHTC QCT)\"},{\"lat\":35.6811,\"lon\":-109.0509,\"label\":\"Window Rock, AZ (low-income community on the Navajo Nation)\"},{\"lat\":34.073,\"lon\":-118.4,\"label\":\"Beverly Hills, CA (genuine clear - not a low-income community)\"}].",
+            "description": "List of points to check against NMTC Low-Income Communities (LIC), read from the DOE/NREL Low-Income Communities Bonus Credit Program Category 1 eligibility layer. Each item is an object with numeric lat and lon (WGS84 decimal degrees) and an optional label echoed into the output. One billable result row is produced per asset, telling you whether the coordinate falls in a NMTC low-income community and therefore qualifies for the IRA 48(e) Category 1 clean-energy ITC bonus. A negative is published only when a separate Census census-tract coverage check confirms the point is inside a US tract; otherwise the flag is null (not checked), never false. Example: [{\"lat\":40.815,\"lon\":-73.904,\"label\":\"South Bronx, NY (low-income community, also a LIHTC QCT)\"},{\"lat\":35.6811,\"lon\":-109.0509,\"label\":\"Window Rock, AZ (low-income community on the Navajo Nation)\"},{\"lat\":34.073,\"lon\":-118.4,\"label\":\"Beverly Hills, CA (genuine clear - not a low-income community)\"}].",
             "items": {
               "type": "string"
             }
@@ -1043,7 +1043,7 @@
           },
           "checkTribal": {
             "type": "boolean",
-            "description": "When true (default), each asset is also checked against the CDFI CIMS Federal Indian Reservation layer and the result carries on_federal_indian_reservation plus the reservation name. This is informational context for the separate IRC 48(e) Category 2 (Indian land) pathway - statutory Indian land under 25 U.S.C. 3501(2) is broader than federal reservations, so false does not rule Category 2 out. Set false to skip the extra lookup. Applied by default if omitted: true."
+            "description": "When true (default), each asset is also checked against the U.S. Census Bureau TIGERweb Federal American Indian Reservations layer and the result carries on_federal_indian_reservation plus the reservation name. This is informational context for the separate IRC 48(e) Category 2 (Indian land) pathway - statutory Indian land under 25 U.S.C. 3501(2) is broader than federal reservations, so false does not rule Category 2 out. Set false to skip the extra lookup. Applied by default if omitted: true."
           }
         },
         "required": [
@@ -5612,7 +5612,7 @@
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
       "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Pre-opening bar & restaurant leads from state liquor registries. Pulls NEW licenses + PENDING applications from TX TABC, NY SLA, FL DBPR — normalized business type, address, owner, dates. Delta mode emits only new applications, newly issued licenses, and status changes.",
+      "description": "Pre-opening bar & restaurant leads from state liquor registries. NEW licenses + PENDING applications from TX TABC, NY SLA, FL DBPR and CA ABC, with California new-premises vs transfer flags. Delta mode emits only new applications, newly issued licenses and status changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -5641,18 +5641,20 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Which state liquor-license registries to query. Available: TX (TABC active + pending), NY (SLA active + pending), FL (DBPR licensed extract, active only). California (ABC) ships in v1.1. Example: [\"TX\",\"NY\"].",
+            "description": "Which state liquor-license registries to query. Available: TX (TABC active + pending), NY (SLA active + pending), FL (DBPR licensed extract, active only), CA (ABC daily export, active + pending; CA applications carry no date, so a sinceDate cannot be applied to CA pending). Example: [\"TX\",\"NY\"].",
             "items": {
               "type": "string",
               "enum": [
                 "TX",
                 "NY",
-                "FL"
+                "FL",
+                "CA"
               ],
               "enumTitles": [
                 "Texas (TABC)",
                 "New York (SLA)",
-                "Florida (DBPR ABT)"
+                "Florida (DBPR ABT)",
+                "California (ABC)"
               ]
             }
           },
@@ -5683,7 +5685,7 @@
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional floor on the notice date. Pending feeds: applications submitted/received on or after this date. Active feeds: licenses issued on or after this date. MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into a live query. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order."
+            "description": "Optional floor on the notice date. Pending feeds: applications submitted/received on or after this date. Active feeds: licenses issued on or after this date. MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into a live query. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. California pending applications publish NO date: combining sinceDate with CA pending fails that leg (disclosed on every row) instead of returning an empty result -- use mode \"delta\" to catch new CA applications."
           },
           "maxResults": {
             "type": "integer",
@@ -6025,6 +6027,12 @@
           "includeNonNetworkFlowlines": {
             "type": "boolean",
             "description": "Also query NHDPlus HR layer 4 (NonNetworkNHDFlowline) for isolated ditches, canals and disconnected reaches near the site. Leave on for a conservative wetland-delineation scope; turn off to save one request per asset. Note that layer 4 carries no NHDPlus value-added attributes, so a nearest reach found there has no mean annual flow, stream order or drainage area. Example: true."
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Optional. One time budget for the whole run, shared by the live drift checks (at most 90 s of it) and every site. If hydro.nationalmap.gov is slow and the budget runs out, the sites not yet reached are returned as rows with failure_kind \"deadline\" and null counts/flags instead of the run dragging on. Leave empty to use max(240, 90 + 30 x number of assets) seconds. Clamped to 30-3500; the run also always stops before its Apify timeout. Example: 240.",
+            "minimum": 30,
+            "maximum": 3500
           }
         },
         "required": [
@@ -6663,6 +6671,18 @@
             "description": "Safety cap on how many crossings are returned per site (or per geography query). When it bites, matched_rows_total still reports the true total and results_truncated is set, so a capped answer is never read as a complete one. Example: 500.",
             "minimum": 1,
             "maximum": 20000
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Leave as none for normal use. A diagnostic seam that drives one named failure path end to end so the availability-vs-drift split can be proven on the shipped build rather than argued for. transient_canary_refusal makes ArcGIS emit its load-shed refusal twice before answering (the run should still succeed); persistent_canary_refusal and named_parameter_refusal make a load-bearing probe fail loudly with nothing billed; canary_field_drift makes the canary ANSWER with a wrong value, which must stay fatal; incident_outage takes the FRA incident source away, which degrades the run rather than failing it. Example: \"none\".",
+            "enum": [
+              "none",
+              "transient_canary_refusal",
+              "persistent_canary_refusal",
+              "named_parameter_refusal",
+              "canary_field_drift",
+              "incident_outage"
+            ]
           }
         }
       }
@@ -8871,6 +8891,12 @@
             "description": "Safety cap on how many sites are reviewed in one run. Sites beyond the cap are skipped with a warning naming how many were left out; they are NOT in the dataset and are not billed. Example: 250.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Wall-clock ceiling for the whole run, shared by the upstream verification probes and every site. The USGS TNM Access API is intermittently very slow - measured on one identical input, this run has taken anywhere from 4 seconds to over 5 minutes - so every request is gated and clamped against this one deadline. A site still being read when the budget expires is reported unavailable with null verdicts and run_deadline_exceeded=true; it is never reported as 'no maps found'. The default leaves headroom inside the 5-minute ceiling the Apify Store applies. Raise it for large portfolios you are happy to wait for; it can never exceed 280. Example: 240.",
+            "minimum": 10,
+            "maximum": 280
           },
           "verifyUpstream": {
             "type": "boolean",
