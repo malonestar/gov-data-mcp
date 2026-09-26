@@ -22,6 +22,7 @@ import {
     indexCatalog, listTools, featuredToolDefinitions, metaToolDefinitions,
     describeTool, searchCatalog, resolveCall, priceLine,
 } from '../src/tools.js';
+import { PRESETS, PRESET_NAMES } from '../src/presets.js';
 
 const catalog = JSON.parse(readFileSync(new URL('../src/catalog.json', import.meta.url), 'utf8'));
 const pkg = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8'));
@@ -161,6 +162,11 @@ test('README carries no orphaned tool count from an earlier catalog', () => {
     // the catalog size or the exposed tool count.
     const legal = new Set([catalog.count, catalog.count - FEATURED.length,
         FEATURED.length, FEATURED.length + Object.keys(META_TOOLS).length]);
+    // Preset sizes are legal too — but only the ones presets.js actually holds.
+    for (const p of Object.values(PRESETS)) {
+        legal.add(p.tools.length);
+        legal.add(p.tools.length + Object.keys(META_TOOLS).length);
+    }
     const claims = [...readme.matchAll(/(?:all|other|only)\s+(\d{2,4})\b|\b(\d{2,4})\s+(?:tools|actors|sources)\b/g)];
     for (const m of claims) {
         const n = Number(m[1] ?? m[2]);
@@ -168,6 +174,31 @@ test('README carries no orphaned tool count from an earlier catalog', () => {
             `README claims "${m[0].trim()}" but the catalog holds ${catalog.count} `
             + `(${FEATURED.length} featured, ${catalog.count - FEATURED.length} reachable via meta tools). `
             + 'Run `npm run readme`, or derive the sentence in tools/gen-readme-coverage.cjs.');
+    }
+});
+
+test('README documents every preset exactly as presets.js defines it', () => {
+    // The Vertical presets section is generated; this pins that it was
+    // regenerated after the last preset edit. A preset that exists in code
+    // but not in the README is a product nobody can find.
+    assert.ok(readme.includes('<!-- PRESETS:START -->') && readme.includes('<!-- PRESETS:END -->'),
+        'README lost its PRESETS markers');
+    const section = readme.slice(readme.indexOf('<!-- PRESETS:START -->'), readme.indexOf('<!-- PRESETS:END -->'));
+    assert.match(section, /## Vertical presets/);
+    for (const name of PRESET_NAMES) {
+        const p = PRESETS[name];
+        assert.ok(section.includes(`### \`${name}\` — ${p.title}`), `README has no section for preset ${name}`);
+        assert.ok(section.includes(`\`${p.serverName}\``), `README does not name ${name}'s server ${p.serverName}`);
+        assert.ok(section.includes(`**${p.tools.length} tools:**`), `README states the wrong tool count for ${name}`);
+        assert.ok(section.includes(`"args": ["-y", "gov-data-mcp", "--preset", "${name}"]`), `README has no client config for ${name}`);
+        assert.ok(section.includes(`npx gov-data-mcp --preset ${name}`), `README has no command line for ${name}`);
+        for (const slug of p.tools) {
+            assert.ok(section.includes(`[${slug}](https://apify.com/malonestar/${slug})`), `README's ${name} section is missing ${slug}`);
+        }
+    }
+    // And no preset is documented that does not exist.
+    for (const m of section.matchAll(/### `([a-z0-9-]+)`/g)) {
+        assert.ok(PRESET_NAMES.includes(m[1]), `README documents preset "${m[1]}", which presets.js does not define`);
     }
 });
 

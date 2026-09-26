@@ -59,11 +59,37 @@ export function toolNameFor(slug) {
   return slug;
 }
 
-export function indexCatalog(catalog) {
-  const actors = catalog.actors || [];
+/**
+ * Build the tool index. With no options this is the full catalog fronted by
+ * FEATURED — byte-identical to every release before presets existed.
+ *
+ * With a preset, the WHOLE index is restricted: `actors` (what search,
+ * describe and run can reach) is filtered to the preset's tools, and
+ * `featured` becomes the preset's own list. A preset tool that is not in the
+ * catalog is a hard error, not a warning — a scoped server advertising a tool
+ * that does not exist is precisely the defect a stderr line would hide.
+ */
+export function indexCatalog(catalog, options = {}) {
+  const all = catalog.actors || [];
+  const preset = options.preset || null;
+  const presetName = options.presetName || null;
+  if (preset) {
+    const missing = preset.tools.filter(s => !all.some(a => a.slug === s));
+    if (missing.length) {
+      throw new Error(`preset "${presetName}" names tools that are not in the bundled catalog: ${missing.join(', ')}. `
+        + 'Regenerate the catalog or fix the preset before starting a server that would advertise them.');
+    }
+  }
+  const allSlugs = new Set(all.map(a => a.slug));
+  const featured = preset ? [...preset.tools] : [...FEATURED];
+  const keep = preset ? new Set(preset.tools) : null;
+  const actors = keep ? all.filter(a => keep.has(a.slug)) : all;
   const bySlug = new Map(actors.map(a => [a.slug, a]));
-  const missingFeatured = FEATURED.filter(s => !bySlug.has(s));
-  return { actors, bySlug, missingFeatured };
+  const missingFeatured = featured.filter(s => !bySlug.has(s));
+  const scopeNote = preset
+    ? ` This server is scoped to the "${presetName}" preset (${actors.length} of ${all.length} catalog tools); start gov-data-mcp without --preset for the full catalog.`
+    : '';
+  return { actors, bySlug, missingFeatured, featured, presetName, scopeNote, catalogTotal: all.length, allSlugs };
 }
 
 function truncate(s, n) {
@@ -151,10 +177,26 @@ export const ROUTING = {
     + 'It is NOT a property contamination screen — for soil and groundwater records at a site use epa-contaminated-site-screener.',
 };
 
+/**
+ * A routing note is only shown when every tool it points at is reachable on
+ * THIS server. Under a preset, a note that sends the agent to a tool outside
+ * the preset would be a dead end dressed as advice, so the note is dropped
+ * rather than edited — a half-note that names a missing tool is worse than none.
+ */
+export function routingNoteFor(index, slug) {
+  const note = ROUTING[slug];
+  if (!note) return '';
+  // Only tokens that are catalog slugs count as references; hyphenated prose is not a tool.
+  const isSlug = (r) => index.allSlugs ? index.allSlugs.has(r) : index.bySlug.has(r);
+  const referenced = (note.match(/[a-z0-9]+(?:-[a-z0-9]+){2,}/g) || []).filter(r => r !== slug && isSlug(r));
+  return referenced.every(r => index.bySlug.has(r)) ? ` ${note}` : '';
+}
+
 export function featuredToolDefinitions(index) {
-  return FEATURED.filter(s => index.bySlug.has(s)).map(slug => {
+  const featured = index.featured || FEATURED;
+  return featured.filter(s => index.bySlug.has(s)).map(slug => {
     const a = index.bySlug.get(slug);
-    const routing = ROUTING[slug] ? ` ${ROUTING[slug]}` : '';
+    const routing = routingNoteFor(index, slug);
     return {
       name: toolNameFor(slug),
       description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
@@ -169,7 +211,7 @@ export function metaToolDefinitions(index) {
   return [
     {
       name: META_TOOLS.SEARCH,
-      description: `Search the full catalog of ${n} US government data tools by keyword, agency, or topic (e.g. "wetlands", "FDIC", "flood", "drone airspace", "business licenses"). Returns matching tool names with descriptions. Use this first when the task is not covered by one of the dedicated tools above. FREE: reads a catalog bundled with this server — no network call, no run, nothing charged.`,
+      description: `Search the full catalog of ${n} US government data tools by keyword, agency, or topic (e.g. "wetlands", "FDIC", "flood", "drone airspace", "business licenses"). Returns matching tool names with descriptions. Use this first when the task is not covered by one of the dedicated tools above.${index.scopeNote || ''} FREE: reads a catalog bundled with this server — no network call, no run, nothing charged.`,
       annotations: { title: 'Search the government data catalog', ...ANNOTATIONS.CATALOG_LOCAL },
       inputSchema: {
         type: 'object',
@@ -246,7 +288,7 @@ export function describeTool(index, name) {
     const near = searchCatalog(index, String(name || '').replace(/[-_]/g, ' '), 5).map(r => r.tool);
     return {
       ok: false,
-      error: `No tool named "${name}" in this catalog.${near.length ? ` Closest matches: ${near.join(', ')}.` : ''} Use ${META_TOOLS.SEARCH} to find one. This is a lookup miss, not a statement about the underlying data.`,
+      error: `No tool named "${name}" in this catalog.${near.length ? ` Closest matches: ${near.join(', ')}.` : ''} Use ${META_TOOLS.SEARCH} to find one. This is a lookup miss, not a statement about the underlying data.${index.scopeNote || ''}`,
     };
   }
   return {
@@ -271,7 +313,7 @@ export function resolveCall(index, toolName, args) {
     if (!slug) return { ok: false, error: `${META_TOOLS.RUN} requires a "tool" argument naming which catalog tool to run.` };
     if (!index.bySlug.has(slug)) {
       const near = searchCatalog(index, String(slug).replace(/[-_]/g, ' '), 5).map(r => r.tool);
-      return { ok: false, error: `No tool named "${slug}" in this catalog.${near.length ? ` Closest matches: ${near.join(', ')}.` : ''}` };
+      return { ok: false, error: `No tool named "${slug}" in this catalog.${near.length ? ` Closest matches: ${near.join(', ')}.` : ''}${index.scopeNote || ''}` };
     }
     return { ok: true, slug, input: (args && args.input) || {}, maxItems: args && args.maxItems };
   }

@@ -153,6 +153,60 @@ for (const [re, replacement] of REWRITES) {
 md = md.replace(/\*\*\d+ US government open-data tools, as one MCP server\.\*\*/,
     `**${catalog.count} US government open-data tools, as one MCP server.**`);
 
+// --- Vertical presets: derived from src/presets.js, never typed ------------
+// Three scoped front doors over the same package. Their tool counts, tool
+// lists and server names are all read from the module, so a preset edit that
+// forgets the README cannot leave a stale list behind — the generator and the
+// agent-surface test both key off the same source.
+const { PRESETS, PRESET_NAMES, PRESET_ENV } = await import('../src/presets.js');
+const bySlug = new Map(catalog.actors.map((a) => [a.slug, a]));
+const configFor = (name) => [
+    '```json',
+    '{',
+    '  "mcpServers": {',
+    `    "gov-data-${name}": {`,
+    '      "command": "npx",',
+    `      "args": ["-y", "gov-data-mcp", "--preset", "${name}"],`,
+    '      "env": { "APIFY_TOKEN": "apify_api_..." }',
+    '    }',
+    '  }',
+    '}',
+    '```',
+].join('\n');
+
+let presets = `## Vertical presets\n\n`
+    + `The full server is the right default for a general-purpose agent. For an agent that serves one kind of buyer, `
+    + `a **preset** narrows the whole surface — the named tools *and* what \`${surface.names[0]}\` / \`${surface.names[1]}\` / `
+    + `\`${surface.names[2]}\` can reach — to one shelf, and announces itself to the client under its own server name and description. `
+    + `Same package, same catalog, same release; nothing to install separately. Pass \`--preset <name>\` or set \`${PRESET_ENV}\`. `
+    + `An unknown preset name refuses to start rather than guessing. \`npx gov-data-mcp --list-presets\` prints the current list as JSON.\n\n`
+    + `| Preset | Server name | Tools | For |\n|---|---|---|---|\n`;
+for (const name of PRESET_NAMES) {
+    const p = PRESETS[name];
+    presets += `| \`${name}\` | \`${p.serverName}\` | ${p.tools.length} + ${surface.meta} meta | ${p.title} |\n`;
+}
+presets += '\n';
+for (const name of PRESET_NAMES) {
+    const p = PRESETS[name];
+    for (const slug of p.tools) {
+        if (!bySlug.has(slug)) { console.error(`preset ${name} names "${slug}", which is not in the catalog`); process.exit(1); }
+    }
+    presets += `### \`${name}\` — ${p.title}\n\n${p.description}\n\n`
+        + `**${p.tools.length} tools:** ` + p.tools.map((s) => `[${s}](${bySlug.get(s).storeUrl})`).join(' · ')
+        + ` — plus \`${surface.names.join('`, `')}\`, scoped to this list.\n\n`
+        + `Claude Desktop (\`claude_desktop_config.json\`), Claude Code (\`.mcp.json\`) and Cursor (\`.cursor/mcp.json\`) all take the same block:\n\n`
+        + `${configFor(name)}\n\n`
+        + `Or, with the environment variable instead of the flag: \`"args": ["-y", "gov-data-mcp"]\` and \`"env": { "APIFY_TOKEN": "apify_api_...", "${PRESET_ENV}": "${name}" }\`.\n\n`
+        + `Command line: \`npx gov-data-mcp --preset ${name}\`\n\n`;
+}
+const PSTART = '<!-- PRESETS:START -->';
+const PEND = '<!-- PRESETS:END -->';
+if (!md.includes(PSTART) || !md.includes(PEND)) {
+    console.error('README is missing the PRESETS:START/END markers — the Vertical presets section cannot be regenerated.');
+    process.exit(1);
+}
+md = md.replace(new RegExp(`${PSTART}[\\s\\S]*?${PEND}`), `${PSTART}\n${presets.trimEnd()}\n${PEND}`);
+
 fs.writeFileSync(readmePath, md);
 const linked = [...assigned.values()].reduce((n, l) => n + l.length, 0);
 console.log(`README coverage regenerated: ${linked} actors linked across ${assigned.size} groups, headline count ${catalog.count}, ${surface.exposed} tools exposed (${surface.featured} featured + ${surface.meta} meta), ${surface.reachable} reachable via meta tools.`);

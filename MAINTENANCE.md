@@ -19,8 +19,8 @@ on any README count that disagrees with the catalog, and on any digit in
 Run in this order. Each one has caught a real defect.
 
 ```bash
-npm test                      # 63 assertions
-node tools/mutate.cjs         # 23 mutations, all must be caught
+npm test                      # the offline suite (it prints its own count)
+node tools/mutate.cjs         # every mutation must be caught; it prints "N caught, 0 missed"
 npm run catalog -- <token>    # regenerate from the live Apify account
 npm run readme                # regenerate coverage + every derived count
 npm run check:catalog         # diff the catalog against live; exits 1 on drift
@@ -43,6 +43,7 @@ with "rewrite target not found", fix the pattern — do not delete the check.
 | An Actor is unpublished or renamed | Same, and check `FEATURED` in `src/tools.js` | `indexCatalog` reports missing featured tools on stderr at startup — that warning is the tripwire. A rename also renames the MCP tool, since the name IS the slug |
 | **An Actor's price changes** | Regenerate the catalog and cut a release | Pricing moves independently of any build, so the catalog can be schema-perfect and still quote a rate the caller is not charged. `check:catalog` now diffs price per actor and fails on drift |
 | A featured tool is added or removed | `npm run readme` | The exposed-count prose is derived from `FEATURED.length`, but only when the generator runs |
+| A preset in `src/presets.js` changes (tool added/removed, title, description, server name) | `npm run readme`, then `npm test` | The README's "Vertical presets" block is generated from that module and `test/agent-surface.test.js` fails when the two disagree. `test/presets.test.js` also refuses any preset slug that is not in the bundled catalog and any preset over the tool cap — so an actor being unpublished breaks the build here, on purpose, rather than shipping a preset that advertises it |
 
 ## Quarterly, or when something feels stale
 

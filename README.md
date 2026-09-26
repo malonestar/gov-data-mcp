@@ -57,6 +57,90 @@ Claude Desktop reads `claude_desktop_config.json`; Claude Code reads `.mcp.json`
 
 The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 120.
 
+<!-- PRESETS:START -->
+## Vertical presets
+
+The full server is the right default for a general-purpose agent. For an agent that serves one kind of buyer, a **preset** narrows the whole surface — the named tools *and* what `search-gov-data-tools` / `describe-gov-data-tool` / `run-gov-data-tool` can reach — to one shelf, and announces itself to the client under its own server name and description. Same package, same catalog, same release; nothing to install separately. Pass `--preset <name>` or set `GOV_DATA_MCP_PRESET`. An unknown preset name refuses to start rather than guessing. `npx gov-data-mcp --list-presets` prints the current list as JSON.
+
+| Preset | Server name | Tools | For |
+|---|---|---|---|
+| `phase1-esa` | `gov-data-mcp-phase1-esa` | 11 + 3 meta | Phase I ESA — Environmental Due Diligence |
+| `cre-leads` | `gov-data-mcp-cre-leads` | 12 + 3 meta | CRE & Local Business Leads — Who Just Changed State |
+| `compliance` | `gov-data-mcp-compliance` | 12 + 3 meta | KYB, Sanctions & Financial Compliance Screening |
+
+### `phase1-esa` — Phase I ESA — Environmental Due Diligence
+
+US government environmental records for Phase I Environmental Site Assessments and property due diligence: EPA Superfund / RCRA / UST / brownfield records at ASTM E1527-21 search distances, state tank and spill registries, historic land use from FRS SIC/NAICS, USGS historical topographic map coverage, NWI wetlands, Clean Water Act §404 surface water, RCRA corrective-action cleanups, orphaned wells, FEMA hazard risk and NFIP flood-loss history, plus a twenty-layer go / caution / no-go site verdict. Every tool reads the official source directly and reports what it could not check as null, never as clear.
+
+**11 tools:** [site-due-diligence-bundle](https://apify.com/malonestar/site-due-diligence-bundle) · [epa-contaminated-site-screener](https://apify.com/malonestar/epa-contaminated-site-screener) · [historic-land-use-sic-contaminant-screener](https://apify.com/malonestar/historic-land-use-sic-contaminant-screener) · [state-tank-spill-registry-screener](https://apify.com/malonestar/state-tank-spill-registry-screener) · [usgs-historical-topo-records-review](https://apify.com/malonestar/usgs-historical-topo-records-review) · [epa-rcra-corrective-action-cleanup-monitor](https://apify.com/malonestar/epa-rcra-corrective-action-cleanup-monitor) · [orphaned-well-proximity-screener](https://apify.com/malonestar/orphaned-well-proximity-screener) · [fws-wetlands-proximity-screener](https://apify.com/malonestar/fws-wetlands-proximity-screener) · [nhd-surface-water-404-screener](https://apify.com/malonestar/nhd-surface-water-404-screener) · [fema-nri-county-risk-profile](https://apify.com/malonestar/fema-nri-county-risk-profile) · [nfip-flood-loss-risk-screener](https://apify.com/malonestar/nfip-flood-loss-risk-screener) — plus `search-gov-data-tools`, `describe-gov-data-tool`, `run-gov-data-tool`, scoped to this list.
+
+Claude Desktop (`claude_desktop_config.json`), Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`) all take the same block:
+
+```json
+{
+  "mcpServers": {
+    "gov-data-phase1-esa": {
+      "command": "npx",
+      "args": ["-y", "gov-data-mcp", "--preset", "phase1-esa"],
+      "env": { "APIFY_TOKEN": "apify_api_..." }
+    }
+  }
+}
+```
+
+Or, with the environment variable instead of the flag: `"args": ["-y", "gov-data-mcp"]` and `"env": { "APIFY_TOKEN": "apify_api_...", "GOV_DATA_MCP_PRESET": "phase1-esa" }`.
+
+Command line: `npx gov-data-mcp --preset phase1-esa`
+
+### `cre-leads` — CRE & Local Business Leads — Who Just Changed State
+
+Lead-generation feeds built from official state and county registers: new and pending liquor licenses, verified new business openings from Secretary of State and tax rosters, WARN layoff notices, newly licensed real estate agents, licensed childcare providers with contacts, parcel owner of record, absentee-owner lists, distressed-property signal stacks, NYC deed transfers and landlord registries, city business licenses and professional license verification. Delta modes return only what changed since the last run, so a scheduled agent pays for new leads, not the same roster twice.
+
+**12 tools:** [liquor-license-new-openings-tracker](https://apify.com/malonestar/liquor-license-new-openings-tracker) · [sos-registry-monitor](https://apify.com/malonestar/sos-registry-monitor) · [warn-layoff-aggregator](https://apify.com/malonestar/warn-layoff-aggregator) · [realtor-license-roster-delta](https://apify.com/malonestar/realtor-license-roster-delta) · [childcare-provider-leads](https://apify.com/malonestar/childcare-provider-leads) · [parcel-owner-lookup](https://apify.com/malonestar/parcel-owner-lookup) · [absentee-owner-lead-list-builder](https://apify.com/malonestar/absentee-owner-lead-list-builder) · [distressed-property-signal-stacker](https://apify.com/malonestar/distressed-property-signal-stacker) · [acris-deed-transfer-intel](https://apify.com/malonestar/acris-deed-transfer-intel) · [nyc-landlord-registry-lead-list](https://apify.com/malonestar/nyc-landlord-registry-lead-list) · [city-business-license-leads](https://apify.com/malonestar/city-business-license-leads) · [license-verifier](https://apify.com/malonestar/license-verifier) — plus `search-gov-data-tools`, `describe-gov-data-tool`, `run-gov-data-tool`, scoped to this list.
+
+Claude Desktop (`claude_desktop_config.json`), Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`) all take the same block:
+
+```json
+{
+  "mcpServers": {
+    "gov-data-cre-leads": {
+      "command": "npx",
+      "args": ["-y", "gov-data-mcp", "--preset", "cre-leads"],
+      "env": { "APIFY_TOKEN": "apify_api_..." }
+    }
+  }
+}
+```
+
+Or, with the environment variable instead of the flag: `"args": ["-y", "gov-data-mcp"]` and `"env": { "APIFY_TOKEN": "apify_api_...", "GOV_DATA_MCP_PRESET": "cre-leads" }`.
+
+Command line: `npx gov-data-mcp --preset cre-leads`
+
+### `compliance` — KYB, Sanctions & Financial Compliance Screening
+
+Know-your-business and compliance screening from primary US government registers: company existence across Secretary of State registries, the Trade.gov Consolidated Screening List (OFAC SDN, BIS, State) as a delta, the DHS UFLPA Entity List, state Medicaid and HHS-OIG exclusion lists, professional license verification, GLEIF LEI ownership graphs, FDIC / NCUA institution health, FDIC structure changes, SEC investment-adviser registrations, PCAOB auditor engagements and SEC Regulation CF / A+ offering lifecycles. A screen that could not reach its source fails loudly rather than returning a clean sheet.
+
+**12 tools:** [kyb-company-verifier](https://apify.com/malonestar/kyb-company-verifier) · [consolidated-screening-list-delta](https://apify.com/malonestar/consolidated-screening-list-delta) · [uflpa-entity-list-monitor](https://apify.com/malonestar/uflpa-entity-list-monitor) · [medicaid-exclusion-screener](https://apify.com/malonestar/medicaid-exclusion-screener) · [license-verifier](https://apify.com/malonestar/license-verifier) · [gleif-ownership-graph](https://apify.com/malonestar/gleif-ownership-graph) · [fdic-ncua-health-rollup](https://apify.com/malonestar/fdic-ncua-health-rollup) · [fdic-structure-change-delta-monitor](https://apify.com/malonestar/fdic-structure-change-delta-monitor) · [ria-registration-delta-monitor](https://apify.com/malonestar/ria-registration-delta-monitor) · [pcaob-auditor-engagement-monitor](https://apify.com/malonestar/pcaob-auditor-engagement-monitor) · [reg-cf-lifecycle-monitor](https://apify.com/malonestar/reg-cf-lifecycle-monitor) · [reg-a-plus-lifecycle-monitor](https://apify.com/malonestar/reg-a-plus-lifecycle-monitor) — plus `search-gov-data-tools`, `describe-gov-data-tool`, `run-gov-data-tool`, scoped to this list.
+
+Claude Desktop (`claude_desktop_config.json`), Claude Code (`.mcp.json`) and Cursor (`.cursor/mcp.json`) all take the same block:
+
+```json
+{
+  "mcpServers": {
+    "gov-data-compliance": {
+      "command": "npx",
+      "args": ["-y", "gov-data-mcp", "--preset", "compliance"],
+      "env": { "APIFY_TOKEN": "apify_api_..." }
+    }
+  }
+}
+```
+
+Or, with the environment variable instead of the flag: `"args": ["-y", "gov-data-mcp"]` and `"env": { "APIFY_TOKEN": "apify_api_...", "GOV_DATA_MCP_PRESET": "compliance" }`.
+
+Command line: `npx gov-data-mcp --preset compliance`
+<!-- PRESETS:END -->
+
 ## Example prompts
 
 > Screen 1200 Broadway, Denver CO for environmental risk under ASTM E1527-21 and tell me which findings fall inside the standard's search distance.

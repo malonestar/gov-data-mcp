@@ -41,6 +41,25 @@ const MUTATIONS = [
   { file: 'src/tools.js', from: "  SEARCH: 'search-gov-data-tools',", to: "  SEARCH: 'search_gov_data_tools',", why: 'the naming convention splits in two again' },
   { file: 'src/tools.js', from: '  if (RENAMED_IN_1_1[toolName]) {', to: '  if (false) {', why: 'a pre-1.1 tool name gets a bare "unknown tool" with no way to recover' },
   { file: 'src/catalog.json', from: '"usdPerUnit": 0.01,', to: '"usdPerUnit": 10,', why: 'a 1000x overpriced rate reaches the shipped catalog' },
+
+  // --- vertical presets, v1.2.0 ---------------------------------------------
+  { file: 'src/tools.js', from: '  const actors = keep ? all.filter(a => keep.has(a.slug)) : all;', to: '  const actors = all;', why: 'a preset scopes the named tools but search/describe/run still reach the whole catalog' },
+  { file: 'src/tools.js', from: '  const featured = preset ? [...preset.tools] : [...FEATURED];', to: '  const featured = [...FEATURED];', why: 'a preset server exposes the default FEATURED list instead of its own' },
+  { file: 'src/tools.js', from: '    if (missing.length) {\n      throw new Error(`preset', to: '    if (false) {\n      throw new Error(`preset', why: 'a preset naming an unpublished tool starts a server that advertises it' },
+  { file: 'src/tools.js', from: "    ? ` This server is scoped to the \"${presetName}\" preset", to: "    ? `", why: 'a scoped server stops telling the agent it is scoped, so a miss reads like the tool does not exist anywhere' },
+  { file: 'src/tools.js', from: "  return referenced.every(r => index.bySlug.has(r)) ? ` ${note}` : '';", to: "  return ` ${note}`;", why: 'a routing note sends the agent to a tool the preset does not expose' },
+  { file: 'src/tools.js', from: "  const featured = index.featured || FEATURED;\n  return featured.filter", to: "  const featured = FEATURED;\n  return featured.filter", why: 'featuredToolDefinitions ignores the index and always lists the global FEATURED set' },
+  { file: 'src/presets.js', from: '  if (!preset) {\n    return {\n      ok: false,', to: '  if (false) {\n    return {\n      ok: false,', why: 'an unknown preset name resolves ok with no preset behind it' },
+  { file: 'src/presets.js', from: "      if (v === undefined || v.startsWith('--')) { out.errors.push('--preset requires a value'); continue; }", to: "      if (false) { out.errors.push('--preset requires a value'); continue; }", why: 'a bare --preset with no value is read as "no preset" and the full catalog starts silently' },
+  { file: 'src/presets.js', from: "  if (out.presetName === null && env && typeof env[PRESET_ENV] === 'string'", to: "  if (false && env && typeof env[PRESET_ENV] === 'string'", why: 'the GOV_DATA_MCP_PRESET environment variable is ignored' },
+  { file: 'src/presets.js', from: "  if (name === undefined || name === null || String(name).trim() === '') return { ok: true, preset: null, name: null };", to: "  if (name === undefined || name === null || String(name).trim() === '') return { ok: true, preset: PRESETS['phase1-esa'], name: 'phase1-esa' };", why: 'no preset silently becomes one preset — the default surface changes' },
+  { file: 'src/presets.js', from: "      'city-business-license-leads',\n      'license-verifier',\n    ],\n  },\n  'compliance'", to: "      'city-business-license-leads',\n      'license-verifier',\n      'hud-affordable-housing-explorer',\n    ],\n  },\n  'compliance'", why: 'a preset grows past the tool-selection cap' },
+  { file: 'src/presets.js', from: "      'reg-a-plus-lifecycle-monitor',\n    ],", to: "      'reg-a-plus-lifecycle-monitors',\n    ],", why: 'a preset names a tool that is not in the catalog (typo / unpublished)' },
+  { file: 'src/index.js', from: '\nif (!chosen.ok) {\n  console.error(`[gov-data-mcp] ${chosen.error}`);\n  process.exit(2);\n}', to: '\nif (!chosen.ok) {\n  console.error(`[gov-data-mcp] ${chosen.error}`);\n}', why: 'index.js logs an unknown preset and then starts the full catalog anyway' },
+  { file: 'src/index.js', from: '\nconst index = indexCatalog(catalog, { preset: chosen.preset, presetName: chosen.name });', to: '\nconst index = indexCatalog(catalog);', why: 'index.js resolves the preset and then ignores it' },
+  { file: 'README.md', from: '**11 tools:** [site-due-diligence-bundle]', to: '**10 tools:** [site-due-diligence-bundle]', why: 'the README states a preset tool count that disagrees with presets.js' },
+  { file: 'README.md', from: '### `cre-leads` — CRE & Local Business Leads', to: '### `cre-lead` — CRE & Local Business Leads', why: 'the README documents a preset name that does not exist' },
+  { file: 'src/index.js', from: '  ? { name: chosen.preset.serverName, version: pkg.version, title: chosen.preset.title, description: chosen.preset.description,', to: "  ? { name: 'gov-data-mcp', version: pkg.version, title: chosen.preset.title, description: undefined,", why: 'a preset server announces itself under the generic name with no description' },
 ];
 
 let pass = 0, fail = 0;
@@ -52,7 +71,7 @@ for (const m of MUTATIONS) {
   fs.writeFileSync(p, original.replace(m.from, m.to));
   let red = false;
   try {
-    execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js', { cwd: ROOT, stdio: 'pipe' });
+    execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js', { cwd: ROOT, stdio: 'pipe' });
   } catch { red = true; }
   fs.writeFileSync(p, original);
   if (red) { console.log(`RED   ${m.why}`); pass++; }
@@ -60,7 +79,7 @@ for (const m of MUTATIONS) {
 }
 
 // The suite must be green again after every restore.
-try { execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js', { cwd: ROOT, stdio: 'pipe' }); }
+try { execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js', { cwd: ROOT, stdio: 'pipe' }); }
 catch { console.error('FATAL: suite is red after restore'); process.exit(1); }
 
 console.log(`\n${pass} caught, ${fail} missed`);
