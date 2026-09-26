@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-24T04:13:45.505Z",
+  "generatedAt": "2026-09-26T01:36:25.156Z",
   "owner": "malonestar",
   "count": 120,
   "actors": [
@@ -1055,7 +1055,7 @@
       "slug": "childcare-provider-leads",
       "actorId": "malonestar/childcare-provider-leads",
       "title": "Childcare Provider Leads — Daycare Contact Lists + Compliance",
-      "description": "Licensed childcare provider lead lists from official state licensing data with direct phone AND email contacts (Texas HHSC). Filter by county, type, capacity, ages served; each lead scored with 2-year deficiency counts + high-risk flag. Delta mode alerts on newly licensed operations.",
+      "description": "Licensed childcare provider lead lists from official state licensing data in 9 states: TX, NY, CA, PA, MA, CT, WA, DE, VT. Phone, email and named contacts where published; filter by county, type, capacity, ages. Violation history where the state publishes it. Delta mode flags new programs.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -1084,26 +1084,63 @@
         "properties": {
           "state": {
             "type": "string",
-            "description": "REQUIRED. US state to pull licensed childcare providers from. v1 supports TX (Texas HHSC Child Care Licensing); FL and CA are scaffolded but not enabled. Name the state explicitly rather than relying on a default. Example: \"TX\".",
+            "description": "REQUIRED. US state to pull licensed childcare providers from: TX, NY, CA, PA, MA, CT, WA, DE or VT. Name the state explicitly rather than relying on a default. To pull several states in one run, also fill \"Additional states\". Example: \"TX\".",
             "enum": [
-              "TX"
+              "TX",
+              "NY",
+              "CA",
+              "PA",
+              "MA",
+              "CT",
+              "WA",
+              "DE",
+              "VT"
             ]
+          },
+          "states": {
+            "type": "array",
+            "description": "Optional extra states to include in the same run, in addition to \"State\". maxResults is shared fairly across all requested states (a state that runs out of matches hands its unused share to the others). A state that cannot answer - source down, failed live check, or a filter it cannot apply - is skipped and disclosed on every row (run_states_failed / run_states_failed_reason); the run fails only if no requested state can answer.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "TX",
+                "NY",
+                "CA",
+                "PA",
+                "MA",
+                "CT",
+                "WA",
+                "DE",
+                "VT"
+              ],
+              "enumTitles": [
+                "Texas (HHSC CCL — phone + email + violations)",
+                "New York (OCFS + NYC DOHMH — phone)",
+                "California (CDSS CCLD centers — phone + citations)",
+                "Pennsylvania (OCDEL — phone + email + STARS)",
+                "Massachusetts (EEC — phone)",
+                "Connecticut (OEC — phone + inspections + violations)",
+                "Washington (DCYF centers — email + contact)",
+                "Delaware (OCCL — phone + citations)",
+                "Vermont (CDD — phone + email + STARS + vacancies)"
+              ]
+            }
           },
           "county": {
             "type": "string",
-            "description": "Filter to one county (case-insensitive, e.g. \"Harris\", \"Dallas\", \"Travis\"). Leave empty for statewide. A county that does not exist returns 0 rows, which is a valid answer. Example: \"Harris\"."
+            "description": "Filter to one county (case-insensitive, e.g. \"Harris\", \"Kings\" or \"Brooklyn\", \"Los Angeles\", \"Chester\"). Leave empty for statewide. Connecticut and Massachusetts publish NO county field, so a county filter makes those states fail loudly rather than return an unfiltered statewide list. A county that does not exist returns 0 rows, which is a valid answer. Example: \"Harris\"."
           },
           "operationType": {
             "type": "string",
-            "description": "Exact operation type (case-insensitive). Common TX values: \"Licensed Center\", \"Licensed Child-Care Home\", \"Registered Child-Care Home\", \"Listed Family Home\". Leave empty for all types. Example: \"Licensed Center\"."
+            "description": "Exact operation type as the state names it (case-insensitive). Examples - TX: \"Licensed Center\", \"Licensed Child-Care Home\"; NY: \"Day Care Center\", \"Group Family Day Care\", \"Family Day Care\", \"School Age Child Care\" (or DCC/GFDC/FDC/SACC); PA: \"Child Care Center\", \"Family Child Care Home\", \"Group Child Care Home\"; CT: \"Child Care Center\", \"Family Child Care Home\"; DE: \"Licensed Child Care Center\"; VT: \"CBCCPP\", \"Registered FCCH\", \"Licensed Provider\"; WA: \"CHILD CARE CENTER\", \"SCHOOL-AGE PROGRAM\"; MA: \"Center-based Care\", \"Family Child Care\"; CA: \"DAY CARE CENTER\", \"INFANT CENTER\", \"SCHOOL-AGE DC CENTER\". Leave empty for all types. Example: \"Licensed Center\"."
           },
           "agesServed": {
             "type": "string",
-            "description": "Substring match on the licensed-to-serve ages field, e.g. \"Infant\", \"Toddler\", \"Pre-Kindergarten\", \"School\". Leave empty for any."
+            "description": "Ages-served filter, e.g. \"Infant\", \"Toddler\", \"Pre-Kindergarten\", \"School\". TX and DE match the published ages text; NY and VT match programs with licensed capacity in that age group (Infant, Toddler, Preschool, School). PA, CT, WA, MA and CA publish no usable ages field, so this filter makes those states fail loudly rather than return unfiltered rows. Leave empty for any."
           },
           "minCapacity": {
             "type": "integer",
-            "description": "Only include operations whose published total licensed capacity is at or above this number (e.g. 50 targets larger centers). 0 = no minimum. Operations for which TX publishes NO capacity are KEPT and marked capacity_filter_applied=\"kept_unknown_capacity\" rather than silently deleted - 141 of the 236 Child Placing Agencies statewide have no published capacity. Applied by default if omitted: 0.",
+            "description": "Only include operations whose published total licensed capacity is at or above this number (e.g. 50 targets larger centers). 0 = no minimum. Operations for which the state publishes NO capacity are KEPT and marked capacity_filter_applied=\"kept_unknown_capacity\" rather than silently deleted - e.g. 141 of the 236 Texas Child Placing Agencies have no published capacity. Applied by default if omitted: 0.",
             "minimum": 0,
             "maximum": 10000
           },
@@ -1115,7 +1152,7 @@
           },
           "includeCompliance": {
             "type": "boolean",
-            "description": "Also join each provider to the TX non-compliance table for a 2-year window and add deficiency_count_2y, deficiency_weighted_score_2y, recent_deficiency_dates and high_risk_flag. When this is off, those four fields are NULL (not checked) - but deficiency_count_total, deficiency_weighted_score_total and high_risk_flag_lifetime, which come from HHSC counts published on the roster row itself, are emitted either way. Example: true."
+            "description": "Also attach each state's published compliance record. TX: 2-year non-compliance join (deficiency_count_2y, high_risk_flag ...) - the lifetime counts HHSC publishes on the roster row are emitted either way. CT: inspection + violation history. DE: non-compliance findings (last ~5 years). CA: CCLD facility page (status, contact, licensee, inspections, Type A/B citations, complaints). NY, PA, VT, WA and MA publish no compliance dataset: those rows read violations_status=\"not_published\" with NULL counts, never 0. Example: true."
           },
           "highRiskThreshold": {
             "type": "integer",
@@ -1125,7 +1162,7 @@
           },
           "mode": {
             "type": "string",
-            "description": "\"roster\" (default) returns the current filtered provider list. \"new_operations\" keeps a baseline of seen operation IDs in the NAMED key-value store \"childcare-provider-leads-state\", scoped to your filter combination, and after the first seeding run emits only newly licensed operations. Every row carries delta_baseline_status so a seeding run is distinguishable from an incremental one. Applied by default if omitted: \"roster\".",
+            "description": "\"roster\" (default) returns the current filtered provider list. \"new_operations\" keeps a baseline of seen operation IDs in the NAMED key-value store \"childcare-provider-leads-state\", scoped to your state and filter combination (one baseline per state), and after the first seeding run emits only newly licensed operations. Every row carries delta_baseline_status so a seeding run is distinguishable from an incremental one. Applied by default if omitted: \"roster\".",
             "enum": [
               "roster",
               "new_operations"
@@ -1133,7 +1170,7 @@
           },
           "activeOnly": {
             "type": "boolean",
-            "description": "Only include currently active operations (operation_status = Y). Disable to include all statuses. Applied by default if omitted: true."
+            "description": "Only include currently operating programs (TX operation_status = Y; NY not Suspended; CT ACTIVE; WA Active; MA not Expired). PA, DE, VT and CA publish current rosters only. Disable to include all statuses where the state publishes them. Applied by default if omitted: true."
           }
         },
         "required": [
@@ -5612,7 +5649,7 @@
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
       "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Pre-opening bar & restaurant leads from state liquor registries. NEW licenses + PENDING applications from TX TABC, NY SLA, FL DBPR and CA ABC, with California new-premises vs transfer flags. Delta mode emits only new applications, newly issued licenses and status changes.",
+      "description": "Pre-opening bar & restaurant leads from state liquor registries: new licenses + pending applications from TX, NY, FL, CA, WA, OR, CT, CO, MO and Chicago, with new-premises vs transfer flags. Delta mode emits only new applications, newly issued licenses and status changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -5641,26 +5678,38 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Which state liquor-license registries to query. Available: TX (TABC active + pending), NY (SLA active + pending), FL (DBPR licensed extract, active only), CA (ABC daily export, active + pending; CA applications carry no date, so a sinceDate cannot be applied to CA pending). Example: [\"TX\",\"NY\"].",
+            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Example: [\"TX\",\"NY\"].",
             "items": {
               "type": "string",
               "enum": [
                 "TX",
                 "NY",
                 "FL",
-                "CA"
+                "CA",
+                "CO",
+                "OR",
+                "CT",
+                "MO",
+                "WA",
+                "IL-CHICAGO"
               ],
               "enumTitles": [
                 "Texas (TABC)",
                 "New York (SLA)",
                 "Florida (DBPR ABT)",
-                "California (ABC)"
+                "California (ABC)",
+                "Colorado (LED)",
+                "Oregon (OLCC)",
+                "Connecticut (DCP)",
+                "Missouri (ATC)",
+                "Washington (LCB)",
+                "Chicago, IL (city liquor licenses)"
               ]
             }
           },
           "feed": {
             "type": "string",
-            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal — a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = both. Note: FL only has an active feed. Example: \"pending\".",
+            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal -- a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = both. Pending is published by TX, NY, CA, WA, OR, CT; active by TX, NY, FL, CA, CO, MO and Chicago. Example: \"pending\".",
             "enum": [
               "pending",
               "active",
@@ -5677,19 +5726,19 @@
           },
           "city": {
             "type": "string",
-            "description": "Optional case-insensitive city substring filter (e.g. \"Austin\", \"Brooklyn\", \"Miami\"). Applied server-side on Socrata sources and client-side on the FL CSV."
+            "description": "Optional case-insensitive city substring filter (e.g. \"Austin\", \"Brooklyn\", \"Seattle\"). Oregon applications publish no separate city, so for OR the match is against the one-line address. A source that publishes no city refuses the filter for its leg (disclosed on every row) instead of ignoring it."
           },
           "county": {
             "type": "string",
-            "description": "Optional case-insensitive county substring filter (e.g. \"Bexar\", \"Bronx\")."
+            "description": "Optional case-insensitive county substring filter (e.g. \"Bexar\", \"Bronx\"). Published by TX, NY, FL, CA and MO only; any other requested source refuses a county filter for its leg (disclosed on every row) rather than returning its whole state as if filtered."
           },
           "sinceDate": {
             "type": "string",
-            "description": "Optional floor on the notice date. Pending feeds: applications submitted/received on or after this date. Active feeds: licenses issued on or after this date. MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into a live query. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. California pending applications publish NO date: combining sinceDate with CA pending fails that leg (disclosed on every row) instead of returning an empty result -- use mode \"delta\" to catch new CA applications."
+            "description": "Optional floor on the notice date. Pending feeds: applications submitted/received on or after this date (WA: LCB notification date). Active feeds: licenses issued on or after this date. MUST be YYYY-MM-DD (e.g. 2026-01-15) - any other format is rejected and the run fails without billing, rather than being spliced unverified into a live query. Slash forms are rejected on purpose: 05/06/2026 is ambiguous between US and EU order. California and Connecticut pending applications publish NO date: combining sinceDate with CA or CT pending fails that leg (disclosed on every row) instead of returning an empty result -- use mode \"delta\" to catch new applications there."
           },
           "maxResults": {
             "type": "integer",
-            "description": "Total cap on records emitted across all selected states and feeds (each record is one billable result). The cap is split evenly across source legs. Example: 200.",
+            "description": "Total cap on records emitted across all selected states and feeds (each record is one billable result). Each source gets an even share of what is left, so a source that returns fewer rows than its share passes the rest to the next one. Example: 200.",
             "minimum": 1,
             "maximum": 50000
           }
@@ -7158,7 +7207,7 @@
       "slug": "parcel-owner-lookup",
       "actorId": "malonestar/parcel-owner-lookup",
       "title": "Parcel Owner Lookup — Address to Owner & Assessor Record",
-      "description": "Turn street addresses into parcel IDs, owner names, mailing addresses, assessed values & coordinates from official assessor rolls (Chicago/Cook County, Philadelphia, NYC) with Census-geocoder fallback. Address-grounding primitive for AI agents, proptech & skip tracing. $0.02/lookup.",
+      "description": "Address to parcel ID, owner name, mailing address & assessed value from official assessor rolls: Chicago, Philadelphia, NYC + NC, NY State, WI, CO, MN, AR, MA, CT, VT statewide, Phoenix, Houston, Cleveland, Nashville & DC. Census fallback elsewhere. $0.02/lookup.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
@@ -7187,7 +7236,7 @@
         "properties": {
           "addresses": {
             "type": "array",
-            "description": "US street addresses to resolve to a parcel + owner record, one per line (e.g. '1060 W Addison St, Chicago, IL'). v1 matches against the Cook County IL (Chicago), Philadelphia PA, and New York City assessment rolls; addresses outside those areas fall back to Census geocoding (lat/lon only). Every input address always yields exactly one output row — unmatched addresses come back with match_confidence 'none'. Example: [\"1060 W Addison St, Chicago, IL\",\"1234 Market St, Philadelphia, PA\",\"350 5th Ave, New York, NY\"].",
+            "description": "US street addresses to resolve to a parcel + owner record, one per line (e.g. '1060 W Addison St, Chicago, IL'). Matched against the Cook County IL (Chicago), Philadelphia PA and New York City rolls, plus (v1.1) statewide rolls for North Carolina, New York State, Wisconsin, Colorado, Minnesota (opt-in counties), Arkansas, Massachusetts, Connecticut and Vermont and county rolls for Maricopa AZ (Phoenix), Harris TX (Houston), Cuyahoga OH (Cleveland), Nashville TN and Washington DC - routed by the Census-geocoded point's county. Addresses elsewhere fall back to Census geocoding (lat/lon only). Every input address yields exactly one output row; see lookup_status on each row. Example: [\"1060 W Addison St, Chicago, IL\",\"1234 Market St, Philadelphia, PA\",\"350 5th Ave, New York, NY\"].",
             "items": {
               "type": "string"
             }
@@ -7442,7 +7491,7 @@
       "slug": "realtor-license-roster-delta",
       "actorId": "malonestar/realtor-license-roster-delta",
       "title": "Realtor License Roster, New Applicants & Broker Change Delta",
-      "description": "Real estate licensee lead feeds for recruiters: TREC daily new license applications (future agents), newly licensed agents, and agent-switched-broker (affiliation change) events. TX live via Socrata; FL weekly DBPR roster. Normalized records with license, status, county, sponsoring broker.",
+      "description": "Real estate licensee lead feeds for recruiters: TX daily license applications, newly licensed agents and broker-change (affiliation) events for TX, FL, CT, CO, NY and DE. Official state licensing data, normalized with license, status, sponsoring broker and address.",
       "categories": [
         "LEAD_GENERATION",
         "REAL_ESTATE",
@@ -7471,39 +7520,40 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "REQUIRED. US states to pull. Supported: TX (roster + daily new applications + delta) and FL (weekly roster CSV + delta). Name the states explicitly — there is no default, so a run cannot quietly return Texas when you asked for Florida. Example: [\"TX\"].",
+            "description": "REQUIRED. US states to pull (two-letter codes; full names also accepted). Supported: TX (daily new applications, new licensees, roster, delta), FL (new licensees, weekly roster, delta), CT (new licensees, roster, delta with broker affiliation), CO (new licensees, roster, delta), DE (new licensees, roster, delta), NY (active roster + broker-change delta; NY publishes no issue date). Several states can be combined; maxResults is split across them. Example: [\"TX\"].",
             "items": {
               "type": "string"
             }
           },
           "feed": {
             "type": "string",
-            "description": "Which lead feed to produce. new_applicants = TREC daily license applications (future agents, pre-license, TX only). roster = a bounded slice of the current licensee roster. delta = compare against the saved baseline and emit newly_licensed + affiliation_change events (first run only seeds the baseline). Example: \"new_applicants\".",
+            "description": "Which lead feed to produce. new_applicants = TREC daily license applications (future agents, TX only). new_licensees = licences first issued in the last daysBack days (TX, FL, CT, CO, DE). roster = a bounded slice of the current licensee roster. delta = compare against the saved baseline and emit newly_licensed + affiliation_change events (first run only seeds the baseline). Leave empty to use each state's own default (TX new_applicants; FL/CT/CO/DE new_licensees; NY roster). If a state does not publish the requested feed it serves the closest one it does publish and says so on every row (feed_requested / feed_resolution / feed_note) instead of failing. Example: \"new_applicants\".",
             "enum": [
               "new_applicants",
+              "new_licensees",
               "roster",
               "delta"
             ]
           },
           "daysBack": {
             "type": "integer",
-            "description": "Look-back window in days for the new_applicants feed. Anchored to the newest date in the applications dataset (not today), so the feed never comes back empty because of publishing lag. Example: 14.",
+            "description": "Look-back window in days for the new_applicants and new_licensees feeds. Anchored to the newest date actually present in the source (not today), so the feed never comes back empty because of publishing lag. Example: 14.",
             "minimum": 0,
             "maximum": 365
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of records to push to the dataset (billing is per result). Example: 200.",
+            "description": "Maximum number of records to push to the dataset (billing is per result). When several states are requested the cap is split across them, and budget an earlier state does not use passes to the next. Example: 200.",
             "minimum": 1,
             "maximum": 50000
           },
           "name": {
             "type": "string",
-            "description": "Optional case-insensitive filter on licensee name (TX: full name; applications: last name; FL: licensee name)."
+            "description": "Optional case-insensitive filter on licensee name (TX: full name; TX applications: last name; FL, CT, NY, DE: licensee name; CO: last name)."
           },
           "county": {
             "type": "string",
-            "description": "Optional case-insensitive county filter, e.g. \"Travis\" or \"Escambia\". Note: many TX rows have a blank county."
+            "description": "Optional case-insensitive county filter, e.g. \"Travis\" or \"Escambia\". Supported for TX, FL and NY. CT, CO and DE publish no county column: a run that combines a county filter with those states skips them (and says so) rather than returning unfiltered rows."
           },
           "licenseType": {
             "type": "string",
@@ -7511,11 +7561,11 @@
           },
           "status": {
             "type": "string",
-            "description": "Optional case-insensitive license-status filter, e.g. \"Active\". Ignored on the TX applications dataset (it has no status column)."
+            "description": "Optional case-insensitive license-status filter, e.g. \"Active\". Ignored on the TX applications dataset (it has no status column). NY publishes active licences only, so a status filter skips NY."
           },
           "flRegions": {
             "type": "array",
-            "description": "Florida DBPR region numbers 1-14 to download when states includes FL (each region is one weekly CSV; files are large, so default is region 1 only). Applied by default if omitted: [\"1\"].",
+            "description": "Florida DBPR region numbers 1-14 to download when states includes FL (each region is one weekly CSV of ~4-5 MB). Region 1 is used when empty. Example: [\"1\"].",
             "items": {
               "type": "string"
             }
@@ -8119,7 +8169,7 @@
       "slug": "sos-registry-monitor",
       "actorId": "malonestar/sos-registry-monitor",
       "title": "Secretary of State Business Search & New-Business Monitor API",
-      "description": "Business entity search & KYB API across official US Secretary of State registries. Search companies by name and monitor newly formed LLCs and corporations for lead generation. Bulk and date-range capable, sourced from state open-data portals — no anti-bot. Keyless.",
+      "description": "Business entity search & KYB API across official US Secretary of State registries. Search companies by name and monitor newly formed LLCs and corporations for lead generation. Bulk and date-range capable, sourced from state open-data portals — no anti-bot. Keyless. Covers CO, CT, NY, OR, PA and DE.",
       "categories": [
         "LEAD_GENERATION",
         "DEVELOPER_TOOLS",
