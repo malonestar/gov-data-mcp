@@ -1,7 +1,7 @@
 {
-  "generatedAt": "2026-09-26T23:07:30.894Z",
+  "generatedAt": "2026-09-26T23:20:31.028Z",
   "owner": "malonestar",
-  "count": 120,
+  "count": 122,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
@@ -768,6 +768,99 @@
             "description": "If a requested quarter cannot be retrieved (not yet published by BTS, or the download failed), the run FAILS loudly by default so a partial window is never mistaken for a complete one. Set true to proceed with the quarters that did arrive — every row then reports quarters_missing and data_complete=false. Applied by default if omitted: false."
           }
         }
+      }
+    },
+    {
+      "slug": "ca-data-broker-registry-delta",
+      "actorId": "malonestar/ca-data-broker-registry-delta",
+      "title": "California Data Broker Registry Monitor — CPPA Delete Act Delta",
+      "description": "California data broker registry API (CPPA / Delete Act): every registered data broker with 2026 disclosure flags (GenAI, foreign actor, minors, geolocation, biometric), DSAR metrics, first-registered year, new/lapsed/renamed/changed delta and is-this-company-registered verification.",
+      "categories": [
+        "BUSINESS",
+        "DEVELOPER_TOOLS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/ca-data-broker-registry-delta",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "Data broker registry row",
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.0055,
+          "DIAMOND": 0.0055
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-26T22:00:01.299Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "description": "registry = the full CPPA registrant list (filterable) with 2026 disclosure flags, DSAR metrics and registration history. delta = only what changed since your last run: new, lapsed, renamed and changed registrants (the first run compares against CPPA's own 2025 export, so it is a real delta). verify = check names[] against the registry and get a three-valued is_registered per name. Example: \"registry\".",
+            "enum": [
+              "registry",
+              "delta",
+              "verify"
+            ]
+          },
+          "flags": {
+            "type": "array",
+            "description": "Optional. Keep only registrants that filed Yes on EVERY listed flag. Keys: collects_minors, collects_account_logins, collects_government_ids, collects_citizenship_data, collects_union_membership, collects_sexual_orientation, collects_gender_identity, collects_biometric, collects_precise_geolocation, collects_reproductive_health, sold_to_foreign_actor, sold_to_federal_government, sold_to_state_governments, sold_to_law_enforcement, sold_to_genai_developer, regulated_fcra, regulated_glba, regulated_iippa, regulated_cmia, regulated_hipaa. An unknown key fails the run before any download.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "nameQuery": {
+            "type": "string",
+            "description": "Optional substring match on the registered name or DBA (case, punctuation and Inc/LLC suffixes ignored). Example: \"transunion\"."
+          },
+          "websiteQuery": {
+            "type": "string",
+            "description": "Optional substring match on the filed website, e.g. \"acxiom.com\"."
+          },
+          "state": {
+            "type": "string",
+            "description": "Optional. 2-letter code or full name (\"CA\" and \"California\" both match the same registrants — CPPA stores both spellings)."
+          },
+          "country": {
+            "type": "string",
+            "description": "Optional exact match on the filed country, as CPPA publishes it in upper case (UNITED STATES, UNITED KINGDOM, CANADA...)."
+          },
+          "eventTypes": {
+            "type": "array",
+            "description": "delta mode only. Optional subset of new, lapsed, renamed, changed. Empty = all four.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "names": {
+            "type": "array",
+            "description": "verify mode. One entry per company; you get one row per entry with is_registered true / false / null (null = fuzzy candidates exist, see evidence — review, do not treat as negative). Max 500. Example: [\"Acxiom\",\"LexisNexis\",\"Oracle America\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "includeHistory": {
+            "type": "boolean",
+            "description": "Also read CPPA's 2024 and 2025 exports and the legacy OAG 2020-2023 registry to fill first_registered_year / date, registration_years_seen and in_registry_* on every row. Three extra small downloads. Default on. Applied by default if omitted: true."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on rows emitted and billed (1-5000). The full registry is ~600 rows; every row carries matched_rows_total and results_truncated so a capped answer is never mistaken for the whole list. Example: 100.",
+            "minimum": 1,
+            "maximum": 5000
+          }
+        },
+        "required": [
+          "mode"
+        ]
       }
     },
     {
@@ -8506,6 +8599,90 @@
         },
         "required": [
           "assets"
+        ]
+      }
+    },
+    {
+      "slug": "ucc-lapse-refinance-window",
+      "actorId": "malonestar/ucc-lapse-refinance-window",
+      "title": "UCC Lien Lapse Leads: Refinance Window + Lender Rollup",
+      "description": "UCC lien lapse leads for equipment-finance, MCA and factoring brokers: UCC-1 financing statements lapsing in the next N days (continuations honoured, terminated liens excluded) with debtor, lender and collateral, plus a secured-party filings rollup by quarter. CO, CT, OR open data. Keyless.",
+      "categories": [
+        "BUSINESS",
+        "LEAD_GENERATION",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/ucc-lapse-refinance-window",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "apify-default-dataset-item",
+        "unit": "UCC lapse lead / rollup row",
+        "usdPerUnit": 0.02,
+        "usdPer1000": 20,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 0.02,
+          "BRONZE": 0.016,
+          "SILVER": 0.014,
+          "GOLD": 0.011,
+          "PLATINUM": 0.011,
+          "DIAMOND": 0.011
+        },
+        "actorStartUsd": null,
+        "since": "2026-09-26T22:00:50.208Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "states": {
+            "type": "array",
+            "description": "REQUIRED. State codes to query. Shipped: CO (full: debtor + secured party + collateral + lapse), CT (full: debtor + secured party + lapse), OR (partial: secured party + lapse, no debtor table published -- rows link to the filing image). NY, PA, DE, TX, WA publish no UCC dataset and are reported as state_coverage=not_available on the run, never as an empty success. Every state is judged independently and its outcome is stamped on every row. Example: [\"CO\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "mode": {
+            "type": "string",
+            "description": "lapse-window = one row per UCC-1 financing statement whose CURRENT lapse date (after continuations; terminated liens excluded) falls inside the next windowDays -- the refinance / re-solicit trigger. secured-party-rollup = initial UCC-1 filings per secured party x quarter over the trailing windowDays (who is lending, how much, where). Example: \"lapse-window\".",
+            "enum": [
+              "lapse-window",
+              "secured-party-rollup"
+            ]
+          },
+          "windowDays": {
+            "type": "integer",
+            "description": "lapse-window: liens lapsing between the window start (today, or sinceDate) and start + windowDays. secured-party-rollup: initial filings accepted in the trailing windowDays (or since sinceDate). 1-365. Example: 90.",
+            "minimum": 1,
+            "maximum": 365
+          },
+          "sinceDate": {
+            "type": "string",
+            "description": "Optional. MUST be YYYY-MM-DD (e.g. 2027-01-01); any other format fails the run without billing rather than being spliced unverified into the live query -- slash forms are rejected on purpose because 05/06/2025 is ambiguous. lapse-window: the window starts here instead of today (ask for lapses in a future quarter). secured-party-rollup: count filings accepted on/after this date instead of today - windowDays."
+          },
+          "securedPartyQuery": {
+            "type": "string",
+            "description": "Optional. Keep only rows whose secured party (lender) name contains this text, case-insensitive (e.g. \"Kubota\", \"Wells Fargo\", \"Small Business Administration\"). Applied after each lien is fully assembled, so a lender named only on an amendment still matches."
+          },
+          "debtorCity": {
+            "type": "string",
+            "description": "Optional. Keep only leads whose primary debtor address city equals this (case-insensitive). CO and CT publish debtor cities; OR publishes no debtor table, so an OR leg with this filter is reported as not applicable rather than silently ignored."
+          },
+          "county": {
+            "type": "string",
+            "description": "Optional. None of the shipped portals publishes a county on the filing record; CO carries one only on farm-product collateral records. A state that cannot honour the filter is reported as not applicable on the run, never silently ignored. Prefer debtorCity."
+          },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard cap on billable rows for the whole run (all states together, soonest lapse first / largest lender first). When more matched, every row carries result_truncated=true. Default 500; prefill 40 so a first free-tier run costs under $1. Example: 40. Applied by default if omitted: 500.",
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "socrataAppToken": {
+            "type": "string",
+            "description": "Optional free Socrata app token to raise rate limits on the state portals."
+          }
+        },
+        "required": [
+          "states"
         ]
       }
     },

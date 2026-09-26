@@ -1,6 +1,6 @@
 # gov-data-mcp
 
-**120 US government open-data tools, as one MCP server.**
+**122 US government open-data tools, as one MCP server.**
 
 EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, NRCS, HRSA, CMS, county assessor rolls and state licensing boards — all reachable as agent-callable tools, all reading directly from official government APIs and bulk files. No scraping, no HTML parsing, no rate-limit roulette.
 
@@ -49,13 +49,13 @@ Claude Desktop reads `claude_desktop_config.json`; Claude Code reads `.mcp.json`
 | `parcel-owner-lookup` | Assessor-roll owner of record for an address |
 | `license-verifier` | 19 professional licensing boards across 9 states + OIG exclusions |
 
-**Plus three tools that reach the other 108:**
+**Plus three tools that reach the other 110:**
 
 - `search-gov-data-tools` — find a tool by keyword, agency or topic
 - `describe-gov-data-tool` — full input schema for any tool in the catalog
 - `run-gov-data-tool` — run any tool in the catalog
 
-The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 120.
+The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 122.
 
 <!-- PRESETS:START -->
 ## Vertical presets
@@ -187,7 +187,7 @@ The underlying actors carry the same discipline: per-source status on every row,
 <!-- COVERAGE:START -->
 ## Coverage
 
-**120 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
+**122 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
 
 Each entry links to its full input/output schema, pricing and worked examples.
 
@@ -211,9 +211,9 @@ Each entry links to its full input/output schema, pricing and worked examples.
 
 [ssurgo-soil-suitability-screener](https://apify.com/malonestar/ssurgo-soil-suitability-screener) · [usda-cdl-farmland-siting-screener](https://apify.com/malonestar/usda-cdl-farmland-siting-screener) · [usgs-groundwater-depth-screener](https://apify.com/malonestar/usgs-groundwater-depth-screener) · [usgs-nwis-streamflow-monitor](https://apify.com/malonestar/usgs-nwis-streamflow-monitor) · [water-rights-availability-screener](https://apify.com/malonestar/water-rights-availability-screener)
 
-**Banking, lending & credit** (8)
+**Banking, lending & credit** (9)
 
-[bank-enforcement-tracker](https://apify.com/malonestar/bank-enforcement-tracker) · [fdic-branch-network-churn-rollup](https://apify.com/malonestar/fdic-branch-network-churn-rollup) · [fdic-ncua-health-rollup](https://apify.com/malonestar/fdic-ncua-health-rollup) · [fdic-sod-deposit-market-share-rollup](https://apify.com/malonestar/fdic-sod-deposit-market-share-rollup) · [fdic-structure-change-delta-monitor](https://apify.com/malonestar/fdic-structure-change-delta-monitor) · [fhlbank-membership-delta-monitor](https://apify.com/malonestar/fhlbank-membership-delta-monitor) · [hmda-fair-lending-disparity-rollup](https://apify.com/malonestar/hmda-fair-lending-disparity-rollup) · [sba-loan-portfolio-explorer](https://apify.com/malonestar/sba-loan-portfolio-explorer)
+[bank-enforcement-tracker](https://apify.com/malonestar/bank-enforcement-tracker) · [fdic-branch-network-churn-rollup](https://apify.com/malonestar/fdic-branch-network-churn-rollup) · [fdic-ncua-health-rollup](https://apify.com/malonestar/fdic-ncua-health-rollup) · [fdic-sod-deposit-market-share-rollup](https://apify.com/malonestar/fdic-sod-deposit-market-share-rollup) · [fdic-structure-change-delta-monitor](https://apify.com/malonestar/fdic-structure-change-delta-monitor) · [fhlbank-membership-delta-monitor](https://apify.com/malonestar/fhlbank-membership-delta-monitor) · [hmda-fair-lending-disparity-rollup](https://apify.com/malonestar/hmda-fair-lending-disparity-rollup) · [sba-loan-portfolio-explorer](https://apify.com/malonestar/sba-loan-portfolio-explorer) · [ucc-lapse-refinance-window](https://apify.com/malonestar/ucc-lapse-refinance-window)
 
 **Securities, audit, pensions & sanctions** (10)
 
@@ -235,9 +235,9 @@ Each entry links to its full input/output schema, pricing and worked examples.
 
 [cdc-nndss-outbreak-monitor](https://apify.com/malonestar/cdc-nndss-outbreak-monitor) · [clinical-trials-meta-search](https://apify.com/malonestar/clinical-trials-meta-search) · [cms-open-payments](https://apify.com/malonestar/cms-open-payments) · [cms-part-d-prescriber-delta](https://apify.com/malonestar/cms-part-d-prescriber-delta) · [drug-shortage-delta-monitor](https://apify.com/malonestar/drug-shortage-delta-monitor) · [nadac-price-movers](https://apify.com/malonestar/nadac-price-movers) · [usmin-mine-feature-proximity-screener](https://apify.com/malonestar/usmin-mine-feature-proximity-screener)
 
-**Patents, IP & company data** (4)
+**Patents, IP & company data** (5)
 
-[npm-package-health-scorer](https://apify.com/malonestar/npm-package-health-scorer) · [ptab-trial-tracker](https://apify.com/malonestar/ptab-trial-tracker) · [sbom-vulnerability-rollup](https://apify.com/malonestar/sbom-vulnerability-rollup) · [uspto-patent-lapse-fto-monitor](https://apify.com/malonestar/uspto-patent-lapse-fto-monitor)
+[ca-data-broker-registry-delta](https://apify.com/malonestar/ca-data-broker-registry-delta) · [npm-package-health-scorer](https://apify.com/malonestar/npm-package-health-scorer) · [ptab-trial-tracker](https://apify.com/malonestar/ptab-trial-tracker) · [sbom-vulnerability-rollup](https://apify.com/malonestar/sbom-vulnerability-rollup) · [uspto-patent-lapse-fto-monitor](https://apify.com/malonestar/uspto-patent-lapse-fto-monitor)
 
 **Labor & enforcement** (3)
 
