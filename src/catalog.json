@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T01:36:25.156Z",
+  "generatedAt": "2026-09-26T23:07:30.894Z",
   "owner": "malonestar",
   "count": 120,
   "actors": [
@@ -84,7 +84,7 @@
       "categories": [
         "REAL_ESTATE",
         "LEAD_GENERATION",
-        "DEVELOPER_TOOLS"
+        "BUSINESS"
       ],
       "storeUrl": "https://apify.com/malonestar/acris-deed-transfer-intel",
       "pricing": {
@@ -1059,7 +1059,7 @@
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
-        "DEVELOPER_TOOLS"
+        "BUSINESS"
       ],
       "storeUrl": "https://apify.com/malonestar/childcare-provider-leads",
       "pricing": {
@@ -1185,7 +1185,7 @@
       "description": "New business-license lead feed across Chicago, LA, SF, NYC and Seattle. Normalizes municipal open data into one schema with new-vs-renewal and active-vs-dead licence flags, owner mailing address, NAICS, phone where published, plus per-city coverage and freshness on every row.",
       "categories": [
         "LEAD_GENERATION",
-        "DEVELOPER_TOOLS",
+        "BUSINESS",
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/city-business-license-leads",
@@ -5482,7 +5482,7 @@
       "description": "KYB/AML company verification API. Given a company name, fans out to France (INSEE/RNE), GLEIF LEI, and US state registries and returns, per registry: exists, normalized status, jurisdiction, identifiers (SIREN/LEI), officers, address, and a match-confidence score. Keyless.",
       "categories": [
         "LEAD_GENERATION",
-        "DEVELOPER_TOOLS",
+        "BUSINESS",
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/kyb-company-verifier",
@@ -5537,7 +5537,7 @@
       "slug": "license-verifier",
       "actorId": "malonestar/license-verifier",
       "title": "License Verification API — Nurses, MDs & OIG Exclusions",
-      "description": "Primary source verification for US professional licenses. Search 19 state boards by name or license number: status, expiration, disciplinary actions. Cross-checks the NPPES NPI registry and screens the HHS-OIG exclusion list. Bulk roster screening.",
+      "description": "Primary source verification for US professional licenses. Search 19 state boards by name or license number: status, expiration, disciplinary actions. Cross-checks the NPPES NPI registry and screens the HHS-OIG exclusion list. Bulk roster screening. Newly licensed clinicians feed (roster-delta).",
       "categories": [
         "BUSINESS",
         "AUTOMATION",
@@ -5641,6 +5641,26 @@
             "items": {
               "type": "string"
             }
+          },
+          "mode": {
+            "type": "string",
+            "description": "Leave empty for the classic lookup/roster behaviour. Set \"roster-delta\" for the newly-credentialed feed: every credential ORIGINALLY ISSUED in the last sinceDays on the selected boards, one row each, with NPI cross-walk and OIG screen. The first run seeds a named baseline and emits the window as event_type \"inventory\"; later runs emit only event_type \"newly_licensed\" (a credential absent from the baseline AND issued on/after the previous run minus 7 days). A run against unchanged data emits 0 rows and bills nothing. Boards with an original-issue date: WA (DOH), TX-BON, TX-LVN, TX-APRN, IL, CO, CT, DE, OR (CCB), WA-CPA, WA-CONTRACTOR, NY-NOTARY, NY-COS, NY-APPRAISER. In this mode maxResults is the TOTAL row cap for the run (newest credentials first).",
+            "enum": [
+              "roster-delta"
+            ]
+          },
+          "professions": {
+            "type": "array",
+            "description": "roster-delta only. Restrict to these professions, matched case-insensitively on the normalised profession (e.g. \"Registered Nurse\") or as a prefix of the board's raw credential type (\"Registered Nurse\" reaches \"Registered Nurse License\" and \"Registered Nurse Temporary Practice Permit\" but NOT \"Advanced Registered Nurse Practitioner\"). Examples: \"Registered Nurse\", \"Licensed Practical Nurse\", \"Physician And Surgeon\", \"Dentist\", \"Pharmacist\", \"Physical Therapist\". Omit for every profession the board publishes. Changing this filter starts a NEW delta baseline (the baseline is scoped by boards + professions). Example: [\"Registered Nurse\"].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sinceDays": {
+            "type": "integer",
+            "description": "roster-delta only. How many days back the original-issue-date window reaches (1-400). The seeding run emits this whole window as inventory; later runs emit only credentials issued since the previous run (minus a 7-day publication slack). A non-integer or out-of-range value fails the run before any request is made. Example: 30.",
+            "minimum": 1,
+            "maximum": 400
           }
         }
       }
@@ -5649,11 +5669,11 @@
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
       "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Pre-opening bar & restaurant leads from state liquor registries: new licenses + pending applications from TX, NY, FL, CA, WA, OR, CT, CO, MO and Chicago, with new-premises vs transfer flags. Delta mode emits only new applications, newly issued licenses and status changes.",
+      "description": "Bar & restaurant lead events from state liquor registries (TX, NY, FL, CA, WA, OR, CT, CO, MO, Chicago): new_application, newly_issued and closing_detected (expired, surrendered, revoked). Texas openings verified against Comptroller tax receipts (opened_verified). Delta mode emits only changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
-        "DEVELOPER_TOOLS"
+        "BUSINESS"
       ],
       "storeUrl": "https://apify.com/malonestar/liquor-license-new-openings-tracker",
       "pricing": {
@@ -5709,11 +5729,12 @@
           },
           "feed": {
             "type": "string",
-            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal -- a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = both. Pending is published by TX, NY, CA, WA, OR, CT; active by TX, NY, FL, CA, CO, MO and Chicago. Example: \"pending\".",
+            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal -- a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = pending + active (unchanged: it does NOT include closing). \"closing\" = licenses that EXPIRED, were SURRENDERED, CANCELLED or REVOKED, or are lapsing without a renewal -- a bar, restaurant or store going dark (newest first; each closing row also bills one closing-detected event). Pending is published by TX, NY, CA, WA, OR, CT; active by TX, NY, FL, CA, CO, MO and Chicago; closing by TX, OR and Chicago only -- any other requested state is reported on every row as unable to answer the closing feed, and the run fails if none can. Example: \"pending\".",
             "enum": [
               "pending",
               "active",
-              "all"
+              "all",
+              "closing"
             ]
           },
           "mode": {
@@ -5741,6 +5762,10 @@
             "description": "Total cap on records emitted across all selected states and feeds (each record is one billable result). Each source gets an even share of what is left, so a source that returns fewer rows than its share passes the rest to the next one. Example: 200.",
             "minimum": 1,
             "maximum": 50000
+          },
+          "verifyOpenings": {
+            "type": "boolean",
+            "description": "Texas only, active feed only. When on (default), every issued TX permit that owes the mixed beverage gross receipts tax (MB, RM, N, NE, NB, NT, D, FB, TB) is joined to the Texas Comptroller's monthly receipts filings: opened_verified reads true when a period with receipts > 0 has been filed, false when at least two obligation periods were due and none carries receipts, and null when it is too early to tell or the permit class never files (beer/wine retailers, package stores). Adds first/latest receipts period, trailing-12-month receipts and the permit's rank in its county. Costs a few extra requests per 50 TX rows and no extra billing; set false to skip it. Applied by default if omitted: true."
           }
         }
       }
@@ -7210,7 +7235,7 @@
       "description": "Address to parcel ID, owner name, mailing address & assessed value from official assessor rolls: Chicago, Philadelphia, NYC + NC, NY State, WI, CO, MN, AR, MA, CT, VT statewide, Phoenix, Houston, Cleveland, Nashville & DC. Census fallback elsewhere. $0.02/lookup.",
       "categories": [
         "REAL_ESTATE",
-        "DEVELOPER_TOOLS",
+        "BUSINESS",
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/parcel-owner-lookup",
@@ -8168,12 +8193,12 @@
     {
       "slug": "sos-registry-monitor",
       "actorId": "malonestar/sos-registry-monitor",
-      "title": "Secretary of State Business Search & New-Business Monitor API",
-      "description": "Business entity search & KYB API across official US Secretary of State registries. Search companies by name and monitor newly formed LLCs and corporations for lead generation. Bulk and date-range capable, sourced from state open-data portals — no anti-bot. Keyless. Covers CO, CT, NY, OR, PA and DE.",
+      "title": "Verified New Business Openings by State & County (SOS + Tax)",
+      "description": "New business leads from official state data: one row per business that just opened, verified across the Secretary of State charter and the sales-tax permit (first-sales date), with county, NAICS, entity type and a three-valued confidence. TX, CO, CT, NY, OR, PA, DE. Keyless, no anti-bot.",
       "categories": [
+        "BUSINESS",
         "LEAD_GENERATION",
-        "DEVELOPER_TOOLS",
-        "AUTOMATION"
+        "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/sos-registry-monitor",
       "pricing": {
@@ -8198,15 +8223,16 @@
         "properties": {
           "mode": {
             "type": "string",
-            "description": "search = look up companies by name. new_businesses = pull recently formed entities (great for fresh B2B leads / monitoring). Example: \"search\".",
+            "description": "openings = ONE row per business that just opened, resolved across every register the state publishes (TX: SOS charter via the franchise-tax roster + sales-tax permit with first-sales date; other states: the SOS registry) with opened_evidence and a three-valued opened_confidence. search = look up companies by name. new_businesses = raw recently formed entities, one row per registry record. Example: \"openings\". Applied by default if omitted: \"search\".",
             "enum": [
+              "openings",
               "search",
               "new_businesses"
             ]
           },
           "states": {
             "type": "array",
-            "description": "REQUIRED. State codes to query. Supported: CO, CT, NY, OR, PA, DE (official state open-data business registries). Every requested state is queried independently and its per-state outcome is reported on the row. Name at least one — there is no default. Example: [\"CO\",\"CT\",\"NY\"].",
+            "description": "REQUIRED. State codes to query. Supported: TX, CO, CT, NY, OR, PA, DE (official state open-data registers). Every requested state is queried independently and its per-state outcome is reported on the row. Texas is read from two Comptroller rosters (franchise tax + sales-tax permits); all other states publish one register, so their openings never read better than opened_confidence=low. Name at least one -- there is no default. Example: [\"TX\",\"CO\"].",
             "items": {
               "type": "string"
             }
@@ -8217,7 +8243,7 @@
           },
           "daysBack": {
             "type": "integer",
-            "description": "How many days of newly formed entities to pull (used when no explicit since date is given). Each state is filtered on its own registration/formation column -- see date_basis on the output. Note: PA republishes roughly monthly and OR/DE lag by days, so widen this if a short window returns nothing. Example: 30. Applied by default if omitted: 7.",
+            "description": "How many days back to look (new_businesses and openings modes; used when no explicit since date is given). Each register is filtered on its own date column -- see date_basis / opened_evidence on the output. Note: PA republishes roughly monthly and OR/DE lag by days, so widen this if a short window returns nothing. Example: 30. Applied by default if omitted: 7.",
             "minimum": 1,
             "maximum": 365
           },
@@ -8231,9 +8257,15 @@
             "minimum": 1,
             "maximum": 50000
           },
+          "maxResults": {
+            "type": "integer",
+            "description": "Hard ceiling on the number of rows this run may emit and bill, across all states. In openings mode one row = one business; the cap is shared max-min fairly across the requested states (so a Texas run cannot starve Colorado), and within a state rows are ranked by opened_confidence (high first) then newest evidence. Applied once by a single emission planner. Omit it in openings mode and the run caps itself at 200; omit it in search / new_businesses and only maxPerState applies (the pre-2026-09-26 behaviour). Rows carry result_truncated=true when the cap bound. Example: 50.",
+            "minimum": 1,
+            "maximum": 5000
+          },
           "monitor": {
             "type": "boolean",
-            "description": "When scheduled, emit only entities not seen in previous runs of the same query -- turns this into a recurring new-business alert. The baseline is kept in a named store and is scoped to the mode, state set and query, so the first run of a new configuration is a full dump by design (delta_baseline_size reports 0). Applied by default if omitted: false."
+            "description": "When scheduled, emit only entities (or, in openings mode, businesses) not seen in previous runs of the same scope -- turns this into a recurring new-business alert. The baseline is kept in a NAMED store scoped to the mode, state set and query, so the first run of a new configuration is a full dump by design (delta_baseline_size reports 0). Applied by default if omitted: false."
           },
           "socrataAppToken": {
             "type": "string",
@@ -9425,7 +9457,7 @@
       "description": "Aggregate US state WARN Act layoff & closure notices into one normalized schema and track new / updated / removed deltas. Oregon (HECC export) and Texas (Socrata) live and keyless; CA/NY/WA/WI/IL/NJ scaffolded. For RevOps, recruiting, econ research and CRE. No API key.",
       "categories": [
         "LEAD_GENERATION",
-        "DEVELOPER_TOOLS",
+        "BUSINESS",
         "AGENTS"
       ],
       "storeUrl": "https://apify.com/malonestar/warn-layoff-aggregator",
