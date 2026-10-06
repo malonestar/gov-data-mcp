@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-26T23:20:31.028Z",
+  "generatedAt": "2026-10-06T01:02:08.793Z",
   "owner": "malonestar",
   "count": 122,
   "actors": [
@@ -6197,7 +6197,7 @@
           },
           "runBudgetSeconds": {
             "type": "integer",
-            "description": "Optional. One time budget for the whole run, shared by the live drift checks (at most 90 s of it) and every site. If hydro.nationalmap.gov is slow and the budget runs out, the sites not yet reached are returned as rows with failure_kind \"deadline\" and null counts/flags instead of the run dragging on. Leave empty to use max(240, 90 + 30 x number of assets) seconds. Clamped to 30-3500; the run also always stops before its Apify timeout. Example: 240.",
+            "description": "Optional. One time budget for the whole run, shared by the live drift checks (at most 180 s of it) and every site. If hydro.nationalmap.gov is slow and the budget runs out, the sites not yet reached are returned as rows with failure_kind \"deadline\" and null counts/flags instead of the run dragging on. Leave empty to use max(240, 90 + 30 x number of assets) seconds. Clamped to 30-3500; the run also always stops before its Apify timeout. Example: 240.",
             "minimum": 30,
             "maximum": 3500
           }
@@ -6995,6 +6995,12 @@
             "description": "Maximum number of lead records (one per unique landlord/agent contact) to push to the dataset. Leads are sorted by portfolio size, largest first, before the cap is applied. Example: 200. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 100000
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Optional wall-clock budget for the whole run. If data.cityofnewyork.us is slow and the budget runs out before every HPD contact batch is fetched, the run returns an honest PARTIAL instead of timing out: every row carries run_deadline_hit=true and portfolio_counts_complete=false, and buildings_count is then a lower bound. Leave empty for no budget (the run takes as long as the source needs). Example: 240.",
+            "minimum": 30,
+            "maximum": 3600
           }
         }
       }
@@ -7364,6 +7370,12 @@
             "description": "Maximum number of addresses to process (one output row per address). Extra addresses beyond this cap are skipped. Example: 10. Applied by default if omitted: 100.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Optional wall-clock budget for the whole run. A parcel roll that is slow to answer is cut when the budget runs out: that address comes back lookup_status \"source_unavailable\" (or keeps the answer the house-number query already gave) with lookup_cut_by_deadline: true, instead of the run hanging. Leave empty for no budget. Example: 240.",
+            "minimum": 30,
+            "maximum": 3600
           }
         },
         "required": [
