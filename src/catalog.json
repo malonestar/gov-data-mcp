@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-06T01:56:23.587Z",
+  "generatedAt": "2026-10-06T02:25:36.480Z",
   "owner": "malonestar",
   "count": 122,
   "actors": [
@@ -1335,7 +1335,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of license records to return per city (the actor paginates to reach this). Example: 50. Applied by default if omitted: 1000.",
+            "description": "Maximum number of rows for the WHOLE run, across all selected cities (each row is one billed result). Divided fairly between cities: a city with fewer matching licences than its share hands the rest to the others, and every city gets at least one row (a city that answers with nothing still emits one status row). Until build 1.1.7 this was a per-city cap, so an empty call across all 5 cities emitted 4,001 rows. Must be at least the number of cities selected. Example: 50. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 50000
           },
@@ -5098,7 +5098,7 @@
           },
           "state": {
             "type": "string",
-            "description": "REQUIRED. Full state name exactly as HRSA stores it, e.g. \"Alabama\", \"California\", \"Texas\". There is no default and no \"all states\" mode: a nationwide HPSA/MUA pull is tens of thousands of designations, so the state must be named explicitly. Run one state per run and combine the datasets. Example: \"Alabama\"."
+            "description": "REQUIRED. A US state, DC or territory, as HRSA's full name (\"Texas\", \"District of Columbia\", \"U.S. Virgin Islands\") or a 2-letter USPS code (\"TX\", \"DC\", \"VI\"); case-insensitive. Codes are converted to HRSA's spelling before the query. A value that names no HRSA state or territory FAILS the run without billing rather than returning a confident empty (until build 1.1.9 \"TX\" matched nothing and SUCCEEDED with 0 rows). There is no default and no \"all states\" mode: a nationwide HPSA/MUA pull is tens of thousands of designations, so run one state per run and combine the datasets. Example: \"Alabama\"."
           },
           "minScore": {
             "type": "integer",
@@ -5179,7 +5179,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "2-letter USPS state codes to search (e.g. CO, TX, NY). Applied to every selected program layer. Defaults to [\"CO\"] if empty. Example: [\"CO\"].",
+            "description": "REQUIRED. The state(s) to search, as 2-letter USPS codes (e.g. [\"TX\"], [\"CO\",\"UT\"]) or full state names; DC and PR/VI/GU/AS/MP are accepted. Applied to every selected program layer. There is no default state and no nationwide mode: until build 1.1.5 an omitted or unrecognised value silently searched Colorado. An unrecognised entry now FAILS the run without billing. Example: [\"CO\"].",
             "items": {
               "type": "string"
             }
@@ -5224,7 +5224,10 @@
             "minimum": 1,
             "maximum": 25000
           }
-        }
+        },
+        "required": [
+          "states"
+        ]
       }
     },
     {
@@ -8336,7 +8339,7 @@
         "properties": {
           "mode": {
             "type": "string",
-            "description": "openings = ONE row per business that just opened, resolved across every register the state publishes (TX: SOS charter via the franchise-tax roster + sales-tax permit with first-sales date; other states: the SOS registry) with opened_evidence and a three-valued opened_confidence. search = look up companies by name. new_businesses = raw recently formed entities, one row per registry record. Example: \"openings\". Applied by default if omitted: \"search\".",
+            "description": "openings = ONE row per business that just opened, resolved across every register the state publishes (TX: SOS charter via the franchise-tax roster + sales-tax permit with first-sales date; other states: the SOS registry) with opened_evidence and a three-valued opened_confidence. search = look up companies by name. new_businesses = raw recently formed entities, one row per registry record. If mode is omitted (an API or MCP call) the default is search, which with the default query \"LLC\" is a name search for LLC -- NOT openings (openings is only the Console prefill). Pass mode explicitly. Example: \"openings\". Applied by default if omitted: \"search\".",
             "enum": [
               "openings",
               "search",
