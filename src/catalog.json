@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-06T01:02:08.793Z",
+  "generatedAt": "2026-10-06T01:56:23.587Z",
   "owner": "malonestar",
   "count": 122,
   "actors": [
@@ -5762,7 +5762,7 @@
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
       "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Bar & restaurant lead events from state liquor registries (TX, NY, FL, CA, WA, OR, CT, CO, MO, Chicago): new_application, newly_issued and closing_detected (expired, surrendered, revoked). Texas openings verified against Comptroller tax receipts (opened_verified). Delta mode emits only changes.",
+      "description": "Bar & restaurant lead events from liquor registries: TX, NY, FL, CA, WA, OR, CT, CO, MO, MI + Chicago, Nashville, Louisville, Phoenix. new_application, newly_issued, closing_detected; Texas openings verified against Comptroller tax receipts. Delta mode emits only changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -5791,7 +5791,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Example: [\"TX\",\"NY\"].",
+            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). MI (MLCC master list, active + pending = Conditional licences approved but not yet operating; no dates published, newest licence number first), TN-NASHVILLE (Metro beer permits, active = issued, pending = temporary permits), KY-LOUISVILLE (Jefferson County ABC licences, active only), AZ-PHOENIX (City of Phoenix applications in their 20-day comment period, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Example: [\"TX\",\"NY\"].",
             "items": {
               "type": "string",
               "enum": [
@@ -5804,7 +5804,11 @@
                 "CT",
                 "MO",
                 "WA",
-                "IL-CHICAGO"
+                "IL-CHICAGO",
+                "MI",
+                "TN-NASHVILLE",
+                "KY-LOUISVILLE",
+                "AZ-PHOENIX"
               ],
               "enumTitles": [
                 "Texas (TABC)",
@@ -5816,7 +5820,11 @@
                 "Connecticut (DCP)",
                 "Missouri (ATC)",
                 "Washington (LCB)",
-                "Chicago, IL (city liquor licenses)"
+                "Chicago, IL (city liquor licenses)",
+                "Michigan (MLCC)",
+                "Nashville, TN (Metro Beer Permit Board)",
+                "Louisville, KY (Jefferson County ABC)",
+                "Phoenix, AZ (City Clerk new applications)"
               ]
             }
           },
