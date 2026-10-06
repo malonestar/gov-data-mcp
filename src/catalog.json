@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-06T02:25:36.480Z",
+  "generatedAt": "2026-10-06T21:44:58.060Z",
   "owner": "malonestar",
   "count": 122,
   "actors": [
@@ -36,11 +36,22 @@
         "properties": {
           "county": {
             "type": "string",
-            "description": "Which assessor/parcel roll to build leads from. cook-il = Cook County IL (Chicago area, full mailing-address mismatch classification). philadelphia-pa = Philadelphia OPA (full classification). nyc = NYC PLUTO (owner names only — no mailing address in the source, so rows are corporate/LLC-owner flag lists with absentee_tier=unknown). Example: \"cook-il\".",
+            "description": "Which assessor/parcel roll to build leads from. cook-il = Cook County IL (Chicago area, full mailing-address mismatch classification). philadelphia-pa = Philadelphia OPA (full classification). nyc = NYC PLUTO (owner names only — no mailing address in the source, so rows are corporate/LLC-owner flag lists with absentee_tier=unknown). Added 2026-10: maricopa-az, harris-tx, cuyahoga-oh, davidson-tn and dc (county rolls) and nc-statewide, ny-statewide, co-statewide, ma-statewide, ct-statewide, vt-statewide (statewide rolls; use countyName to scope nc/ny/co to one county). Every added roll publishes both an owner mailing address and a situs address; Wisconsin, Minnesota and Arkansas are deliberately not offered (their mailing state cannot be read reliably). Example: \"cook-il\".",
             "enum": [
               "cook-il",
               "philadelphia-pa",
-              "nyc"
+              "nyc",
+              "maricopa-az",
+              "harris-tx",
+              "cuyahoga-oh",
+              "davidson-tn",
+              "dc",
+              "nc-statewide",
+              "ny-statewide",
+              "co-statewide",
+              "ma-statewide",
+              "ct-statewide",
+              "vt-statewide"
             ]
           },
           "absenteeTier": {
@@ -60,12 +71,16 @@
           },
           "propertyClassPrefix": {
             "type": "string",
-            "description": "Filter by the source's property-class code prefix. cook-il: Cook Assessor major class, e.g. \"2\" = residential, \"3\" = multi-family, \"5\" = commercial/industrial. nyc: PLUTO building class, e.g. \"A\" = one-family, \"C\" = walk-up apartments. philadelphia-pa: OPA category_code, e.g. \"1\" = single family (applied client-side). Leave empty for all classes. Example: \"2\"."
+            "description": "Filter by the source's property-class code prefix. cook-il: Cook Assessor major class, e.g. \"2\" = residential, \"3\" = multi-family, \"5\" = commercial/industrial. nyc: PLUTO building class, e.g. \"A\" = one-family, \"C\" = walk-up apartments. philadelphia-pa: OPA category_code, e.g. \"1\" = single family (applied client-side). Leave empty for all classes. Added rolls: the roll's own land-use / property-class code (e.g. Harris \"A1\", NY State \"210\", Massachusetts \"101\"), matched server-side as a prefix. Example: \"2\"."
           },
           "minAssessedValue": {
             "type": "integer",
-            "description": "Keep only parcels at or above this value. Uses market_value for philadelphia-pa and assesstot for nyc. The Cook County Parcel Universe dataset carries no assessed-value column, so this filter is ignored for cook-il (a warning is logged).",
+            "description": "Keep only parcels at or above this value. Uses market_value for philadelphia-pa and assesstot for nyc. The Cook County Parcel Universe dataset carries no assessed-value column, so this filter is ignored for cook-il (a warning is logged). Added rolls: each roll's own value column (Maricopa full cash value, HCAD market value, Cuyahoga market value, Nashville appraisal, DC assessment, NC parcel value, NY full market value, Colorado appraised value, MA/CT/VT assessed or listed value).",
             "minimum": 0
+          },
+          "countyName": {
+            "type": "string",
+            "description": "Optional. For nc-statewide, ny-statewide and co-statewide: keep only one county, e.g. \"Mecklenburg\", \"Erie\", \"St Lawrence\" or \"Denver\". Checked against the counties the roll actually covers; an unknown or excluded county fails the run with the covered list (nothing billed). Ignored for the county rolls."
           },
           "maxResults": {
             "type": "integer",
@@ -5811,7 +5826,8 @@
                 "MI",
                 "TN-NASHVILLE",
                 "KY-LOUISVILLE",
-                "AZ-PHOENIX"
+                "AZ-PHOENIX",
+                "ID"
               ],
               "enumTitles": [
                 "Texas (TABC)",
@@ -5827,7 +5843,8 @@
                 "Michigan (MLCC)",
                 "Nashville, TN (Metro Beer Permit Board)",
                 "Louisville, KY (Jefferson County ABC)",
-                "Phoenix, AZ (City Clerk new applications)"
+                "Phoenix, AZ (City Clerk new applications)",
+                "Idaho (ISP ABC)"
               ]
             }
           },
@@ -7661,7 +7678,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "REQUIRED. US states to pull (two-letter codes; full names also accepted). Supported: TX (daily new applications, new licensees, roster, delta), FL (new licensees, weekly roster, delta), CT (new licensees, roster, delta with broker affiliation), CO (new licensees, roster, delta), DE (new licensees, roster, delta), NY (active roster + broker-change delta; NY publishes no issue date). Several states can be combined; maxResults is split across them. Example: [\"TX\"].",
+            "description": "REQUIRED. US states to pull (two-letter codes; full names also accepted). Supported: TX (daily new applications, new licensees, roster, delta), FL (new licensees, weekly roster, delta), CT (new licensees, roster, delta with broker affiliation), CO (new licensees, roster, delta), DE (new licensees, roster, delta), NY (active roster + broker-change delta; NY publishes no issue date). Several states can be combined; maxResults is split across them. Example: [\"TX\",\"CO\"].",
             "items": {
               "type": "string"
             }
@@ -7684,7 +7701,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of records to push to the dataset (billing is per result). When several states are requested the cap is split across them, and budget an earlier state does not use passes to the next. Example: 200.",
+            "description": "Maximum number of records to push to the dataset (billing is per result). When several states are requested the cap is split across them, and budget an earlier state does not use passes to the next. Example: 80. Applied by default if omitted: 200.",
             "minimum": 1,
             "maximum": 50000
           },
@@ -9690,7 +9707,7 @@
           },
           "mode": {
             "type": "string",
-            "description": "snapshot = emit the current normalized WARN notices. delta = compare against a prior snapshot and emit only change rows (new / updated / removed). Delta needs priorItems or priorKvKey. Applied by default if omitted: \"snapshot\".",
+            "description": "snapshot = emit the current normalized WARN notices. delta = compare against a prior snapshot and emit only change rows (new / updated / removed). The prior snapshot comes from priorItems, or from the named store under priorKvKey (default key \"default\" when neither is given), so a scheduled delta needs no extra input. Applied by default if omitted: \"snapshot\".",
             "enum": [
               "snapshot",
               "delta"
