@@ -1,6 +1,6 @@
 # gov-data-mcp
 
-**122 US government open-data tools, as one MCP server.**
+**123 US government open-data tools, as one MCP server.**
 
 EPA, FEMA, USGS, NOAA, FAA, USACE, FDIC, HUD, NRCS, HRSA, CMS, county assessor rolls and state licensing boards — all reachable as agent-callable tools, all reading directly from official government APIs and bulk files. No scraping, no HTML parsing, no rate-limit roulette.
 
@@ -49,13 +49,13 @@ Claude Desktop reads `claude_desktop_config.json`; Claude Code reads `.mcp.json`
 | `parcel-owner-lookup` | Assessor-roll owner of record for an address |
 | `license-verifier` | 19 professional licensing boards across 9 states + OIG exclusions |
 
-**Plus three tools that reach the other 110:**
+**Plus three tools that reach the other 111:**
 
 - `search-gov-data-tools` — find a tool by keyword, agency or topic
 - `describe-gov-data-tool` — full input schema for any tool in the catalog
 - `run-gov-data-tool` — run any tool in the catalog
 
-The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 122.
+The catalog is bundled, so discovery costs nothing. Ask your agent *"what government data tools do you have for flood risk?"* and it will search all 123.
 
 <!-- PRESETS:START -->
 ## Vertical presets
@@ -187,13 +187,13 @@ The underlying actors carry the same discipline: per-source status on every row,
 <!-- COVERAGE:START -->
 ## Coverage
 
-**122 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
+**123 tools**, every one reading an official US government API or bulk file. The MCP server exposes 15 of them directly — twelve named tools plus `search-gov-data-tools`, `describe-gov-data-tool` and `run-gov-data-tool`, which reach the rest — because agents choose badly when handed more than about twenty tools.
 
 Each entry links to its full input/output schema, pricing and worked examples.
 
-**Contamination & environmental due diligence** (18)
+**Contamination & environmental due diligence** (19)
 
-[epa-airtoxscreen-cancer-risk-screener](https://apify.com/malonestar/epa-airtoxscreen-cancer-risk-screener) · [epa-contaminated-site-screener](https://apify.com/malonestar/epa-contaminated-site-screener) · [epa-drinking-water-quality-screener](https://apify.com/malonestar/epa-drinking-water-quality-screener) · [epa-ghgrp-emitter-screener](https://apify.com/malonestar/epa-ghgrp-emitter-screener) · [epa-impaired-waters-303d-screener](https://apify.com/malonestar/epa-impaired-waters-303d-screener) · [epa-nonattainment-air-permit-screener](https://apify.com/malonestar/epa-nonattainment-air-permit-screener) · [epa-rcra-corrective-action-cleanup-monitor](https://apify.com/malonestar/epa-rcra-corrective-action-cleanup-monitor) · [epa-rcra-hazwaste-generator-rollup](https://apify.com/malonestar/epa-rcra-hazwaste-generator-rollup) · [epa-repowering-brownfield-to-solar-site-finder](https://apify.com/malonestar/epa-repowering-brownfield-to-solar-site-finder) · [epa-sole-source-aquifer-screener](https://apify.com/malonestar/epa-sole-source-aquifer-screener) · [epa-tri-facility-release-rollup](https://apify.com/malonestar/epa-tri-facility-release-rollup) · [epa-tsca-cdr-chemical-site-screener](https://apify.com/malonestar/epa-tsca-cdr-chemical-site-screener) · [erns-nrc-release-incident-screener](https://apify.com/malonestar/erns-nrc-release-incident-screener) · [fuds-defense-site-screener](https://apify.com/malonestar/fuds-defense-site-screener) · [historic-land-use-sic-contaminant-screener](https://apify.com/malonestar/historic-land-use-sic-contaminant-screener) · [site-due-diligence-bundle](https://apify.com/malonestar/site-due-diligence-bundle) · [state-tank-spill-registry-screener](https://apify.com/malonestar/state-tank-spill-registry-screener) · [usgs-historical-topo-records-review](https://apify.com/malonestar/usgs-historical-topo-records-review)
+[environmental-records-report](https://apify.com/malonestar/environmental-records-report) · [epa-airtoxscreen-cancer-risk-screener](https://apify.com/malonestar/epa-airtoxscreen-cancer-risk-screener) · [epa-contaminated-site-screener](https://apify.com/malonestar/epa-contaminated-site-screener) · [epa-drinking-water-quality-screener](https://apify.com/malonestar/epa-drinking-water-quality-screener) · [epa-ghgrp-emitter-screener](https://apify.com/malonestar/epa-ghgrp-emitter-screener) · [epa-impaired-waters-303d-screener](https://apify.com/malonestar/epa-impaired-waters-303d-screener) · [epa-nonattainment-air-permit-screener](https://apify.com/malonestar/epa-nonattainment-air-permit-screener) · [epa-rcra-corrective-action-cleanup-monitor](https://apify.com/malonestar/epa-rcra-corrective-action-cleanup-monitor) · [epa-rcra-hazwaste-generator-rollup](https://apify.com/malonestar/epa-rcra-hazwaste-generator-rollup) · [epa-repowering-brownfield-to-solar-site-finder](https://apify.com/malonestar/epa-repowering-brownfield-to-solar-site-finder) · [epa-sole-source-aquifer-screener](https://apify.com/malonestar/epa-sole-source-aquifer-screener) · [epa-tri-facility-release-rollup](https://apify.com/malonestar/epa-tri-facility-release-rollup) · [epa-tsca-cdr-chemical-site-screener](https://apify.com/malonestar/epa-tsca-cdr-chemical-site-screener) · [erns-nrc-release-incident-screener](https://apify.com/malonestar/erns-nrc-release-incident-screener) · [fuds-defense-site-screener](https://apify.com/malonestar/fuds-defense-site-screener) · [historic-land-use-sic-contaminant-screener](https://apify.com/malonestar/historic-land-use-sic-contaminant-screener) · [site-due-diligence-bundle](https://apify.com/malonestar/site-due-diligence-bundle) · [state-tank-spill-registry-screener](https://apify.com/malonestar/state-tank-spill-registry-screener) · [usgs-historical-topo-records-review](https://apify.com/malonestar/usgs-historical-topo-records-review)
 
 **Flood, fire, quake & ground hazard** (13)
 

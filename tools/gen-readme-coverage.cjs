@@ -29,7 +29,7 @@ const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, 'src', 'catalog.json'
 // Ordered: first match wins, so put the specific before the general.
 const BUCKETS = [
     ['Contamination & environmental due diligence',
-        /contaminated|rcra|tsca|superfund|brownfield|tri-facility|airtoxscreen|erns|fuds|historic-land-use|repowering|due-diligence|impaired-waters|sole-source|drinking-water|ghgrp|hazwaste|nonattainment|tank-spill|historical-topo/],
+        /contaminated|rcra|tsca|superfund|brownfield|tri-facility|airtoxscreen|erns|fuds|historic-land-use|repowering|due-diligence|impaired-waters|sole-source|drinking-water|ghgrp|hazwaste|nonattainment|tank-spill|historical-topo|environmental-records/],
     ['Flood, fire, quake & ground hazard',
         /flood|nfip|fema-nri|wildfire|calfire|seismic|landslide|karst|sea-level|slr|storm-events|levee|repetitive-loss|bedrock-geology|lithology/],
     ['Habitat, wetlands, protected & historic land',

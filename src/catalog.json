@@ -1,13 +1,13 @@
 {
-  "generatedAt": "2026-10-06T21:44:58.060Z",
+  "generatedAt": "2026-10-07T06:53:49.281Z",
   "owner": "malonestar",
-  "count": 122,
+  "count": 123,
   "actors": [
     {
       "slug": "absentee-owner-lead-list-builder",
       "actorId": "malonestar/absentee-owner-lead-list-builder",
       "title": "Absentee Owner Lead List Builder — County Assessor Rolls",
-      "description": "Build absentee-owner lead lists from county assessor rolls: Cook County IL, Philadelphia PA, NYC. Flags out-of-state and out-of-city owners by situs-vs-mailing mismatch, LLC/trust entity owners, with class and value filters. Clean JSON/CSV leads for wholesalers, flippers, direct mail and agents.",
+      "description": "Build absentee-owner lead lists from assessor rolls: Cook IL, Philadelphia, Phoenix, Houston, Cleveland, Nashville, DC, NYC and statewide NC, NY, CO, MA, CT, VT. Flags out-of-state and out-of-city owners by situs-vs-mailing mismatch, LLC/trust owners, with class/value filters.",
       "categories": [
         "REAL_ESTATE",
         "LEAD_GENERATION",
@@ -17,6 +17,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.025,
         "usdPer1000": 25,
@@ -105,6 +106,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.015,
         "usdPer1000": 15,
@@ -193,6 +195,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -271,6 +274,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -345,6 +349,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -434,6 +439,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -490,6 +496,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -549,6 +556,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -620,6 +628,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Route climatology result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -710,6 +719,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Route fare-market result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -799,6 +809,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Data broker registry row",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -892,6 +903,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -961,6 +973,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -1039,6 +1052,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -1115,6 +1129,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -1173,6 +1188,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -1300,6 +1316,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -1375,6 +1392,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -1451,6 +1469,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -1519,6 +1538,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -1630,6 +1650,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -1698,6 +1719,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.025,
         "usdPer1000": 25,
@@ -1780,6 +1802,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Screened site",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -1871,6 +1894,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -1960,6 +1984,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -2030,6 +2055,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2094,6 +2120,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -2137,6 +2164,100 @@
       }
     },
     {
+      "slug": "environmental-records-report",
+      "actorId": "malonestar/environmental-records-report",
+      "title": "Environmental Records Report - ASTM E1527 Records Screen PDF",
+      "description": "One HTML + PDF Environmental Records Report per US property: ASTM E1527-21 Sec. 8.2 federal records at standard search distances, Sec. 8.3 prior uses, historical topo coverage, tank/spill registries, 20-layer site screen, live drift-gate page, explicit not-included page. $2.50/report + child rows.",
+      "categories": [
+        "REAL_ESTATE",
+        "BUSINESS",
+        "AGENTS"
+      ],
+      "storeUrl": "https://apify.com/malonestar/environmental-records-report",
+      "pricing": {
+        "model": "PAY_PER_EVENT",
+        "event": "report-generated",
+        "perResult": false,
+        "unit": "Environmental Records Report generated",
+        "usdPerUnit": 2.5,
+        "usdPer1000": 2500,
+        "tierDiscountsUsdPerUnit": {
+          "FREE": 2.5,
+          "BRONZE": 2,
+          "SILVER": 1.75,
+          "GOLD": 1.375,
+          "PLATINUM": 1.375,
+          "DIAMOND": 1.375
+        },
+        "actorStartUsd": null,
+        "since": "2026-10-06T21:18:47.163Z"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "properties": {
+            "type": "array",
+            "description": "One report is generated per property. Each item is EITHER {\"address\": \"5980 Lipan St, Denver, CO 80221\", \"label\": \"...\"} (geocoded with the free US Census geocoder) OR {\"lat\": 39.8037, \"lon\": -104.9986, \"label\": \"...\", \"state\": \"CO\" (optional 2-letter hint)}. A property that cannot be resolved to coordinates gets a dataset row with report_status=not_screened and is NOT charged. Each generated report is one $2.50 report-generated event (list price; paid Apify plans pay less) PLUS the five child screeners' own per-result charges on your account (measured $0.98-1.32 per property at 1 mile; capped at $2.40). Before calling any child the run checks that its charge limit covers the report fee plus that $2.40 worst case per property, so one property fits a free plan's $5 monthly credit. Example: [{\"lat\":39.8037,\"lon\":-104.9986,\"state\":\"CO\",\"label\":\"Denver industrial parcel (prefill)\"}].",
+            "items": {
+              "type": "string"
+            }
+          },
+          "layers": {
+            "type": "array",
+            "description": "Which record layers the report is composed from. Each layer is one Actor-to-Actor call to a published malonestar screener on its latest build. Leave all five selected for the full appendix. A layer whose child screener does not answer is rendered as an explicit 'UNAVAILABLE - NOT SCREENED' page and the report status becomes 'partial'; a report is 'complete' only when every requested layer answered in full. Example: [\"federal_records\",\"prior_uses\",\"historical_topo\",\"tank_spill\",\"site_screen\"].",
+            "items": {
+              "type": "string",
+              "enum": [
+                "federal_records",
+                "prior_uses",
+                "historical_topo",
+                "tank_spill",
+                "site_screen"
+              ],
+              "enumTitles": [
+                "ASTM Sec. 8.2 federal records (epa-contaminated-site-screener)",
+                "ASTM Sec. 8.3 prior uses + state/tribal inventory (historic-land-use-sic-contaminant-screener)",
+                "ASTM Sec. 8.3.4 historical topo coverage (usgs-historical-topo-records-review)",
+                "Tank / spill registries (state-tank-spill-registry-screener)",
+                "20-layer site screen (site-due-diligence-bundle)"
+              ]
+            }
+          },
+          "radiusMiles": {
+            "type": "number",
+            "description": "Radius for the federal records table, the tank/spill table and the site screen. 1 mile is the largest ASTM E1527-21 Sec. 8.2.1 standard search distance and the working default; the ASTM summary always evaluates each database at its own standard distance regardless. Accepts fractional miles, range 0.25-5. Example: 1.",
+            "minimum": 0.25,
+            "maximum": 5
+          },
+          "priorUseRadiusMiles": {
+            "type": "number",
+            "description": "Radius for the ASTM Sec. 8.3 prior-uses layer. The standard concerns the subject and adjoining properties, so 0.25 mile is the working default; 1 mile is the maximum. Accepts fractional miles, range 0.02-1. Example: 0.25.",
+            "minimum": 0.02,
+            "maximum": 1
+          },
+          "topoReviewStartYear": {
+            "type": "integer",
+            "description": "First year of the ASTM Sec. 8.3.4 historical-map review window passed to the topographic layer. 1940 is the standard baseline; set it earlier when the property has an obvious first developed use before 1940. Range 1880-2020. Example: 1940.",
+            "minimum": 1880,
+            "maximum": 2020
+          },
+          "includePdf": {
+            "type": "boolean",
+            "description": "When true (recommended) each report is stored both as HTML and as a PDF in the run's key-value store, and the dataset row carries report_pdf_url. When false only the HTML (and the JSON model) are stored. Does not change billing. Example: true."
+          },
+          "maxProperties": {
+            "type": "integer",
+            "description": "Safety cap on how many of the supplied properties are screened and billed in this run. Leave empty to screen every property supplied. Properties beyond the cap get a dataset row with report_status=not_screened and are not charged. The run also caps itself at what the run's charge limit can pay for.",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "required": [
+          "properties"
+        ]
+      }
+    },
+    {
       "slug": "epa-airtoxscreen-cancer-risk-screener",
       "actorId": "malonestar/epa-airtoxscreen-cancer-risk-screener",
       "title": "EPA AirToxScreen Cancer Risk Screener - Census Tract Air Toxics",
@@ -2150,6 +2271,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Screened site",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2210,6 +2332,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -2311,6 +2434,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Drinking water screening result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -2416,6 +2540,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2510,6 +2635,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2566,6 +2692,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2633,6 +2760,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Cleanup record",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -2739,6 +2867,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -2808,6 +2937,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "RE-Powering candidate site",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -2953,6 +3083,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -3019,6 +3150,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "TRI release row",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -3085,6 +3217,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "CDR site-chemical row",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -3186,6 +3319,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result row",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -3291,6 +3425,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.02,
         "usdPer1000": 20,
@@ -3368,6 +3503,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.015,
         "usdPer1000": 15,
@@ -3467,6 +3603,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -3570,6 +3707,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -3649,6 +3787,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.015,
         "usdPer1000": 15,
@@ -3748,6 +3887,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -3866,6 +4006,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -3935,6 +4076,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -4014,6 +4156,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Roster row",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -4098,6 +4241,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -4167,6 +4311,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Screened site",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -4259,6 +4404,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -4319,6 +4465,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -4385,6 +4532,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -4479,6 +4627,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.005,
         "usdPer1000": 5,
@@ -4596,6 +4745,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -4697,6 +4847,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -4844,6 +4995,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -4991,6 +5143,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -5075,6 +5228,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.009,
         "usdPer1000": 9,
@@ -5175,6 +5329,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -5259,6 +5414,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -5309,6 +5465,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Contract row",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -5427,6 +5584,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -5497,6 +5655,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -5547,6 +5706,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -5600,6 +5760,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.003,
         "usdPer1000": 3,
@@ -5658,6 +5819,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -5780,7 +5942,7 @@
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
       "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Bar & restaurant lead events from liquor registries: TX, NY, FL, CA, WA, OR, CT, CO, MO, MI + Chicago, Nashville, Louisville, Phoenix. new_application, newly_issued, closing_detected; Texas openings verified against Comptroller tax receipts. Delta mode emits only changes.",
+      "description": "Bar & restaurant lead events from liquor registries: TX, NY, FL, CA, WA, OR, CT, CO, MO, MI, ID + Chicago, Nashville, Louisville, Phoenix. new_application, newly_issued, closing_detected; Texas openings verified against Comptroller tax receipts. Delta mode emits only changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -5790,6 +5952,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.015,
         "usdPer1000": 15,
@@ -5905,6 +6068,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -5985,6 +6149,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -6062,6 +6227,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6115,6 +6281,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6183,6 +6350,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -6249,6 +6417,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.005,
         "usdPer1000": 5,
@@ -6303,6 +6472,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6381,6 +6551,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -6447,6 +6618,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Screened site",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6536,6 +6708,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6616,6 +6789,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -6665,6 +6839,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6749,6 +6924,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6805,6 +6981,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Crossing record",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -6896,6 +7073,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -6958,6 +7136,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.015,
         "usdPer1000": 15,
@@ -7047,6 +7226,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -7148,6 +7328,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -7232,6 +7413,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Establishment injury & illness record",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -7319,6 +7501,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -7369,6 +7552,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.02,
         "usdPer1000": 20,
@@ -7425,6 +7609,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -7489,6 +7674,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -7567,6 +7753,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -7659,6 +7846,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -7754,6 +7942,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Reg A+ lifecycle result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -7842,6 +8031,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Reg CF lifecycle result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -7930,6 +8120,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -8018,6 +8209,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -8126,6 +8318,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.02,
         "usdPer1000": 20,
@@ -8197,6 +8390,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -8281,6 +8475,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.1,
         "usdPer1000": 100,
@@ -8337,6 +8532,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.0025,
         "usdPer1000": 2.5,
@@ -8424,6 +8620,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Soil screening result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -8513,6 +8710,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -8596,6 +8794,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -8656,6 +8855,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "UCC lapse lead / rollup row",
         "usdPerUnit": 0.02,
         "usdPer1000": 20,
@@ -8740,6 +8940,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "UFLPA screening result",
         "usdPerUnit": 0.012,
         "usdPer1000": 12,
@@ -8821,6 +9022,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -8882,6 +9084,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.007,
         "usdPer1000": 7,
@@ -8963,6 +9166,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -9019,6 +9223,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Groundwater result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9127,6 +9332,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -9233,6 +9439,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,
@@ -9290,6 +9497,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -9390,6 +9598,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -9486,6 +9695,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "Mine feature row",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9546,6 +9756,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9621,6 +9832,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.006,
         "usdPer1000": 6,
@@ -9681,6 +9893,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9755,6 +9968,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9824,6 +10038,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.008,
         "usdPer1000": 8,
@@ -9884,6 +10099,7 @@
       "pricing": {
         "model": "PAY_PER_EVENT",
         "event": "apify-default-dataset-item",
+        "perResult": true,
         "unit": "result",
         "usdPerUnit": 0.01,
         "usdPer1000": 10,

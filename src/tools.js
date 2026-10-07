@@ -130,6 +130,11 @@ export function priceLine(pricing) {
   const cheapest = pricing.tierDiscountsUsdPerUnit
     ? Math.min(...Object.values(pricing.tierDiscountsUsdPerUnit))
     : pricing.usdPerUnit;
+  if (pricing.perResult === false) {
+    // Billed per discrete event (e.g. one report), not per row: a per-1,000 figure would mislead.
+    const lower = cheapest < pricing.usdPerUnit ? ` Lower on paid Apify plans, down to $${cheapest}.` : '';
+    return `$${pricing.usdPerUnit} per ${pricing.unit}.${lower} Any underlying screeners it calls bill their own rows separately.`;
+  }
   const discount = cheapest < pricing.usdPerUnit
     ? ` Lower on paid Apify plans, down to $${(cheapest * 1000).toFixed(2)} per 1,000.`
     : '';
@@ -277,7 +282,9 @@ export function searchCatalog(index, query, limit = 10) {
     categories: x.actor.categories,
     // Price rides along on every search hit so an agent can weigh cost while
     // choosing, rather than discovering it only after it has already called.
-    usdPer1000Results: x.actor.pricing ? x.actor.pricing.usdPer1000 : null,
+    usdPer1000Results: x.actor.pricing && x.actor.pricing.perResult !== false ? x.actor.pricing.usdPer1000 : null,
+    usdPerUnit: x.actor.pricing ? x.actor.pricing.usdPerUnit : null,
+    priceUnit: x.actor.pricing ? x.actor.pricing.unit : null,
     storeUrl: x.actor.storeUrl,
   }));
 }

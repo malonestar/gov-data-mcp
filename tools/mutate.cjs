@@ -37,7 +37,7 @@ const MUTATIONS = [
 
   // --- pricing and naming, v1.1.0 ------------------------------------------
   { file: 'src/tools.js', from: 'billed ${priceLine(pricing)}', to: 'billed at the rate on the Store page.', why: 'featured tools stop quoting a price an agent can actually read' },
-  { file: 'src/tools.js', from: "    usdPer1000Results: x.actor.pricing ? x.actor.pricing.usdPer1000 : null,", to: '', why: 'search hits stop carrying price, so an agent chooses blind' },
+  { file: 'src/tools.js', from: "    usdPer1000Results: x.actor.pricing && x.actor.pricing.perResult !== false ? x.actor.pricing.usdPer1000 : null,", to: '', why: 'search hits stop carrying price, so an agent chooses blind' },
   { file: 'src/tools.js', from: "  SEARCH: 'search-gov-data-tools',", to: "  SEARCH: 'search_gov_data_tools',", why: 'the naming convention splits in two again' },
   { file: 'src/tools.js', from: '  if (RENAMED_IN_1_1[toolName]) {', to: '  if (false) {', why: 'a pre-1.1 tool name gets a bare "unknown tool" with no way to recover' },
   { file: 'src/catalog.json', from: '"usdPerUnit": 0.01,', to: '"usdPerUnit": 10,', why: 'a 1000x overpriced rate reaches the shipped catalog' },

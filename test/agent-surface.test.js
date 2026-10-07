@@ -228,8 +228,27 @@ test('no catalog price sits in the 1000x-overprice band', () => {
     // worst version of the bug, so the band is asserted in the shipped artifact
     // as well as in the generator.
     for (const a of catalog.actors) {
+        if (a.pricing.perResult === false) {
+            assert.ok(a.pricing.usdPerUnit >= 0.05 && a.pricing.usdPerUnit <= 50,
+                `${a.slug}: $${a.pricing.usdPerUnit} per ${a.pricing.unit} is outside the per-event band`);
+            continue;
+        }
         assert.ok(a.pricing.usdPer1000 >= 0.5 && a.pricing.usdPer1000 <= 200,
             `${a.slug}: $${a.pricing.usdPer1000} per 1,000 is outside the portfolio's real band`);
+    }
+});
+
+test('per-event pricing never quotes a misleading per-1,000 figure', () => {
+    const line = priceLine({ perResult: false, usdPerUnit: 2.5, usdPer1000: 2500, unit: 'Report generated',
+        tierDiscountsUsdPerUnit: { FREE: 2.5, GOLD: 1.375 } });
+    assert.match(line, /\$2\.5 per Report generated/);
+    assert.doesNotMatch(line, /per 1,000/, 'a per-report price must not be restated per 1,000');
+    assert.match(line, /down to \$1\.375/);
+    const perEvent = catalog.actors.filter(a => a.pricing.perResult === false);
+    assert.ok(perEvent.length >= 1, 'expected at least one per-event tool (environmental-records-report)');
+    for (const a of perEvent) {
+        const d = describeTool(index, a.slug);
+        assert.doesNotMatch(d.pricing.summary, /per 1,000/, `${a.slug}: per-event tool quoted per 1,000`);
     }
 });
 

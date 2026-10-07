@@ -99,6 +99,9 @@ function activePricing(detail, now = Date.now()) {
   return {
     model: active.pricingModel,
     event: eventName,
+    // true = billed per dataset row (a per-1,000 figure is meaningful); false = billed
+    // per discrete event such as one generated report, where "per 1,000" misleads.
+    perResult: eventName === 'apify-default-dataset-item',
     unit: ev.eventTitle || 'result',
     usdPerUnit: listPrice,
     usdPer1000: Number((listPrice * 1000).toFixed(4)),
@@ -117,6 +120,9 @@ function activePricing(detail, now = Date.now()) {
 // worst version of this bug.
 const MIN_USD_PER_1000 = 0.5;
 const MAX_USD_PER_1000 = 200;
+// Per-event (non-row) pricing, e.g. environmental-records-report's report-generated event.
+const MIN_USD_PER_EVENT = 0.05;
+const MAX_USD_PER_EVENT = 50;
 
 function toJsonSchema(input) {
   const props = {};
@@ -152,7 +158,13 @@ function toJsonSchema(input) {
     // weigh whether to call, and this catalog is the only place it could look.
     const pricing = activePricing(detail);
     if (!pricing) throw new Error(`${detail.name}: no active pricing could be resolved — refusing to publish a tool whose cost an agent cannot see`);
-    if (pricing.usdPer1000 < MIN_USD_PER_1000 || pricing.usdPer1000 > MAX_USD_PER_1000) {
+    if (!pricing.perResult) {
+      // Per-event pricing (e.g. one report): the per-1k band does not apply, but the
+      // 1000x defect still shows as an absurd per-unit price, so band the unit price.
+      if (pricing.usdPerUnit < MIN_USD_PER_EVENT || pricing.usdPerUnit > MAX_USD_PER_EVENT) {
+        throw new Error(`${detail.name}: $${pricing.usdPerUnit} per ${pricing.unit} is outside the per-event band $${MIN_USD_PER_EVENT}-$${MAX_USD_PER_EVENT} — check the actor's pricing before regenerating.`);
+      }
+    } else if (pricing.usdPer1000 < MIN_USD_PER_1000 || pricing.usdPer1000 > MAX_USD_PER_1000) {
       throw new Error(`${detail.name}: $${pricing.usdPer1000}/1000 is outside the sane band $${MIN_USD_PER_1000}-$${MAX_USD_PER_1000}. `
         + 'This is the signature of a pricing PUT that set per-1k dollars where Apify expects per-EVENT dollars (a 1000x error that returns HTTP 200). Check the actor before regenerating.');
     }
