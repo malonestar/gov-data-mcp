@@ -18,7 +18,7 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 
 import { createClient, ApifyError } from './apify.js';
-import { indexCatalog, listTools, searchCatalog, describeTool, resolveCall, formatRunResult, META_TOOLS } from './tools.js';
+import { indexCatalog, listTools, searchCatalog, describeTool, resolveCall, formatRunResult, serverInstructions, META_TOOLS } from './tools.js';
 import { parseCliArgs, resolvePreset, describePresets, PRESET_ENV } from './presets.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -51,7 +51,7 @@ const identity = chosen.preset
 
 const server = new Server(
   identity,
-  { capabilities: { tools: {} } },
+  { capabilities: { tools: {} }, instructions: serverInstructions(index) },
 );
 
 server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: listTools(index) }));
@@ -82,7 +82,7 @@ server.setRequestHandler(CallToolRequestSchema, async (req) => {
     const result = await client.runActor(`${catalog.owner}/${call.slug}`, call.input, {
       maxItems: call.maxItems ?? 200,
     });
-    const formatted = formatRunResult(call.slug, result);
+    const formatted = formatRunResult(call.slug, result, index.bySlug.get(call.slug));
     return text(formatted.text, formatted.isError);
   } catch (err) {
     if (err instanceof ApifyError) return text(`${err.message}`, true);

@@ -30,7 +30,7 @@ const MUTATIONS = [
   { file: 'src/tools.js', from: '      annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },', to: '', why: 'featured tools stop declaring what calling them does to the world' },
   { file: 'src/tools.js', from: '  BILLED_LIVE_READ: { readOnlyHint: false,', to: '  BILLED_LIVE_READ: { readOnlyHint: true,', why: 'a tool that spends the caller money claims to be read-only' },
   { file: 'src/tools.js', from: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false }', to: '  CATALOG_LOCAL: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: true }', why: 'a bundled catalog read claims to reach the open world' },
-  { file: 'src/tools.js', from: 'Reads live from the official government source. ${costNote(a.pricing)}', to: 'Reads live from the official government source. ${\'\'}', why: 'billing stops being disclosed on the tools that bill' },
+  { file: 'src/tools.js', from: '${costNote(a.pricing)} Store page', to: ' Store page', why: 'billing stops being disclosed on the tools that bill' },
   { file: 'src/tools.js', from: "  'nhd-surface-water-404-screener':", to: "  'nhd-surface-water-404-screeners':", why: 'a routing note points at a tool name that does not exist' },
   { file: 'package.json', from: 'MCP server exposing published US government', to: 'MCP server exposing 95 published US government', why: 'the npm headline description carries a count that will rot' },
   { file: 'README.md', from: 'and it will search all ', to: 'and it will search all 95. Ignore: ', why: 'a stale catalog count is reintroduced into README prose' },
@@ -60,6 +60,13 @@ const MUTATIONS = [
   { file: 'README.md', from: '**11 tools:** [site-due-diligence-bundle]', to: '**10 tools:** [site-due-diligence-bundle]', why: 'the README states a preset tool count that disagrees with presets.js' },
   { file: 'README.md', from: '### `cre-leads` — CRE & Local Business Leads', to: '### `cre-lead` — CRE & Local Business Leads', why: 'the README documents a preset name that does not exist' },
   { file: 'src/index.js', from: '  ? { name: chosen.preset.serverName, version: pkg.version, title: chosen.preset.title, description: chosen.preset.description,', to: "  ? { name: 'gov-data-mcp', version: pkg.version, title: chosen.preset.title, description: undefined,", why: 'a preset server announces itself under the generic name with no description' },
+  {"file":"src/tools.js","from":"    if (v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)) problems.push","to":"    if (v === undefined) problems.push","why":"preflight accepts an empty array / blank for a required field"},
+  {"file":"src/tools.js","from":"    if (!p) { problems.push(","to":"    if (!p) { continue; problems.push(","why":"preflight lets a misspelled input name through"},
+  {"file":"src/tools.js","from":"    if (problems.length) {\n      return { ok: false","to":"    if (false) {\n      return { ok: false","why":"resolveCall ignores preflight and starts a metered run on a bad input"},
+  {"file":"src/tools.js","from":"  if (actor && failed && !pending) Object.assign(header, guidanceFor(actor, 'failed'));","to":"","why":"a failed run returns no next step or example"},
+  {"file":"src/tools.js","from":"  if (actor && !failed && result.itemCount === 0) Object.assign(header, guidanceFor(actor, 'zero'));","to":"","why":"a zero-row run gives no scope check guidance"},
+  {"file":"src/tools.js","from":"    example_input: actor.exampleInput || null,","to":"","why":"describe drops the verified example input"},
+  {"file":"src/index.js","from":"instructions: serverInstructions(index) ","to":"","why":"the server stops sending its agent guide"},
 ];
 
 let pass = 0, fail = 0;
@@ -71,7 +78,7 @@ for (const m of MUTATIONS) {
   fs.writeFileSync(p, original.replace(m.from, m.to));
   let red = false;
   try {
-    execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js', { cwd: ROOT, stdio: 'pipe' });
+    execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js test/guidance.test.js', { cwd: ROOT, stdio: 'pipe' });
   } catch { red = true; }
   fs.writeFileSync(p, original);
   if (red) { console.log(`RED   ${m.why}`); pass++; }
@@ -79,7 +86,7 @@ for (const m of MUTATIONS) {
 }
 
 // The suite must be green again after every restore.
-try { execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js', { cwd: ROOT, stdio: 'pipe' }); }
+try { execSync('node --test test/tools.test.js test/apify.test.js test/catalog.test.js test/agent-surface.test.js test/presets.test.js test/guidance.test.js', { cwd: ROOT, stdio: 'pipe' }); }
 catch { console.error('FATAL: suite is red after restore'); process.exit(1); }
 
 console.log(`\n${pass} caught, ${fail} missed`);

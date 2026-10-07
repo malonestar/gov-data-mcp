@@ -169,7 +169,27 @@ npx awal x402 pay 'https://agi.apify.com/protocols/x402/prepaid-tokens?amount=5&
 # → returns a bearer token; export it as APIFY_TOKEN and start this server as usual
 ```
 
-The prepaid balance is an absolute spending cap and expires after 14 days. Every tool here charges only per result — none pass platform usage through, none require full permissions, and none run in Standby mode, which are the three things that make an Actor ineligible. Prices are in the catalog (`usdPer1000Results` on every search hit), so an agent can see the cost before spending.
+The prepaid balance is an absolute spending cap and expires after 14 days. Every tool here charges per result or per generated report. None pass platform usage through, none require full permissions, and none run in Standby mode, which are the three things that make an Actor ineligible. Prices are in the catalog (`usdPerUnit` and `priceUnit` on every search hit, plus `usdPer1000Results` for per-row tools), so an agent can see the cost before spending.
+
+## Calling the tools well (guide for agents)
+
+The most common way to waste a call is to guess the input: no state, no coordinates, a misspelled field. These tools then refuse the question, or match nothing, and the caller still pays a fractional actor-start fee. The server helps an agent avoid that in four ways:
+
+1. **An agent guide in the handshake.** The MCP `initialize` response carries `instructions`. They cover the search → describe → run workflow, scoping every call, real codes and ISO dates, starting small, and how to read failures, zero rows and `null`.
+2. **Verified example inputs.** `describe-gov-data-tool` (free) returns:
+   - `must_supply`: the fields you have to provide.
+   - `example_input`: the actor's prefill, which Apify's own QA runs every few days and which returns rows.
+   - Up to two `examples`: inputs from the actor's published, run-verified demo tasks, each with a human title.
+
+   Start from one of them and change only the values you need.
+3. **A free local check before any metered run.** A missing required field, an input name the tool doesn't have, or a value outside a closed vocabulary is reported with `run_status: NOT_RUN_INPUT_INVALID` and the example to copy. Nothing runs and nothing is charged.
+4. **A next step on every unhelpful result.** A failed run returns the actor's own reason in `note`, plus `next_step`, `must_supply` and `example_input`. A zero-row success says to check spelling, state code, radius and date window before concluding that nothing exists.
+
+Example of a well-scoped first call:
+
+```json
+{"tool": "medicaid-exclusion-screener", "input": {"mode": "screen", "targets": [{"npi": "1972902351"}, {"name": "Jane Doe", "dob": "1970-01-01"}]}}
+```
 
 ## On honest answers
 

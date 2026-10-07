@@ -124,6 +124,29 @@ const MAX_USD_PER_1000 = 200;
 const MIN_USD_PER_EVENT = 0.05;
 const MAX_USD_PER_EVENT = 50;
 
+/**
+ * A known-good starting input: every property's `prefill`, assembled into one
+ * object. Prefill is what Apify's own auto-QA sends every ~3 days and what each
+ * actor is built to answer non-empty, so it is the single best "first call" an
+ * agent can make. (`default` is deliberately NOT used — see sanitiseProperty.)
+ */
+function exampleInputOf(input) {
+  const out = {};
+  for (const [k, v] of Object.entries(input.properties || {})) {
+    if (v.prefill !== undefined) out[k] = v.prefill;
+  }
+  return Object.keys(out).length ? out : null;
+}
+
+// Required fields an agent MUST supply: required and with no server-side default.
+function mustSupplyOf(input) {
+  const req = Array.isArray(input.required) ? input.required : [];
+  return req.filter(k => !(input.properties && input.properties[k] && input.properties[k].default !== undefined));
+}
+
+const MAX_EXAMPLE_BYTES = 1500;
+const MAX_EXAMPLES = 2;
+
 function toJsonSchema(input) {
   const props = {};
   for (const [k, v] of Object.entries(input.properties || {})) props[k] = sanitiseProperty(k, v);
@@ -137,6 +160,17 @@ function toJsonSchema(input) {
   const items = list.data && list.data.items;
   if (!Array.isArray(items) || items.length === 0) throw new Error('actor list came back empty');
   console.error(`[gen] ${items.length} actors owned`);
+
+  // Published demo tasks are run-verified, real use cases with a human title.
+  // They are public landing pages already, so their inputs are safe to ship.
+  // The TASK list's isPublic is truthful (unlike the ACT list's).
+  const taskList = await get(`https://api.apify.com/v2/actor-tasks?limit=1000`);
+  const tasksByActId = new Map();
+  for (const t of (taskList.data && taskList.data.items) || []) {
+    if (!t.isPublic) continue;
+    if (!tasksByActId.has(t.actId)) tasksByActId.set(t.actId, []);
+    tasksByActId.get(t.actId).push(t);
+  }
 
   const catalog = [];
   const skipped = [];
@@ -169,6 +203,18 @@ function toJsonSchema(input) {
         + 'This is the signature of a pricing PUT that set per-1k dollars where Apify expects per-EVENT dollars (a 1000x error that returns HTTP 200). Check the actor before regenerating.');
     }
 
+    const examples = [];
+    for (const t of (tasksByActId.get(detail.id) || []).sort((a, b) => a.name.localeCompare(b.name))) {
+      if (examples.length >= MAX_EXAMPLES) break;
+      // This endpoint returns the raw input object, not a { data } envelope.
+      const tin = await get(`https://api.apify.com/v2/actor-tasks/${t.id}/input`);
+      if (!tin || typeof tin !== 'object' || Array.isArray(tin)) continue;
+      // Only fields the live schema still declares, so a stale task cannot teach a dead field.
+      const clean = Object.fromEntries(Object.entries(tin).filter(([k]) => input.properties[k] !== undefined));
+      if (!Object.keys(clean).length || JSON.stringify(clean).length > MAX_EXAMPLE_BYTES) continue;
+      examples.push({ title: t.title || t.name, input: clean });
+    }
+
     catalog.push({
       slug: detail.name,
       actorId: `${USERNAME}/${detail.name}`,
@@ -178,6 +224,9 @@ function toJsonSchema(input) {
       storeUrl: `https://apify.com/${USERNAME}/${detail.name}`,
       pricing,
       inputSchema: toJsonSchema(input),
+      exampleInput: exampleInputOf(input),
+      mustSupply: mustSupplyOf(input),
+      examples,
     });
     console.error(`[gen] + ${detail.name} (${Object.keys(input.properties).length} inputs, $${pricing.usdPer1000}/1k)`);
   }

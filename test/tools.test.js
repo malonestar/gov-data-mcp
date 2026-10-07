@@ -132,16 +132,17 @@ test('describe on an unknown tool is an explicit miss with suggestions, not a si
 });
 
 test('resolveCall handles a direct featured call', () => {
-  const r = resolveCall(index, 'faa-drone-airspace-checker', { assets: [] });
+  const r = resolveCall(index, 'faa-drone-airspace-checker', index.bySlug.get('faa-drone-airspace-checker').exampleInput);
   assert.equal(r.ok, true);
   assert.equal(r.slug, 'faa-drone-airspace-checker');
 });
 
 test('resolveCall handles the generic run tool', () => {
-  const r = resolveCall(index, META_TOOLS.RUN, { tool: 'karst-sinkhole-risk-screener', input: { x: 1 }, maxItems: 5 });
+  const karstInput = index.bySlug.get('karst-sinkhole-risk-screener').exampleInput;
+  const r = resolveCall(index, META_TOOLS.RUN, { tool: 'karst-sinkhole-risk-screener', input: karstInput, maxItems: 5 });
   assert.equal(r.ok, true);
   assert.equal(r.slug, 'karst-sinkhole-risk-screener');
-  assert.deepEqual(r.input, { x: 1 });
+  assert.deepEqual(r.input, karstInput);
   assert.equal(r.maxItems, 5);
 });
 

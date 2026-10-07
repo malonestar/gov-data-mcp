@@ -54,6 +54,78 @@ export const RENAMED_IN_1_1 = {
   run_gov_data_tool: 'run-gov-data-tool',
 };
 
+/**
+ * Server-level guide, sent in the MCP `initialize` response as `instructions`.
+ *
+ * Written because the measured failure mode is agents GUESSING inputs: an agent
+ * that calls a screener with no state, no coordinates and no name starts a
+ * metered run that refuses the question (or matches nothing) and costs the
+ * caller an actor-start fee for no answer. Every rule below targets that.
+ */
+export function serverInstructions(index) {
+  const n = index.actors.length;
+  return [
+    `gov-data-mcp: ${n} tools over official US government open data (EPA, FEMA, USGS, FDIC, SEC, state licensing boards and registries, ...).${index.scopeNote || ''}`,
+    '',
+    'HOW TO CALL THESE TOOLS WELL',
+    `1. Find the tool: ${META_TOOLS.SEARCH} (free). 2. Read it: ${META_TOOLS.DESCRIBE} (free) - it returns mustSupply, exampleInput and run-verified examples. 3. Run it.`,
+    '4. Start from exampleInput or one of the examples and change only the values you need. These inputs are verified to return rows; a hand-built input usually is not.',
+    '5. Always SCOPE the question: a state, county, coordinates, a name, an NPI, a date window. Unscoped calls are refused by most tools or bill for whole national lists.',
+    '6. Use real values the source knows: two-letter state codes unless the schema says otherwise, decimal-degree lat/lon, ISO dates (YYYY-MM-DD). Never invent enum values - use the enum in the schema.',
+    '7. Keep the first call small (low maxResults / few assets) and widen once the shape works. Each call bills per row (see the price in the tool description).',
+    '',
+    'READING RESULTS',
+    '- run_status other than SUCCEEDED means the question was NOT answered. Read `note` (the tool explains what was wrong), fix the input, and do not retry the identical input.',
+    '- SUCCEEDED with zero rows means the source was reached and matched nothing for exactly that input. Before concluding "none exist", check the scope (radius, date window, spelling, state).',
+    '- null in a field means "not checked / not published", never "no". Many rows carry per-source status fields; read them before stating a negative.',
+  ].join('\n');
+}
+
+/**
+ * Free, local pre-flight check run BEFORE a metered call: required fields the
+ * caller must supply (required with no server default) and closed vocabularies.
+ * Apify would reject these too, but only after the agent has learned nothing
+ * useful; answering here returns the example to copy instead.
+ */
+export function preflight(actor, input) {
+  const problems = [];
+  const props = (actor.inputSchema && actor.inputSchema.properties) || {};
+  const given = input && typeof input === 'object' ? input : {};
+  for (const k of actor.mustSupply || []) {
+    const v = given[k];
+    if (v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0)) problems.push(`"${k}" is required and was not supplied`);
+  }
+  for (const [k, v] of Object.entries(given)) {
+    const p = props[k];
+    if (!p) { problems.push(`"${k}" is not an input of this tool (known inputs: ${Object.keys(props).join(', ')})`); continue; }
+    if (Array.isArray(p.enum) && v !== undefined && v !== null && !p.enum.includes(v)) problems.push(`"${k}" must be one of ${JSON.stringify(p.enum)}, got ${JSON.stringify(v)}`);
+    const itemEnum = p.items && Array.isArray(p.items.enum) ? p.items.enum : null;
+    if (itemEnum && Array.isArray(v)) {
+      const bad = v.filter(x => !itemEnum.includes(x));
+      if (bad.length) problems.push(`"${k}" items must be from ${JSON.stringify(itemEnum)}, got ${JSON.stringify(bad)}`);
+    }
+  }
+  return problems;
+}
+
+/** What an agent should do next, attached to every non-SUCCEEDED or zero-row result. */
+export function guidanceFor(actor, kind) {
+  const ex = actor && actor.exampleInput ? actor.exampleInput : null;
+  const examples = actor && Array.isArray(actor.examples) ? actor.examples : [];
+  const base = kind === 'failed'
+    ? 'The question was not answered and no result rows were billed. Read `note` above for the reason, fix the input, and do not resend the same input.'
+    : kind === 'preflight'
+      ? 'Nothing was run and nothing was charged. Fix the input and call again.'
+      : 'Zero rows is an answer only for exactly this input. Before concluding nothing exists, check the scope: spelling, state code, radius, date window, mode.';
+  return {
+    next_step: `${base} Compare your input with example_input (verified to return rows) and change only the values you need.`,
+    must_supply: actor ? (actor.mustSupply || []) : [],
+    example_input: ex,
+    examples: examples.length ? examples : undefined,
+    describe: actor ? `${META_TOOLS.DESCRIBE} {"tool":"${actor.slug}"}` : undefined,
+  };
+}
+
 /** MCP tool names must match ^[a-zA-Z0-9_-]{1,64}$. Slugs already do. */
 export function toolNameFor(slug) {
   return slug;
@@ -204,7 +276,7 @@ export function featuredToolDefinitions(index) {
     const routing = routingNoteFor(index, slug);
     return {
       name: toolNameFor(slug),
-      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
+      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. Call ${META_TOOLS.DESCRIBE} (free) for a verified example input. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
       inputSchema: a.inputSchema,
       annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },
     };
@@ -242,7 +314,7 @@ export function metaToolDefinitions(index) {
     {
       name: META_TOOLS.RUN,
       description: `Run any one of the ${n} catalog tools with the given input and return its rows. Call ${META_TOOLS.DESCRIBE} first to shape the input. `
-        + `${COST_NOTE} A run that FAILS returns an error and no rows rather than an empty result, so a zero-row answer here always means the source was reached and genuinely matched nothing.`,
+        + `${COST_NOTE} A run that FAILS returns an error and no rows rather than an empty result, so a zero-row answer means the source was reached and matched nothing for exactly that input. Failed and zero-row results carry next_step, must_supply and a verified example_input to copy. Inputs are checked locally first: a missing required field or an invalid enum value is reported free, without starting a run.`,
       annotations: { title: 'Run any government data tool', ...ANNOTATIONS.BILLED_LIVE_READ },
       inputSchema: {
         type: 'object',
@@ -308,13 +380,25 @@ export function describeTool(index, name) {
       ? { ...actor.pricing, summary: priceLine(actor.pricing) }
       : null,
     storeUrl: actor.storeUrl,
+    must_supply: actor.mustSupply || [],
+    example_input: actor.exampleInput || null,
+    examples: actor.examples || [],
+    how_to_call: 'Start from example_input (or one of examples): these inputs are verified to return rows. Change only the values you need, keep the call scoped (state / coordinates / name / date window) and keep the first call small. '
+      + `Run it with ${META_TOOLS.RUN} {"tool":"${actor.slug}","input":{...}}${index.featured && index.featured.includes(actor.slug) ? ` or call the dedicated "${actor.slug}" tool directly` : ''}.`,
     inputSchema: actor.inputSchema,
   };
 }
 
 /** Resolve a tool call to { slug, input } or an error, for both featured and meta RUN calls. */
 export function resolveCall(index, toolName, args) {
-  if (index.bySlug.has(toolName)) return { ok: true, slug: toolName, input: args || {}, maxItems: undefined };
+  const checked = (slug, input, maxItems) => {
+    const problems = preflight(index.bySlug.get(slug), input);
+    if (problems.length) {
+      return { ok: false, error: JSON.stringify({ tool: slug, run_status: 'NOT_RUN_INPUT_INVALID', problems, ...guidanceFor(index.bySlug.get(slug), 'preflight') }, null, 2) };
+    }
+    return { ok: true, slug, input, maxItems };
+  };
+  if (index.bySlug.has(toolName)) return checked(toolName, args || {}, undefined);
   if (toolName === META_TOOLS.RUN) {
     const slug = args && args.tool;
     if (!slug) return { ok: false, error: `${META_TOOLS.RUN} requires a "tool" argument naming which catalog tool to run.` };
@@ -322,7 +406,7 @@ export function resolveCall(index, toolName, args) {
       const near = searchCatalog(index, String(slug).replace(/[-_]/g, ' '), 5).map(r => r.tool);
       return { ok: false, error: `No tool named "${slug}" in this catalog.${near.length ? ` Closest matches: ${near.join(', ')}.` : ''}${index.scopeNote || ''}` };
     }
-    return { ok: true, slug, input: (args && args.input) || {}, maxItems: args && args.maxItems };
+    return checked(slug, (args && args.input) || {}, args && args.maxItems);
   }
   // A caller with a hardcoded pre-1.1 name gets told what happened rather than
   // silently aliased, so the hardcode gets fixed instead of quietly persisting.
@@ -333,7 +417,7 @@ export function resolveCall(index, toolName, args) {
 }
 
 /** Shape a run result into MCP text content. Never collapses a failure into an empty answer. */
-export function formatRunResult(slug, result) {
+export function formatRunResult(slug, result, actor = null) {
   const header = {
     tool: slug,
     run_status: result.status,
@@ -343,6 +427,10 @@ export function formatRunResult(slug, result) {
   };
   if (result.statusMessage) header.note = result.statusMessage;
   const failed = result.status !== 'SUCCEEDED';
+  // A run still in flight on Apify is not a wrong input; do not tell the agent to change it.
+  const pending = result.status === 'CLIENT_TIMEOUT' || result.status === 'DATASET_UNSETTLED';
+  if (actor && failed && !pending) Object.assign(header, guidanceFor(actor, 'failed'));
+  if (actor && !failed && result.itemCount === 0) Object.assign(header, guidanceFor(actor, 'zero'));
   return {
     isError: failed,
     text: JSON.stringify(failed ? header : { ...header, rows: result.items }, null, 2),
