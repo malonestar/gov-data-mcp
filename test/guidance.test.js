@@ -125,3 +125,21 @@ test('guidanceFor never invents an example for an unknown actor', () => {
   assert.equal(g.example_input, null);
   assert.deepEqual(g.must_supply, []);
 });
+
+test('every featured tool carries parameter guidance, and every input it names exists in the live schema', async () => {
+  const { SCOPING, FEATURED } = await import('../src/tools.js');
+  for (const slug of FEATURED) {
+    assert.ok(SCOPING[slug], `${slug} has no SCOPING note`);
+    const props = index.bySlug.get(slug).inputSchema.properties;
+    const named = [...SCOPING[slug].matchAll(/`([A-Za-z0-9_]+)`/g)].map(m => m[1]);
+    assert.ok(named.length >= 2, `${slug} SCOPING names fewer than 2 inputs`);
+    for (const n of named) assert.ok(props[n], `${slug} SCOPING names \`${n}\`, which is not an input`);
+  }
+  for (const t of featuredToolDefinitions(index)) assert.ok(t.description.includes('INPUTS:'), `${t.name} description lacks the INPUTS guidance`);
+});
+
+test('faa-drone-airspace-checker says when it is the wrong tool', () => {
+  const t = featuredToolDefinitions(index).find(x => x.name === 'faa-drone-airspace-checker');
+  assert.match(t.description, /CHOOSE THIS/);
+  assert.match(t.description, /site-due-diligence-bundle/);
+});

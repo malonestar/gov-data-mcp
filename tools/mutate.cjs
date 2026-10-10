@@ -67,6 +67,9 @@ const MUTATIONS = [
   {"file":"src/tools.js","from":"  if (actor && !failed && result.itemCount === 0) Object.assign(header, guidanceFor(actor, 'zero'));","to":"","why":"a zero-row run gives no scope check guidance"},
   {"file":"src/tools.js","from":"    example_input: actor.exampleInput || null,","to":"","why":"describe drops the verified example input"},
   {"file":"src/index.js","from":"instructions: serverInstructions(index) ","to":"","why":"the server stops sending its agent guide"},
+  {"file":"src/tools.js","from":"${routing}${scopingNoteFor(slug)} Reads live","to":"${routing} Reads live","why":"featured tools lose their parameter guidance"},
+  {"file":"src/tools.js","from":"`maxPoints` is the cost cap","to":"`maxPointz` is the cost cap","why":"parameter guidance names an input that does not exist"},
+  {"file":"src/tools.js","from":"  'faa-drone-airspace-checker':\n    'CHOOSE THIS","to":"  'faa-drone-airspace-checker-x':\n    'CHOOSE THIS","why":"faa-drone loses its when-to-use routing note"},
 ];
 
 let pass = 0, fail = 0;

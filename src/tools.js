@@ -252,7 +252,50 @@ export const ROUTING = {
   'epa-drinking-water-quality-screener':
     'CHOOSE THIS for public water-system quality: SDWA violations, lead 90th-percentile results and PFAS occurrence. '
     + 'It is NOT a property contamination screen — for soil and groundwater records at a site use epa-contaminated-site-screener.',
+  'faa-drone-airspace-checker':
+    'CHOOSE THIS for drone (Part 107) airspace questions at specific US points: airspace class, LAANC ceiling, restricted and special-use areas, temporary flight restrictions. '
+    + 'It does NOT screen ground conditions — for a site environmental or hazard screen use site-due-diligence-bundle. It reports what the FAA layers say; it does not request or grant an authorization.',
 };
+
+/**
+ * Parameter guidance for the featured tools: which inputs matter, how they
+ * interact, and how to keep a first call small. Input schemas already document
+ * each field on its own; what they cannot say is which combinations an agent
+ * should reach for, which inputs override others, and which one is the cost cap.
+ * Every input named here in backticks is asserted to exist in the live schema
+ * (test/guidance.test.js), so a renamed field fails the build rather than
+ * leaving advice that points at nothing.
+ */
+export const SCOPING = {
+  'site-due-diligence-bundle':
+    'INPUTS: `assets` is required (lat/lon per site). `radiusMiles` sets the proximity layers only; point-in-polygon layers ignore it. `maxAssets` is the cost cap, one billed row per site, so start with 1-3 sites.',
+  'epa-contaminated-site-screener':
+    'INPUTS: `mode` decides everything else. In "assets" mode supply `assets` (address or lat/lon) and `radiusMiles`; `states`, `onlyNpl` and `onlyWithCoords` are ignored. In "inventory" mode supply `states` and the asset inputs are ignored. One row per site hit is billed, so `maxHitsPerProgram` and `maxResults` are the cost levers; keep them low on a first call near dense industrial areas.',
+  'faa-drone-airspace-checker':
+    'INPUTS: `points` is required. `layers` narrows which FAA layers are checked; leave it empty for all eight. `maxPoints` is the cost cap, one billed row per point.',
+  'hifld-grid-proximity-screener':
+    'INPUTS: `assets` is required. `radiusMiles` bounds every layer. `minVoltageKv` filters lines only, never substations or plants, and drops lines with unknown voltage. `includeSubstations`, `includePowerPlants` and `includeUtility` add columns, not rows; turn them off to speed up large batches. `maxResults` caps assets, one billed row each.',
+  'interconnection-queue-tracker':
+    'INPUTS: leave `isos` empty for all seven ISOs, or name one or two to keep a first call small. `maxResults` is applied in ISO order, so a low value silently drops the later ISOs; raise it or narrow `isos` instead. For change monitoring use `deltaOnly` in snapshot mode rather than re-pulling the full queue.',
+  'fdic-ncua-health-rollup':
+    'INPUTS: always set `state`; an empty state scores the whole country and bills far more rows. `minAssets` and `maxAssets` are in THOUSANDS of dollars (1000000 = $1B) and together with `peerBasis` define who counts as a peer. `institutionType` "credit_union" is not available yet and fails the run. `maxResults` is the cost cap.',
+  'fema-nri-county-risk-profile':
+    'INPUTS: supply `assets` (FIPS, state+county, or lat/lon) for specific places; `states` and `counties` are used ONLY when `assets` is empty (inventory mode). `resolution` "tract" applies only to lat/lon assets and inventory pulls; FIPS or state+county assets always get county data. `maxResults` caps rows in both modes.',
+  'fws-wetlands-proximity-screener':
+    'INPUTS: `assets` is required. `radiusMeters` is the presence check (a true circle); `nearestSearchRadiusMeters` is independent and only bounds the nearest-wetland distance, so a site can read no wetland in radius and still report a nearest one. `maxResults` caps assets, one billed row each.',
+  'nhd-surface-water-404-screener':
+    'INPUTS: `assets` is required. `radiusMeters` 1000 covers a typical Phase I adjacent-property review; widen it only on purpose. Keep `includeNonNetworkFlowlines` on for a conservative screen. `runBudgetSeconds` trades completeness for speed when the USGS service is slow; a site cut by the budget reports null counts, not zero. `maxResults` caps sites, exactly one row each.',
+  'epa-drinking-water-quality-screener':
+    'INPUTS: supply `assets` (lat/lon, matched to a water system boundary) or `pwsids` (9-character EPA system ids) or both. `includePfas` is the slow leg; turn it off when PFAS is not the question. `violationYears` only changes the recent-violation flags, not the history summary. `maxAssets` is the cost cap.',
+  'parcel-owner-lookup':
+    'INPUTS: `addresses` is required, one full street address with city and state per entry. Coverage is a fixed list of county and state assessor rolls; every address still yields exactly one row, so read its lookup_status before treating a missing owner as an answer. `maxResults` caps addresses, one billed row each.',
+  'license-verifier':
+    'INPUTS: always scope with `states` (a state code searches every board in it; a board id targets one). The most precise search is `licenseNumber`; otherwise `lastName` plus `firstName`. `roster` runs a batch instead of a single search, and `mode` "roster-delta" switches to the newly-credentialed feed with `professions` and `sinceDays`. `maxResults` applies PER BOARD, so a bare state code can bill several boards; start with a low value.',
+};
+
+export function scopingNoteFor(slug) {
+  return SCOPING[slug] ? ` ${SCOPING[slug]}` : '';
+}
 
 /**
  * A routing note is only shown when every tool it points at is reachable on
@@ -276,7 +319,7 @@ export function featuredToolDefinitions(index) {
     const routing = routingNoteFor(index, slug);
     return {
       name: toolNameFor(slug),
-      description: `${a.title}. ${truncate(a.description, 400)}${routing} Reads live from the official government source. Call ${META_TOOLS.DESCRIBE} (free) for a verified example input. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
+      description: `${a.title}. ${truncate(a.description, 400)}${routing}${scopingNoteFor(slug)} Reads live from the official government source. Call ${META_TOOLS.DESCRIBE} (free) for a verified example input. ${costNote(a.pricing)} Store page: ${a.storeUrl}`,
       inputSchema: a.inputSchema,
       annotations: { title: a.title, ...ANNOTATIONS.BILLED_LIVE_READ },
     };
