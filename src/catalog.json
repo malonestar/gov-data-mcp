@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-10-07T07:53:26.647Z",
+  "generatedAt": "2026-11-02T04:14:45.035Z",
   "owner": "malonestar",
   "count": 123,
   "actors": [
@@ -85,7 +85,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of lead rows to emit (caps your cost — you are billed per result row). Hard cap 10,000 per run. Example: 100.",
+            "description": "Maximum number of lead rows to emit (caps your cost — you are billed per result row). Hard cap 10,000 per run. Example: 40. Applied by default if omitted: 100.",
             "minimum": 1,
             "maximum": 10000
           }
@@ -95,7 +95,7 @@
         "county": "cook-il",
         "absenteeTier": "out_of_state",
         "propertyClassPrefix": "2",
-        "maxResults": 100
+        "maxResults": 40
       },
       "mustSupply": [],
       "examples": [
@@ -195,6 +195,12 @@
             "description": "A deed is flagged cash_sale=true when no mortgage (MTGE) is recorded against the same borough-block-lot within this many days of the deed recording date. cash_sale is null (never true) when the mortgage lookup could not be completed for that parcel - see mortgage_status. Applied by default if omitted: 45.",
             "minimum": 1,
             "maximum": 180
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Optional wall-clock budget for the whole run. NYC Open Data (data.cityofnewyork.us) is sometimes very slow; with a budget the run ends on time instead of dragging on. If the budget is reached before any deed can be answered, the run FAILS and nothing is billed. If it is reached later, the deeds already joined are emitted and every row says what was cut (run_deadline_hit=true, run_deadline_note): a cut mortgage lookup leaves cash_sale null (never true), a cut Parties batch leaves the buyer/seller flags null, and a cut scan may return fewer deeds than maxResults. Leave empty for no budget (the run takes as long as the source needs). Example: 240.",
+            "minimum": 30,
+            "maximum": 3600
           }
         }
       },
@@ -204,7 +210,8 @@
         ],
         "docTypes": [
           "DEED"
-        ]
+        ],
+        "runBudgetSeconds": 240
       },
       "mustSupply": [],
       "examples": [
@@ -2546,6 +2553,12 @@
             "description": "Maximum number of ranked parcel leads to emit (highest distress score first). You are billed per result, so this caps your spend. Example: 100.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Optional wall-clock budget for the New York City leg. NYC Open Data (data.cityofnewyork.us) is sometimes very slow; with a budget the run ends on time instead of dragging on. If the budget runs out before all three distress signal sources are read in full, the run FAILS and nothing is billed (a score over part of the data would be wrong). If it runs out only while owner contacts are being fetched, the ranked parcels are still emitted with complete scores and every row says so: run_deadline_hit=true and owner_contact_checked=false. Leave empty for no budget (the run takes as long as the source needs). Detroit, Philadelphia and Chicago are not budgeted. Example: 240.",
+            "minimum": 30,
+            "maximum": 3600
           }
         }
       },
@@ -2556,7 +2569,8 @@
         "borough": "BRONX",
         "minSignals": 2,
         "lookbackMonths": 12,
-        "maxResults": 100
+        "maxResults": 100,
+        "runBudgetSeconds": 240
       },
       "mustSupply": [],
       "examples": [
@@ -3785,7 +3799,7 @@
           },
           "runBudgetSeconds": {
             "type": "integer",
-            "description": "Total time budget for all upstream requests including retries. Requests stop rather than retry past this budget, so a long EPA outage fails loudly instead of hanging. Example: 900.",
+            "description": "Total time budget for all upstream requests including retries. Requests stop rather than retry past this budget, so a long EPA outage fails loudly instead of hanging. Prefilled at 240 s so a demo or QA run finishes inside Apify's 5-minute limit even when EPA is slow; when omitted the run allows 900 s. Example: 240.",
             "minimum": 60,
             "maximum": 7200
           },
@@ -3834,7 +3848,7 @@
         "violationYears": 10,
         "maxViolationDetails": 25,
         "maxAssets": 250,
-        "runBudgetSeconds": 900,
+        "runBudgetSeconds": 240,
         "refreshPfasCache": false,
         "simulateOutage": "none"
       },
@@ -5844,7 +5858,7 @@
         "properties": {
           "state": {
             "type": "string",
-            "description": "US state to scope the cohort, e.g. CA, TX, NY. Strongly recommended: it focuses the run and makes peer percentiles state-level. Empty = the entire country (slower; national peer scoring). Example: \"TX\"."
+            "description": "US state to scope the cohort, e.g. CA, TX, NY. Strongly recommended: it focuses the run and makes peer percentiles state-level. Empty = the entire country (slower; national peer scoring). Example: \"CO\"."
           },
           "institutionType": {
             "type": "string",
@@ -5914,7 +5928,7 @@
         }
       },
       "exampleInput": {
-        "state": "TX",
+        "state": "CO",
         "institutionType": "bank",
         "mode": "stress",
         "peerBasis": "business_line",
@@ -8622,7 +8636,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of unified property rows to push to the dataset (each row = 1 billed result). 1-25000. Example: 500. Applied by default if omitted: 1000.",
+            "description": "Maximum number of unified property rows to push to the dataset (each row = 1 billed result). 1-25000. Example: 150. Applied by default if omitted: 1000.",
             "minimum": 1,
             "maximum": 25000
           }
@@ -8641,7 +8655,7 @@
           "PUBLIC_HOUSING"
         ],
         "includeOpportunityZoneFlag": true,
-        "maxResults": 500
+        "maxResults": 150
       },
       "mustSupply": [
         "states"
@@ -8699,7 +8713,7 @@
         "properties": {
           "assets": {
             "type": "array",
-            "description": "List of points to check against the HUD designations that grant the 130% LIHTC eligible-basis boost under IRC Sec. 42(d)(5)(B): Qualified Census Tracts (current and prior year) and Difficult Development Areas. Each item is an object with numeric lat and lon (WGS84 decimal degrees) and an optional label echoed into the output. One billable result row is produced per asset. Example: [{\"lat\":40.815,\"lon\":-73.904,\"label\":\"South Bronx, NY (Qualified Census Tract)\"},{\"lat\":34.073,\"lon\":-118.4,\"label\":\"Beverly Hills, CA (Small Area DDA - boost via DDA, not QCT)\"},{\"lat\":39.07095,\"lon\":-108.55684,\"label\":\"Grand Junction, CO (QCT in the prior year, not the current one)\"},{\"lat\":39,\"lon\":-101.5,\"label\":\"Rural Kansas (genuine clear - neither QCT nor DDA)\"}].",
+            "description": "List of points to check against the HUD designations that grant the 130% LIHTC eligible-basis boost under IRC Sec. 42(d)(5)(B): Qualified Census Tracts (current and prior year) and Difficult Development Areas. Each item is an object with numeric lat and lon (WGS84 decimal degrees) and an optional label echoed into the output. One billable result row is produced per asset. Example: [{\"lat\":40.815,\"lon\":-73.904,\"label\":\"South Bronx, NY (Qualified Census Tract)\"},{\"lat\":34.073,\"lon\":-118.4,\"label\":\"Beverly Hills, CA (Small Area DDA - boost via DDA, not QCT)\"},{\"lat\":39.07095,\"lon\":-108.55684,\"label\":\"Grand Junction, CO (QCT in an earlier vintage, not the current one)\"},{\"lat\":39,\"lon\":-101.5,\"label\":\"Rural Kansas (genuine clear - neither QCT nor DDA)\"}].",
             "items": {
               "type": "string"
             }
@@ -8730,7 +8744,7 @@
           {
             "lat": 39.07095,
             "lon": -108.55684,
-            "label": "Grand Junction, CO (QCT in the prior year, not the current one)"
+            "label": "Grand Junction, CO (QCT in an earlier vintage, not the current one)"
           },
           {
             "lat": 39,
@@ -8869,7 +8883,7 @@
           },
           "contractStatuses": {
             "type": "array",
-            "description": "TRACS statuses to keep: Active, Expired, Pending, Suspended, Terminated, Executed. Leave empty for all statuses - not defaulted to Active, because a hidden status filter is a hidden answer. Example: [\"Active\"].",
+            "description": "TRACS statuses to keep: Active, Expired, Pending, Suspended, Terminated, Executed. Leave empty for all statuses - not defaulted to Active, because a hidden status filter is a hidden answer. DELIBERATELY NOT PREFILLED: contract status is published by the contract-level table and by the Access substitute, but NOT by the contract-renewal file this actor falls back to when neither is available. A prefilled status filter would make the advertised example unanswerable on that last-resort source, and the run would blame the caller input for an upstream outage.",
             "items": {
               "type": "string"
             }
@@ -8922,9 +8936,6 @@
           "CA"
         ],
         "expiringWithinMonths": 36,
-        "contractStatuses": [
-          "Active"
-        ],
         "maxResults": 300
       },
       "mustSupply": [],
@@ -9025,7 +9036,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of queue records to fetch across ALL selected ISOs combined. The cap is applied in ISO order, so a low value truncates the last ISOs: any ISO that is cut short or never reached is marked iso_status=truncated / not_fetched on its iso_summary row and is excluded from withdrawn-project detection for that run. The default is deliberately low (500) so an unconfigured call cannot run away; raise it to about 20000 to pull the whole federation (~18,200 records). Applied by default if omitted: 500.",
+            "description": "Maximum number of queue records to fetch across ALL selected ISOs combined. The cap is applied in ISO order, so a low value truncates the last ISOs: any ISO that is cut short or never reached is marked iso_status=truncated / not_fetched on its iso_summary row and is excluded from withdrawn-project detection for that run. The default is deliberately low (500) so an unconfigured call cannot run away; raise it to about 20000 to pull the whole federation (~18,200 records). Example: 100. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 500000
           }
@@ -9034,7 +9045,8 @@
       "exampleInput": {
         "isos": [
           "SPP"
-        ]
+        ],
+        "maxResults": 100
       },
       "mustSupply": [],
       "examples": [
@@ -9361,18 +9373,18 @@
         "event": "apify-default-dataset-item",
         "perResult": true,
         "unit": "result",
-        "usdPerUnit": 0.003,
-        "usdPer1000": 3,
+        "usdPerUnit": 0.01,
+        "usdPer1000": 10,
         "tierDiscountsUsdPerUnit": {
-          "FREE": 0.003,
-          "BRONZE": 0.0024,
-          "SILVER": 0.0021,
-          "GOLD": 0.00165,
-          "PLATINUM": 0.0012,
-          "DIAMOND": 0.0009
+          "FREE": 0.01,
+          "BRONZE": 0.008,
+          "SILVER": 0.007,
+          "GOLD": 0.0055,
+          "PLATINUM": 0.0055,
+          "DIAMOND": 0.0055
         },
         "actorStartUsd": 0.00005,
-        "since": "2026-08-24T23:57:42.560Z"
+        "since": "2026-10-10T23:31:38.895Z"
       },
       "inputSchema": {
         "type": "object",
@@ -9634,11 +9646,11 @@
           "BRONZE": 0.012,
           "SILVER": 0.0105,
           "GOLD": 0.00825,
-          "PLATINUM": 0.006,
-          "DIAMOND": 0.0045
+          "PLATINUM": 0.00825,
+          "DIAMOND": 0.00825
         },
         "actorStartUsd": null,
-        "since": "2026-07-23T06:11:59.065Z"
+        "since": "2026-10-11T00:07:46.034Z"
       },
       "inputSchema": {
         "type": "object",
@@ -16547,7 +16559,7 @@
       "slug": "warn-layoff-aggregator",
       "actorId": "malonestar/warn-layoff-aggregator",
       "title": "US WARN Layoff Notice Aggregator & Delta Monitor (OR/TX API)",
-      "description": "Aggregate US state WARN Act layoff & closure notices into one normalized schema and track new / updated / removed deltas. Oregon (HECC export) and Texas (Socrata) live and keyless; CA/NY/WA/WI/IL/NJ scaffolded. For RevOps, recruiting, econ research and CRE. No API key.",
+      "description": "Aggregate US state WARN Act layoff & closure notices into one normalized schema and track new / updated / removed deltas. Oregon (HECC export) and Texas (TWC workbooks) live and keyless; CA/NY/WA/WI/IL/NJ scaffolded. For RevOps, recruiting, econ research and CRE. No API key.",
       "categories": [
         "LEAD_GENERATION",
         "BUSINESS",
@@ -16607,7 +16619,7 @@
           },
           "maxResults": {
             "type": "integer",
-            "description": "Maximum number of WARN notices to fetch. The budget is split evenly across the selected states, so a small value returns some of every state rather than all of the first one. Rows carry source_truncated when a state was cut short. Applied by default if omitted: 500.",
+            "description": "Maximum number of WARN notices to fetch. The budget is split evenly across the selected states, so a small value returns some of every state rather than all of the first one. Rows carry source_truncated when a state was cut short. Example: 100. Applied by default if omitted: 500.",
             "minimum": 1,
             "maximum": 500000
           },
@@ -16622,6 +16634,7 @@
           "OR",
           "TX"
         ],
+        "maxResults": 100,
         "deltaStoreName": "warn-layoff-delta"
       },
       "mustSupply": [],
@@ -16808,6 +16821,12 @@
             "minimum": 1,
             "maximum": 2000
           },
+          "runBudgetSeconds": {
+            "type": "integer",
+            "description": "Whole-run wall clock shared by every request to the USFS EDW service. That service stalls in bursts: a stalled request sits on its own ~60 s instance-pool wait timeout before answering HTTP 200 with an embedded 503 \"Wait timeout for the request exceeded\", and the identical request then succeeds in ~150 ms. Each attempt is therefore capped at 5 s and re-asked, and this budget guarantees the run still reaches a terminal state. If it is exhausted the run FAILS LOUDLY as an upstream availability failure and bills nothing - it never returns a partial answer as though it were complete. Raise it for large batches. Clamped to 30-280 s; omit it and the actor uses 240 s, chosen to stay inside Apify’s 5-minute run-quality budget. Example: 240.",
+            "minimum": 30,
+            "maximum": 280
+          },
           "skipDriftChecks": {
             "type": "boolean",
             "description": "Every run first verifies the live USFS service against measured bands (layer counts, classification vocabulary, a known-positive canary on the Rogue, a known-positive canary in the Rio Grande layer-1 coverage gap, and a known-clear negative control on Denver). If any check fails the run fails and nothing is billed. Set true only for very large batches where the ~12 extra requests matter; you then accept results from an unverified upstream. Default false. Example: false."
@@ -16851,6 +16870,7 @@
           }
         ],
         "radiusMeters": 5000,
+        "runBudgetSeconds": 240,
         "skipDriftChecks": false
       },
       "mustSupply": [
