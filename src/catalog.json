@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T02:23:08.774Z",
+  "generatedAt": "2026-11-12T07:38:51.976Z",
   "owner": "malonestar",
   "count": 123,
   "actors": [
@@ -9363,8 +9363,8 @@
     {
       "slug": "kyb-company-verifier",
       "actorId": "malonestar/kyb-company-verifier",
-      "title": "KYB Company Verifier — Cross-Registry Business Verification API",
-      "description": "KYB/AML company verification API. Given a company name, fans out to France (INSEE/RNE), GLEIF LEI, and US state registries and returns, per registry: exists, normalized status, jurisdiction, identifiers (SIREN/LEI), officers, address, and a match-confidence score. Keyless.",
+      "title": "KYB Company Verification — Business Registry & LEI Check",
+      "description": "Company verification and KYB screening by name: checks Colorado, Connecticut, New York, Oregon, Pennsylvania and Delaware state registries, France (INSEE SIRENE) and the global GLEIF LEI register in one call. Per registry: exists, status, IDs, officers, address, match confidence. Keyless.",
       "categories": [
         "LEAD_GENERATION",
         "BUSINESS",
@@ -9629,8 +9629,8 @@
     {
       "slug": "liquor-license-new-openings-tracker",
       "actorId": "malonestar/liquor-license-new-openings-tracker",
-      "title": "Liquor License New Openings Tracker — Bar & Restaurant Leads",
-      "description": "Bar & restaurant lead events from liquor registries: TX, NY, FL, CA, WA, OR, CT, CO, MO, MI, ID + Chicago, Nashville, Louisville, Phoenix. new_application, newly_issued, closing_detected; Texas openings verified against Comptroller tax receipts. Delta mode emits only changes.",
+      "title": "Liquor License Leads — New Bar & Restaurant Openings Tracker",
+      "description": "New bar & restaurant openings from official liquor license filings: TX, NY, FL, CA, WA, OR, CT, CO, MO, MI, ID, NE + Chicago, Denver, Las Vegas, Clark County NV, Milwaukee, Nashville, Louisville, Phoenix. Applications, new licenses, closings, multi-location operators. Delta mode bills only changes.",
       "categories": [
         "LEAD_GENERATION",
         "AGENTS",
@@ -9660,7 +9660,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). MI (MLCC master list, active + pending = Conditional licences approved but not yet operating; no dates published, newest licence number first), TN-NASHVILLE (Metro beer permits, active = issued, pending = temporary permits), KY-LOUISVILLE (Jefferson County ABC licences, active only), AZ-PHOENIX (City of Phoenix applications in their 20-day comment period, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Example: [\"TX\",\"NY\"].",
+            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). MI (MLCC master list, active + pending = Conditional licences approved but not yet operating; no dates published, newest licence number first), TN-NASHVILLE (Metro beer permits, active = issued, pending = temporary permits), KY-LOUISVILLE (Jefferson County ABC licences, active only), AZ-PHOENIX (City of Phoenix applications in their 20-day comment period, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Added 2026-11-12: NV-CLARK (Clark County incl. the Las Vegas Strip: active = licensed, dated by initial issue; pending = pending + temporary licences, no date published), NV-LAS-VEGAS (City of Las Vegas: active + pending, no dates published -- use delta mode for new ones), NE (Nebraska LCC weekly reports: active = issued, pending = applications + temporary operating permits, dated), WI-MILWAUKEE (current City licences, active only, no original issue date -- use delta mode), CO-DENVER (Denver pending applications only; issued Denver licences come from CO). Example: [\"TX\",\"NY\"].",
             "items": {
               "type": "string",
               "enum": [
@@ -9678,7 +9678,12 @@
                 "TN-NASHVILLE",
                 "KY-LOUISVILLE",
                 "AZ-PHOENIX",
-                "ID"
+                "ID",
+                "NV-CLARK",
+                "NV-LAS-VEGAS",
+                "NE",
+                "WI-MILWAUKEE",
+                "CO-DENVER"
               ],
               "enumTitles": [
                 "Texas (TABC)",
@@ -9695,7 +9700,12 @@
                 "Nashville, TN (Metro Beer Permit Board)",
                 "Louisville, KY (Jefferson County ABC)",
                 "Phoenix, AZ (City Clerk new applications)",
-                "Idaho (ISP ABC)"
+                "Idaho (ISP ABC)",
+                "Clark County, NV (unincorporated incl. the Las Vegas Strip)",
+                "Las Vegas, NV (City business licences)",
+                "Nebraska (LCC)",
+                "Milwaukee, WI (City liquor licences)",
+                "Denver, CO (pending applications)"
               ]
             }
           },
