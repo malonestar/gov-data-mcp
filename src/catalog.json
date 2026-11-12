@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-12T08:37:54.156Z",
+  "generatedAt": "2026-11-12T14:43:09.454Z",
   "owner": "malonestar",
   "count": 123,
   "actors": [
@@ -9398,11 +9398,11 @@
           },
           "country": {
             "type": "string",
-            "description": "Restrict to registries for one country: FR (France INSEE/RNE) or US (all supported US states). GLEIF (global) is always included. Leave blank to query every registry."
+            "description": "Restrict to registries for one country: FR (France INSEE/RNE) or US (all supported US states, including Texas). GLEIF (global) is always included. Leave blank to query every registry."
           },
           "registries": {
             "type": "array",
-            "description": "Explicit registry codes to query. Supported: FR-INSEE, GLEIF, US-CO, US-CT, US-NY, US-OR, US-PA, US-DE. Overrides the country filter when set. Applied by default if omitted: [].",
+            "description": "Explicit registry codes to query. Supported: FR-INSEE, GLEIF, US-CO, US-CT, US-NY, US-OR, US-PA, US-DE, US-TX. Overrides the country filter when set. US-TX (Texas Comptroller franchise-tax + sales-tax rosters, with right-to-transact tax standing) matches EXACT normalized names only. Leave empty to query every registry, US-TX included. Applied by default if omitted: [].",
             "items": {
               "type": "string"
             }
@@ -9412,6 +9412,14 @@
             "description": "Maximum candidate records to return per registry, ranked by name-match confidence. 1 = best match only. Applied by default if omitted: 5.",
             "minimum": 1,
             "maximum": 50
+          },
+          "simulateOutage": {
+            "type": "string",
+            "description": "Diagnostic seam for proving the failure path without waiting for a real outage. 'none' is normal operation and is what you want for real work. 'US-TX' makes every data.texas.gov request fail as unreachable through the same retry and error path a genuine outage takes: the run must still SUCCEED, the US-TX row must read exists=null / registry_unavailable_not_checked (never 'not found'), and every other registry must still answer. Applied by default if omitted: \"none\".",
+            "enum": [
+              "none",
+              "US-TX"
+            ]
           }
         },
         "required": [
@@ -9660,7 +9668,7 @@
         "properties": {
           "states": {
             "type": "array",
-            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). MI (MLCC master list, active + pending = Conditional licences approved but not yet operating; no dates published, newest licence number first), TN-NASHVILLE (Metro beer permits, active = issued, pending = temporary permits), KY-LOUISVILLE (Jefferson County ABC licences, active only), AZ-PHOENIX (City of Phoenix applications in their 20-day comment period, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Added 2026-11-12: NV-CLARK (Clark County incl. the Las Vegas Strip: active = licensed, dated by initial issue; pending = pending + temporary licences, no date published), NV-LAS-VEGAS (City of Las Vegas: active + pending, no dates published -- use delta mode for new ones), NE (Nebraska LCC weekly reports: active = issued, pending = applications + temporary operating permits, dated), WI-MILWAUKEE (current City licences, active only, no original issue date -- use delta mode), CO-DENVER (Denver pending applications only; issued Denver licences come from CO). Added 2026-11-12, feed \"food_permit\" (health-department food permits = new restaurant openings): FL (DBPR new food-service licences, current fiscal year), IL-CHICAGO (CDPH licence inspections), and three food_permit-only codes: NY-NYC (DOHMH pre-permit inspections), WA-KING (King County incl. Seattle: first inspection of a business since 2021), MD-MONTGOMERY (Pre-Opening inspections, ownership changes excluded). The food-only codes have no liquor feed: with feed \"active\", \"pending\", \"all\" or \"closing\" they are reported on every row as unable to answer. Example: [\"TX\",\"NY\"].",
+            "description": "Which liquor-license registries to query. TX (TABC active + pending), NY (SLA active + pending), FL (DBPR, active only), CA (ABC daily export, active + pending; CA applications carry no date), CO (LED recently approved licenses, active only), MO (ATC new licenses, active only), IL-CHICAGO (City of Chicago newly issued liquor licenses, active only), WA (LCB new-application notices, last 30 days, pending only), OR (OLCC applications in progress, pending only), CT (DCP pending permits, pending only; no date published). MI (MLCC master list, active + pending = Conditional licences approved but not yet operating; no dates published, newest licence number first), TN-NASHVILLE (Metro beer permits, active = issued, pending = temporary permits), KY-LOUISVILLE (Jefferson County ABC licences, active only), AZ-PHOENIX (City of Phoenix applications in their 20-day comment period, pending only; no date published). A state that lacks the requested feed is reported on every row (run_legs_failed) rather than silently skipped; the run fails only if NO requested state can answer. Added 2026-11-12: NV-CLARK (Clark County incl. the Las Vegas Strip: active = licensed, dated by initial issue; pending = pending + temporary licences, no date published), NV-LAS-VEGAS (City of Las Vegas: active + pending, no dates published -- use delta mode for new ones), NE (Nebraska LCC weekly reports: active = issued, pending = applications + temporary operating permits, dated), WI-MILWAUKEE (current City licences, active only, no original issue date -- use delta mode), CO-DENVER (Denver pending applications only; issued Denver licences come from CO). Added 2026-11-12, feed \"food_permit\" (health-department food permits = new restaurant openings): FL (DBPR new food-service licences, current fiscal year), IL-CHICAGO (CDPH licence inspections), and three food_permit-only codes: NY-NYC (DOHMH pre-permit inspections), WA-KING (King County incl. Seattle: first inspection of a business since 2021), MD-MONTGOMERY (Pre-Opening inspections, ownership changes excluded). The food-only codes have no liquor feed: with feed \"active\", \"pending\", \"all\" or \"closing\" they are reported on every row as unable to answer. Added 2026-11-12: OK (Oklahoma ABLE Commission monthly licensee lists: Mixed Beverage, Beer and Wine, Retail Spirits, Retail Wine, Brew Pub; active only, no issue date published -- use delta mode for new licences) and ME (Maine BABLO monthly licence list, active premises licences; the state posts it monthly, so source_freshness can read \"stale\"; active only, use delta mode); sinceDate is refused for both before any request. CA-SAN-DIEGO (San Diego County food permits newly Issued; food_permit feed only -- CA liquor stays under CA; home-kitchen permits never emitted; owner name and phone only for registered business entities, never an e-mail). Example: [\"TX\",\"NY\"].",
             "items": {
               "type": "string",
               "enum": [
@@ -9686,7 +9694,10 @@
                 "CO-DENVER",
                 "NY-NYC",
                 "WA-KING",
-                "MD-MONTGOMERY"
+                "MD-MONTGOMERY",
+                "CA-SAN-DIEGO",
+                "OK",
+                "ME"
               ],
               "enumTitles": [
                 "Texas (TABC)",
@@ -9711,13 +9722,16 @@
                 "Denver, CO (pending applications)",
                 "New York City (DOHMH food permits; food_permit feed only)",
                 "King County, WA incl. Seattle (food permits; food_permit feed only)",
-                "Montgomery County, MD (food permits; food_permit feed only)"
+                "Montgomery County, MD (food permits; food_permit feed only)",
+                "San Diego County, CA (food permits; food_permit feed only)",
+                "Oklahoma (ABLE Commission monthly licensee lists)",
+                "Maine (BABLO monthly licence list)"
               ]
             }
           },
           "feed": {
             "type": "string",
-            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal -- a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = pending + active (unchanged: it does NOT include closing). \"closing\" = licenses that EXPIRED, were SURRENDERED, CANCELLED or REVOKED, or are lapsing without a renewal -- a bar, restaurant or store going dark (newest first; each closing row also bills one closing-detected event). Pending is published by TX, NY, CA, WA, OR, CT; active by TX, NY, FL, CA, CO, MO and Chicago; closing by TX, OR and Chicago only -- any other requested state is reported on every row as unable to answer the closing feed, and the run fails if none can. \"food_permit\" (added 2026-11-12) = NEW RESTAURANT OPENINGS from health-department food permits and pre-opening inspections, for FL, NY-NYC, IL-CHICAGO, WA-KING and MD-MONTGOMERY: one row per new permit (event_type new_food_permit in delta mode), with food_signal_date, food_facility_type, seats/seating_range, risk_category and liquor_license_match. Without sinceDate it covers the last 90 days. \"all\" does NOT include food_permit (unchanged output and bill for existing callers); request it by name. Example: \"pending\".",
+            "description": "Which feed to pull. \"pending\" = new license APPLICATIONS (the earliest opening signal -- a bar/restaurant typically opens 60-90 days later). \"active\" = recently ISSUED licenses (sorted newest first). \"all\" = pending + active (unchanged: it does NOT include closing). \"closing\" = licenses that EXPIRED, were SURRENDERED, CANCELLED or REVOKED, or are lapsing without a renewal -- a bar, restaurant or store going dark (newest first; each closing row also bills one closing-detected event). Pending is published by TX, NY, CA, WA, OR, CT; active by TX, NY, FL, CA, CO, MO and Chicago; closing by TX, OR and Chicago only -- any other requested state is reported on every row as unable to answer the closing feed, and the run fails if none can. \"food_permit\" (added 2026-11-12) = NEW RESTAURANT OPENINGS from health-department food permits and pre-opening inspections, for FL, NY-NYC, IL-CHICAGO, WA-KING, MD-MONTGOMERY and (2026-11-12) CA-SAN-DIEGO: one row per new permit (event_type new_food_permit in delta mode), with food_signal_date, food_facility_type, seats/seating_range, risk_category and liquor_license_match. Without sinceDate it covers the last 90 days. \"all\" does NOT include food_permit (unchanged output and bill for existing callers); request it by name. Example: \"pending\".",
             "enum": [
               "pending",
               "active",
