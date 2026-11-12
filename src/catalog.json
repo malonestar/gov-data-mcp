@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-02T04:14:45.035Z",
+  "generatedAt": "2026-11-12T02:23:08.774Z",
   "owner": "malonestar",
   "count": 123,
   "actors": [
@@ -2004,7 +2004,7 @@
         "properties": {
           "cities": {
             "type": "array",
-            "description": "City slugs to pull business licenses from. Live and wired: chicago, los-angeles, san-francisco, new-york, seattle. Any other slug produces an explicit unknown_city / not_wired row rather than being silently dropped. Leave empty to query all live cities. Example: [\"chicago\"]. Applied by default if omitted: [\"chicago\",\"los-angeles\",\"san-francisco\",\"new-york\",\"seattle\"].",
+            "description": "City slugs to pull business licenses from. Live and wired: chicago, los-angeles, san-francisco, new-york, seattle. Any other slug produces an explicit unknown_city / not_wired row rather than being silently dropped. Leave empty to query all live cities. Example: [\"chicago\",\"seattle\"]. Applied by default if omitted: [\"chicago\",\"los-angeles\",\"san-francisco\",\"new-york\",\"seattle\"].",
             "items": {
               "type": "string"
             }
@@ -2047,7 +2047,8 @@
       },
       "exampleInput": {
         "cities": [
-          "chicago"
+          "chicago",
+          "seattle"
         ],
         "since": "2025-01-01",
         "onlyNewLicenses": true,
@@ -6480,7 +6481,7 @@
       "slug": "fema-repetitive-loss-flood-market-screener",
       "actorId": "malonestar/fema-repetitive-loss-flood-market-screener",
       "title": "FEMA NFIP Repetitive Loss & Flood Insurance Market Screener",
-      "description": "Resolve any US coordinate to its NFIP community, then return that community's repetitive-loss and severe-repetitive-loss property rollup, CRS class and premium discounts, NFIP participation status, and county flood-insurance market penetration. Four FEMA OpenFEMA datasets joined in one call.",
+      "description": "Resolve any US coordinate to its NFIP community using FEMA's flood-map (NFHL) jurisdictions, then return that community's repetitive-loss and severe-repetitive-loss rollup, CRS class and premium discount, NFIP participation, and county flood-insurance penetration. FEMA NFHL + 3 OpenFEMA datasets.",
       "categories": [
         "REAL_ESTATE",
         "DEVELOPER_TOOLS",
@@ -6510,18 +6511,18 @@
         "properties": {
           "assets": {
             "type": "array",
-            "description": "Sites to screen. Each item is {\"lat\": <number>, \"lon\": <number>, \"label\": \"<your reference>\"}. Each site is resolved to the NFIP community whose published boundary contains it, then answered at community and county scope. FEMA redacts repetitive-loss property coordinates to one decimal place (roughly +/-5 to +/-55 km), so no radius or nearest-property distance is derivable from this data and none is offered. Maximum 25 sites per run; each distinct state costs one community-boundary download. Example: [{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver City Hall, CO\"},{\"lat\":39.7047,\"lon\":-105.0814,\"label\":\"Lakewood, CO (city inside Jefferson County)\"},{\"lat\":40.015,\"lon\":-105.2705,\"label\":\"Boulder, CO\"},{\"lat\":40.53,\"lon\":-104.3,\"label\":\"Rural Weld County, CO (unincorporated)\"},{\"lat\":29.9511,\"lon\":-90.0715,\"label\":\"New Orleans, LA\"}].",
+            "description": "Sites to screen. Each item is {\"lat\": <number>, \"lon\": <number>, \"label\": \"<your reference>\"}. Each site is resolved to the NFIP community whose FEMA NFHL Political Jurisdictions polygon contains it, then answered at community and county scope. A site outside every NFHL polygon is reported as not mapped, with null metrics, never as \"no community\". FEMA redacts repetitive-loss property coordinates to one decimal place (roughly +/-5 to +/-55 km), so no radius or nearest-property distance is derivable from this data and none is offered. Maximum 25 sites per run. Example: [{\"lat\":39.7392,\"lon\":-104.9903,\"label\":\"Denver City Hall, CO\"},{\"lat\":39.7047,\"lon\":-105.0814,\"label\":\"Lakewood, CO (city inside Jefferson County)\"},{\"lat\":40.015,\"lon\":-105.2705,\"label\":\"Boulder, CO\"},{\"lat\":40.53,\"lon\":-104.3,\"label\":\"Rural Weld County, CO (unincorporated)\"},{\"lat\":29.9511,\"lon\":-90.0715,\"label\":\"New Orleans, LA\"}].",
             "items": {
               "type": "string"
             }
           },
           "includeCountyCommunity": {
             "type": "boolean",
-            "description": "When a site sits inside an incorporated place, the county or parish is usually ALSO an NFIP community covering unincorporated areas, with its own CRS class and its own repetitive-loss rollup. Leave on to receive a profile row for both. Turn off to receive only the governing municipal community. Defaults to on when omitted. Example: true."
+            "description": "When a site sits inside an incorporated place, the county or parish is usually ALSO an NFIP community covering unincorporated areas, with its own CRS class and its own repetitive-loss rollup. Leave on to receive a profile row for both: the county community is looked up from FEMA NFHL and reported as not identified (never guessed) where NFHL naming cannot single it out, for example in township states. Turn off to receive only the governing community. Defaults to on when omitted. Example: true."
           },
           "includeTribalEtjLayer": {
             "type": "boolean",
-            "description": "FEMA publishes 608 tribal nation, extraterritorial-jurisdiction and special land-use-authority community polygons with no state or county code, so a state-scoped boundary read is structurally blind to them. Leave on to include them (one extra request per state). When off, tribal/ETJ coverage is reported as not checked rather than as a negative. Defaults to on when omitted. Example: true."
+            "description": "Kept for compatibility. Since 2026-11-12 there is no separate tribal / extraterritorial-jurisdiction pass: FEMA retired the OpenFEMA layer that carried those polygons. Tribal NFIP communities that FEMA maps in NFHL are resolved by the same point lookup as any other community whether this is on or off; NFHL has no ETJ or SLUA layer. Every row carries a tribal_etj_note saying so. Example: true."
           },
           "includeLossProperties": {
             "type": "boolean",
@@ -6547,7 +6548,9 @@
               "geo",
               "canary",
               "negative_control",
-              "tribal_etj"
+              "tribal_etj",
+              "nfhl",
+              "county_community"
             ]
           }
         },
@@ -14815,6 +14818,15 @@
             "description": "In assets mode: caps how many of your assets are screened (one billed row per asset). In inventory mode: how many top leveed areas to output, ranked by leveeRiskScore descending (each row is one billed result). Default 500. Example: 500.",
             "minimum": 1,
             "maximum": 5000
+          },
+          "backend": {
+            "type": "string",
+            "description": "Which copy of the National Levee Database to read. \"auto\" (default) reads the first-party USACE service and falls back to the Esri US Federal Datasets mirror ONLY when the USACE host cannot be reached — never when it answers and contradicts the actor's checks. \"primary_only\" refuses the fallback. \"secondary_only\" pins the mirror. The mirror is republished annually, so every row it serves is labelled with source_backend, backend_failover and backend_vintage_note. Applied by default if omitted: \"auto\".",
+            "enum": [
+              "auto",
+              "primary_only",
+              "secondary_only"
+            ]
           }
         }
       },
